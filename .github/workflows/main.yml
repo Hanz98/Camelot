@@ -1,4 +1,16 @@
+name: Build code
+
 on:
   push:
     branches:
-    - main
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test
+        run: echo "This is a testing workflow!"
