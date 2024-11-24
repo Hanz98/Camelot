@@ -2,8 +2,6 @@ name: Build
 
 on:
   push:
-    branches:
-      - main
   pull_request:
     # Triggers on any pull request for all branches
     types:
