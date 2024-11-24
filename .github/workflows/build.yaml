@@ -5,8 +5,11 @@ on:
     branches:
       - main
   pull_request:
-    branches:
-      - main
+    # Triggers on any pull request for all branches
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 jobs:
   build:
