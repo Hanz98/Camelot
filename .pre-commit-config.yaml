@@ -1,8 +1,13 @@
+fail_fast: false
 repos:
-  - repo: https://github.com/cpp-linter/cpp-linter-hooks
-    rev: v0.5.1  # Use the ref you want to point at
+  - repo: https://github.com/pocc/pre-commit-hooks
+    rev: v1.3.5
     hooks:
       - id: clang-format
-        args: [--style=Google] # Other coding style: LLVM, GNU, Chromium, Microsoft, Mozilla, WebKit.
+        args: [--style=Google]
       - id: clang-tidy
-        args: [--checks='boost-*,bugprone-*,performance-*,readability-*,portability-*,modernize-*,clang-analyzer-*,cppcoreguidelines-*']
+      - id: oclint
+      - id: uncrustify
+      - id: cppcheck
+      - id: cpplint
+      - id: include-what-you-use
