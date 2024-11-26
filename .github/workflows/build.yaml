@@ -29,7 +29,7 @@ jobs:
       
       - name: Build Project
         run: |
-          ls
+          ls -R
           cmake \
               -S .  \
               -B build  \
