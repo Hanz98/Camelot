@@ -28,6 +28,7 @@ jobs:
           conan install . --build=missing -s build_type=Debug
       
       - name: Build Project
+        run: |
           ls
           cmake \
               -S .  \
