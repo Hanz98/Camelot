@@ -25,7 +25,7 @@ jobs:
       - name: Install Conan Dependencies
         run: |
           conan profile detect
-          conan install . --build=missing -s build_type=Debug
+          conan install . --build=missing
       
       - name: Build Project
         run: |
@@ -35,5 +35,5 @@ jobs:
               -B build  \
               -G "Unix Makefiles" \
               -D CMAKE_TOOLCHAIN_FILE=generators/conan_toolchain.cmake \
-              -D CMAKE_POLICY_DEFAULT_CMP0091=NEW -DCMAKE_BUILD_TYPE=Debug
+              -D CMAKE_POLICY_DEFAULT_CMP0091=NEW
           cmake --build build
