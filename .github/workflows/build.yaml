@@ -34,7 +34,8 @@ jobs:
               -B build  \
               -G "Unix Makefiles" \
               -D CMAKE_TOOLCHAIN_FILE=Debug/generators/conan_toolchain.cmake \
-              -D CMAKE_POLICY_DEFAULT_CMP0091=NEW -DCMAKE_BUILD_TYPE=Debug
+              -D CMAKE_POLICY_DEFAULT_CMP0091=NEW \
+              -DCMAKE_BUILD_TYPE=Debug
           cmake --build build
 
       - name: Run Tests
