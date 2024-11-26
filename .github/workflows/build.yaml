@@ -19,7 +19,7 @@ jobs:
       - name: Install Basic Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake g++ python3 # Install CMake and GCC
+          sudo apt-get install -y cmake g++ make python3 # Install CMake and GCC
           pip install conan
 
       - name: Build Project
