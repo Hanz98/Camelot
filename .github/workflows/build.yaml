@@ -19,11 +19,14 @@ jobs:
       - name: Install Basic Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake g++ # Install CMake and GCC
-
-#      - name: Install Connan dependecies
+          sudo apt-get install -y cmake g++ python3 # Install CMake and GCC
+          pip install conan
 
       - name: Build Project
         run: |
-            cmake -S . -B build
-            cmake --build build
+          conan install . --build=missing -s build_type=Debug
+          cmake \
+              -S .  \
+              -B build  \
+              -D CMAKE_TOOLCHAIN_FILE='build/generators/conan_toolchain.cmake'
+          cmake --build build
