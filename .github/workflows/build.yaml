@@ -29,5 +29,5 @@ jobs:
           cmake \
               -S .  \
               -B build  \
-              -D CMAKE_TOOLCHAIN_FILE='build/generators/conan_toolchain.cmake'
+              --preset conan-debug
           cmake --build build
