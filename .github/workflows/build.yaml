@@ -1,0 +1,29 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+    # Triggers on any pull request for all branches
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install Basic Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake g++ # Install CMake and GCC
+
+#      - name: Install Connan dependecies
+
+      - name: Build Project
+        run: |
+            cmake -S . -B build
+            cmake --build build
