@@ -19,11 +19,26 @@ jobs:
       - name: Install Basic Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake g++ # Install CMake and GCC
+          sudo apt-get install -y cmake g++ build-essential python3 # Install CMake and GCC
+          pip install conan
 
-#      - name: Install Connan dependecies
-
+      - name: Install Conan Dependencies
+        run: |
+          conan profile detect
+          conan install . --build=missing -s build_type=Debug
+      
       - name: Build Project
         run: |
-            cmake -S . -B build
-            cmake --build build
+          cmake \
+              -S .  \
+              -B build  \
+              -G "Unix Makefiles" \
+              -D CMAKE_TOOLCHAIN_FILE=Debug/generators/conan_toolchain.cmake \
+              -D CMAKE_POLICY_DEFAULT_CMP0091=NEW \
+              -DCMAKE_BUILD_TYPE=Debug
+          cmake --build build
+
+      - name: Run Tests
+        run: |
+          cd build 
+          ctest
