@@ -1,7 +1,7 @@
 if (test-path "build") {
     Remove-Item -Recurse -Force "build"
 }
-
+conan profile detect
 conan install . --build=missing -s build_type=Debug
 
 cmake `
