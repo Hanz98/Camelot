@@ -28,3 +28,17 @@ repos:
     rev: 2.0.0  # Use the ref you want to point at
     hooks: 
       - id: cpplint
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.5.5
+    hooks:
+      - id: insert-license
+        name: insert license header
+        files: \.cpp$
+        exclude: ^build
+        args:
+        - --license-filepath
+        - 'LICENSES/code_header'
+        - --comment-style
+        - "/*| *|*/"
+        - --fuzzy-match-generates-todo 
+      
