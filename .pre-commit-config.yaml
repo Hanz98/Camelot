@@ -1,31 +1,12 @@
 fail_fast: false
 repos:
   - repo: https://github.com/cpp-linter/cpp-linter-hooks
-    rev: v0.5.1  # Use the ref you want to point at
+    rev: v0.5.1
     hooks:
       - id: clang-format
-        args: [--style=Google] # Other coding style: LLVM, GNU, Chromium, Microsoft, Mozilla, WebKit.
-#  - repo: https://github.com/pocc/pre-commit-hooks
-#    rev: v1.3.5
-#    hooks:
-#      - id: clang-tidy
-#
-#  - repo: https://github.com/oclint/oclint
-#    rev: v22.02  # Use the ref you want to point at
-#    hooks: 
-#      - id: oclint
-#
-#  - repo: https://github.com/uncrustify/uncrustify
-#    rev:  uncrustify-0.80.1  # Use the ref you want to point at
-#    hooks: 
-#      - id: uncrustify
-#
-#  - repo: https://github.com/danmar/cppcheck
-#    rev:  2.16.0  # Use the ref you want to point at
-#    hooks: 
-#      - id: cppcheck
+        args: [--style=Google]
   - repo: https://github.com/cpplint/cpplint
-    rev: 2.0.0  # Use the ref you want to point at
+    rev: 2.0.0
     hooks: 
       - id: cpplint
   - repo: https://github.com/Lucas-C/pre-commit-hooks
@@ -41,4 +22,3 @@ repos:
         - --comment-style
         - "/*| *|*/"
         - --fuzzy-match-generates-todo 
-      
