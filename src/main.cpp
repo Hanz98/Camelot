@@ -12,14 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * File: main.cpp
- * Author: Jan Filip
- * Description: test file
  */
 
 #include <iostream>
-#include <vector>  // comment without space
+#include <vector>
 
 int main() {
   std::cout << "Hello, World!" << std::endl;
