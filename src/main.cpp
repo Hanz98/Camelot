@@ -16,7 +16,6 @@
  * File: main.cpp
  * Author: Jan Filip
  * Description: test file
- *
  */
 
 #include <iostream>
