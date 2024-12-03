@@ -15,7 +15,7 @@ jobs:
       - name: Install Basic Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake g++ build-essential python3 # Install CMake and GCC
+          sudo apt-get install -y cmake g++ build-essential python3d
           pip install conan pre-commit
 
       - name: Install Conan Dependencies
