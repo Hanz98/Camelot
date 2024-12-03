@@ -3,11 +3,7 @@ name: Build
 on:
   push:
   pull_request:
-    # Triggers on any pull request for all branches
-    types:
-      - opened
-      - synchronize
-      - reopened
+  workflow_dispatch:
 
 jobs:
   build:
@@ -19,8 +15,8 @@ jobs:
       - name: Install Basic Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake g++ build-essential python3 # Install CMake and GCC
-          pip install conan
+          sudo apt-get install -y cmake g++ build-essential python3
+          pip install conan pre-commit
 
       - name: Install Conan Dependencies
         run: |
@@ -35,8 +31,12 @@ jobs:
               -G "Unix Makefiles" \
               -D CMAKE_TOOLCHAIN_FILE=Debug/generators/conan_toolchain.cmake \
               -D CMAKE_POLICY_DEFAULT_CMP0091=NEW \
-              -DCMAKE_BUILD_TYPE=Debug
+              -D CMAKE_BUILD_TYPE=Debug
           cmake --build build
+
+      - name: Lint
+        run: |
+          pre-commit run --all-files
 
       - name: Run Tests
         run: |
