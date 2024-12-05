@@ -19,21 +19,9 @@
  *
  */
 
-#ifndef CAMELOTLIB_CAMELOTLIB_CAMELOTINTERFACE_H_
-#define CAMELOTLIB_CAMELOTLIB_CAMELOTINTERFACE_H_
+#ifndef CAMELOT_API_ICAMELOT_H_
+#define CAMELOT_API_ICAMELOT_H_
 
-#define CAMELOT_EXPORTS
+class ICamelot {};
 
-#ifdef CAMELOT_EXPORTS
-#define CAMELOT_API __declspec(dllexport)
-#else
-#define CAMELOT_API __declspec(ddllimport)
-#endif
-
-#include <Camelot/CamelotAPI/ICamelot.h>
-
-typedef void (*Camelot_Init_Func)(ICamelot** camelot);
-
-extern "C" CAMELOT_API void buildCamelot(ICamelot** camelot);
-
-#endif  // CAMELOTLIB_CAMELOTLIB_CAMELOTINTERFACE_H_
+#endif  // CAMELOT_API_ICAMELOT_H_
