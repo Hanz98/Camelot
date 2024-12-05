@@ -14,4 +14,5 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 include(CTest)
 
 add_subdirectory(CamelotExec)
-add_subdirectory(tests)
+add_subdirectory(CamelotLib)
+#add_subdirectory(Tests)
