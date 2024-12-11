@@ -1,19 +1,17 @@
 # Dockerfile
-FROM ubuntu:22.04
+FROM archlinux:latest
 
-# Install tools
+RUN pacman -Syu --noconfirm
+RUN pacman-key --init
+
+RUN pacman -S --noconfirm base-devel cmake clang
+RUN  pacman -S --noconfirm cppcheck git
+
+WORKDIR /src
+
 COPY .pre-commit-config.yaml .
 
-RUN apt-get update && apt-get install -y \
-    clang-tidy \
-    oclint \
-    uncrustify \
-    cppcheck \
-    && rm -rf /var/lib/apt/lists/*
-    git init . && pre-commit install-hooks
-
-# Set the working directory
-WORKDIR /src
+RUN git init . && pre-commit install-hooks
 
 # Default command (can be overridden)
 CMD ["echo", "Custom Dockerfile ready!"]
