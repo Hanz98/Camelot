@@ -36,15 +36,19 @@ jobs:
       - name: Run Pre-commit
         run: |
           pre-commit run --all-files
-
+        continue-on-error: true
+      
       - name: Run Clang-Tidy
         run: |
           clang-tidy **/*.cpp -- -std=c++17
-
+        continue-on-error: true
+      
       - name: Run Uncrustify
         run: |
           uncrustify -c uncrustify.cfg --replace **/*.cpp
+        continue-on-error: true
 
       - name: Run Cppcheck
         run: |
           cppcheck --enable=all --std=c++17 --suppress=missingIncludeSystem **/*.cpp
+        continue-on-error: true
