@@ -19,7 +19,7 @@ jobs:
       - name: Install Basic Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang-tidy oclint uncrustify cppcheck
+          sudo apt-get install -y clang-tidy uncrustify cppcheck
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -40,10 +40,6 @@ jobs:
       - name: Run Clang-Tidy
         run: |
           clang-tidy **/*.cpp -- -std=c++17
-
-      - name: Run OCLint
-        run: |
-          oclint -p build -e some/exclude/path -rc=LONG_LINE=200 **/*.cpp
 
       - name: Run Uncrustify
         run: |
