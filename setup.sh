@@ -1,2 +1,8 @@
+#!/bin/bash
 conan install . --output-folder=build --build=missing
-cmake -S . -B build
+
+mkdir -p build
+cd build
+
+cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake
+cmake --build .
