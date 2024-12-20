@@ -1,5 +1,5 @@
 # Camelot
-
+![Build and Test status](https://github.com/Hanz98/Camelot/actions/workflows/build.yaml/badge.svg)
 ## Setup project 
 
 On Windows, run `setup.ps1` file to generate a Visual Studio solution file. You should then be able to open the project folder in Visual Studio.
