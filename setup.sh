@@ -1,5 +1,7 @@
 #!/bin/bash
-conan install . --output-folder=build --build=missing
+conan profile detect -e --name Camelot
+
+conan install . --output-folder=build --build=missing 
 
 mkdir -p build
 cd build
