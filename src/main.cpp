@@ -19,10 +19,19 @@
  *
  */
 
+void foo(int x) {
+    int buf[10];
+    if (x == 1000) {}
+    buf[x] = 0; // <- ERROR
+}
+
 #include <iostream>
 #include <vector>  // comment without space
 
 int main() {
   std::cout << "Hello, World!" << std::endl;
+  int * test = nullptr;
+  test = 4;
+  foo(5);
   return 0;
 }
