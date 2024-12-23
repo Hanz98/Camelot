@@ -33,12 +33,16 @@ fi
 
 mapfile -t files < <(git -C "$(git rev-parse --show-toplevel)" ls-files | grep -E '\.(c|cpp|h|hpp)$')
 
-#clang-format -i --style=Google $files > /dev/null
-uncrustify --no-backup $files
+clang-format -i --style=Google $files > /dev/null
 #clang-tidy $files -- -std=c++17 > /dev/null
-#oclint $files
-#cppcheck $files
-#include-what-you-use $files
+oclint -p ../../build $files
+
+cppcheck --enable=all --inconclusive -v $files
+
+printf "${RED}"
+include-what-you-use $files
+printf "${NC}"
+
 for file in "${files[@]}"; do
   uncrustify -c scripts/linux/cfg/uncrustify.cfg -f $file -o src/main.cpp --no-backup
 done
