@@ -20,9 +20,10 @@
  */
 
 void foo(int x) {
-    int buf[10];
-    if (x == 1000) {}
-    buf[x] = 0; // <- ERROR
+  int buf[10];
+  if (x == 1000) {
+  }
+  buf[x] = 0;  // <- ERROR
 }
 
 #include <iostream>
@@ -30,8 +31,7 @@ void foo(int x) {
 
 int main() {
   std::cout << "Hello, World!" << std::endl;
-  int * test = nullptr;
-  test = 4;
+  int* test = nullptr;
   foo(5);
   return 0;
 }
