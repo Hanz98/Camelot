@@ -13,7 +13,11 @@ echo Starting the build procedure!
 
 conan profile detect -e --name Camelot
 
+echo Profile detected!
+
 conan install . --output-folder=build --build=missing 
+
+echo Conan installed!
 
 mkdir -p build
 cd build
