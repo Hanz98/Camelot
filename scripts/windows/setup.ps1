@@ -2,6 +2,8 @@ if (test-path "build") {
     Remove-Item -Recurse -Force "build"
 }
 
+conan profile detect -e --name Camelot
+
 conan install . --build=missing -s build_type=Debug
 
 cmake `
