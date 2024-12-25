@@ -18,20 +18,22 @@
  * Description: test file
  *
  */
+void foo(int x)
+{
+	int buf[10];
 
-void foo(int x) {
-  int buf[10];
-  if (x == 1000) {
-  }
-  buf[x] = 0;  // <- ERROR
+	if (x == 1000) {
+	}
+	buf[x] = 0; // <- ERROR
 }
 
 #include <iostream>
 #include <vector>  // comment without space
 
-int main() {
-  std::cout << "Hello, World!" << std::endl;
-  int* test = nullptr;
-  foo(5);
-  return 0;
+int main()
+{
+	std::cout << "Hello, World!" << std::endl;
+	int *test = nullptr;
+	foo(5);
+	return 0;
 }
