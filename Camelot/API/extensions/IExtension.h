@@ -11,15 +11,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * File: Excalibur.cpp
+ * Author: Jan Filip
+ *
  */
 
-#include <Camelot/src/main/MainModel.h>
+#ifndef CAMELOT_API_EXTENSIONS_IEXTENSION_H_
+#define CAMELOT_API_EXTENSIONS_IEXTENSION_H_
 
-#include <iostream>
+class IExtension {};
 
-int main(int argc, char* argv[]) {
-  std::cout << "Hello world from Pendragon!" << std::endl;
-  MainTest mainTest;
-  mainTest.test();
-  return 0;
-}
+#endif  // CAMELOT_API_EXTENSIONS_IEXTENSION_H_

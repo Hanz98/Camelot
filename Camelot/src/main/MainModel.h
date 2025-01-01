@@ -13,13 +13,14 @@
  * limitations under the License.
  */
 
-#include <Camelot/src/main/MainModel.h>
+#ifndef CAMELOT_SRC_MAIN_MAINMODEL_H_
+#define CAMELOT_SRC_MAIN_MAINMODEL_H_
 
 #include <iostream>
 
-int main(int argc, char* argv[]) {
-  std::cout << "Hello world from Pendragon!" << std::endl;
-  MainTest mainTest;
-  mainTest.test();
-  return 0;
-}
+class MainTest {
+ public:
+  void test() { std::cout << "Hello World from Camelot!" << std::endl; }
+};
+
+#endif  // CAMELOT_SRC_MAIN_MAINMODEL_H_
