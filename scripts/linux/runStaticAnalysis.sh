@@ -12,25 +12,33 @@ NC='\033[0m' # No Color
 
 FAILED_ANALYZERS=()
 
-# Check Git status
 GS=$(git status --porcelain=v1 2>/dev/null)
 if [ $? -ne 128 ]; then
   function _count_git_pattern() {
     echo "$(grep "^$1" <<< $GS | wc -l)"
   }
 
+  EXIT_CODE=0
+
   if [ $(_count_git_pattern "??") -ne 0 ]; then
     printf "${RED}There are $(_count_git_pattern "??") untracked files.\n"
+    EXIT_CODE=1
   fi
   if [ $(_count_git_pattern " M") -ne 0 ]; then
     printf "${RED}There are $(_count_git_pattern " M") unstaged, modified files.\n"
+    EXIT_CODE=1
   fi
   if [ $(_count_git_pattern "M ") -ne 0 ]; then
     printf "${RED}There are $(_count_git_pattern "M ") staged, modified files.\n"
+    EXIT_CODE=1
   fi
-  printf "${RED}Please stash or commit them.\n${NC}"
-  exit 1
+
+  if [ $EXIT_CODE -eq 1 ]; then
+    printf "${RED}Please stash or commit them.\n${NC}"
+    exit 1
+  fi
 fi
+
 
 mapfile -t files < <(git -C "$(git rev-parse --show-toplevel)" ls-files | grep -E '\.(c|cpp|h|hpp)$')
 
