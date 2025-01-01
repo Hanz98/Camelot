@@ -29,7 +29,7 @@ if [ $? -ne 128 ]; then
     printf "${RED}There are $(_count_git_pattern "M ") staged, modified files.\n"
   fi
   printf "${RED}Please stash or commit them.\n${NC}"
-#  exit 1
+  exit 1
 fi
 
 mapfile -t files < <(git -C "$(git rev-parse --show-toplevel)" ls-files | grep -E '\.(c|cpp|h|hpp)$')
