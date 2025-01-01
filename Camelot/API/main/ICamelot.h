@@ -13,13 +13,9 @@
  * limitations under the License.
  */
 
-#include <Camelot/src/main/MainModel.h>
+#ifndef CAMELOT_API_MAIN_ICAMELOT_H_
+#define CAMELOT_API_MAIN_ICAMELOT_H_
 
-#include <iostream>
+class ICamelot {};
 
-int main(int argc, char* argv[]) {
-  std::cout << "Hello world from Pendragon!" << std::endl;
-  MainTest mainTest;
-  mainTest.test();
-  return 0;
-}
+#endif  // CAMELOT_API_MAIN_ICAMELOT_H_

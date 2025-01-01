@@ -14,4 +14,5 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 include(CTest)
 
 add_subdirectory(Pendragon)
+add_subdirectory(Camelot)
 add_subdirectory(Tests)
