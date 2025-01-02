@@ -15,4 +15,5 @@ include(CTest)
 
 add_subdirectory(Pendragon)
 add_subdirectory(Camelot)
+add_subdirectory(Excalibur)
 add_subdirectory(Tests)
