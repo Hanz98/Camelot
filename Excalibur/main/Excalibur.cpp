@@ -13,14 +13,4 @@
  * limitations under the License.
  */
 
-#ifndef CAMELOT_SRC_MAIN_MAINMODEL_H_
-#define CAMELOT_SRC_MAIN_MAINMODEL_H_
-
-#include <iostream>
-
-class MainModel {
- public:
-  void test() { std::cout << "Hello World from Camelot!" << std::endl; }
-};
-
-#endif  // CAMELOT_SRC_MAIN_MAINMODEL_H_
+#include "Excalibur.h"

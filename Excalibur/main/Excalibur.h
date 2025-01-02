@@ -17,21 +17,31 @@
  *
  */
 
-#ifndef EXCALIBUR_SRC_EXCALIBUR_H_
-#define EXCALIBUR_SRC_EXCALIBUR_H_
+#ifndef EXCALIBUR_MAIN_EXCALIBUR_H_
+#define EXCALIBUR_MAIN_EXCALIBUR_H_
 
+#define EXCALIBUR_EXPORTS
+
+#if defined(_WIN32) || defined(_WIN64)
 #define EXCALIBUR_EXPORTS
 
 #ifdef EXCALIBUR_EXPORTS
 #define EXCALIBUR_API __declspec(dllexport)
 #else
-#define EXCALIBUR_API __declspec(ddllimport)
+#define EXCALIBUR_API __declspec(dllimport)
+#endif
+#else
+#ifdef EXCALIBUR_EXPORTS
+#define EXCALIBUR_API __attribute__((visibility("default")))
+#else
+#define EXCALIBUR_API
+#endif
 #endif
 
-#include <Camelot/API/ICamelot.h>
+#include <Camelot/API/main/ICamelot.h>
 
 typedef void (*Camelot_Init_Func)(ICamelot** camelot);
 
 extern "C" EXCALIBUR_API void buildCamelot(ICamelot** camelot);
 
-#endif  // EXCALIBUR_SRC_EXCALIBUR_H_
+#endif  // EXCALIBUR_MAIN_EXCALIBUR_H_

@@ -19,7 +19,7 @@
 
 int main(int argc, char* argv[]) {
   std::cout << "Hello world from Pendragon!" << std::endl;
-  MainTest mainTest;
+  MainModel mainTest;
   mainTest.test();
   return 0;
 }

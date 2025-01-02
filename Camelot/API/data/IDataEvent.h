@@ -11,16 +11,19 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * File: IDataEvent.cpp
+ * Author: Jan Filip
+ *
  */
 
-#ifndef CAMELOT_SRC_MAIN_MAINMODEL_H_
-#define CAMELOT_SRC_MAIN_MAINMODEL_H_
+#ifndef CAMELOT_API_DATA_IDATAEVENT_H_
+#define CAMELOT_API_DATA_IDATAEVENT_H_
 
-#include <iostream>
-
-class MainModel {
+class IDataEvent {
  public:
-  void test() { std::cout << "Hello World from Camelot!" << std::endl; }
+  virtual ~IDataEvent() = default;
+  virtual void onEvent() = 0;
 };
 
-#endif  // CAMELOT_SRC_MAIN_MAINMODEL_H_
+#endif  // CAMELOT_API_DATA_IDATAEVENT_H_
