@@ -51,7 +51,7 @@ fi
 
 # Run clang-tidy
 printf "${CYAN}clang-tidy\n${NC}"
-clang-tidy $files -p build/compile_commands.json -warnings-as-errors=*
+clang-tidy $files -p build/release/compile_commands.json -warnings-as-errors=*
 if [ $? -ne 0 ]; then
   FAILED_ANALYZERS+=("clang-tidy")
 fi
