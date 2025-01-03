@@ -40,8 +40,8 @@
 
 #include <Camelot/API/main/ICamelot.h>
 
-typedef void (*Camelot_Init_Func)(ICamelot** camelot);
+typedef void (*Camelot_Init_Func)(ICamelot **camelot);
 
-extern "C" EXCALIBUR_API void buildCamelot(ICamelot** camelot);
+extern "C" EXCALIBUR_API void buildCamelot(ICamelot **camelot);
 
 #endif  // EXCALIBUR_MAIN_EXCALIBUR_H_
