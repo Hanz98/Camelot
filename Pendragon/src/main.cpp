@@ -17,7 +17,7 @@
 
 #include <iostream>
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
   std::cout << "Hello world from Pendragon!" << std::endl;
   MainModel mainTest;
   mainTest.test();
