@@ -12,6 +12,14 @@ NC='\033[0m' # No Color
 
 FAILED_ANALYZERS=()
 
+noconfirm=false
+for arg in "$@"; do
+    if [[ "$arg" == "--noconfirm" ]]; then
+        noconfirm=true
+        break
+    fi
+done
+
 GS=$(git status --porcelain=v1 2>/dev/null)
 if [ $? -ne 128 ]; then
   function _count_git_pattern() {
@@ -33,10 +41,21 @@ if [ $? -ne 128 ]; then
     EXIT_CODE=1
   fi
 
+
+  printf   "${NC}"
   if [ $EXIT_CODE -eq 1 ]; then
-    printf "${RED}Please stash or commit them.\n${NC}"
-    exit 1
+    if ! $noconfirm; then
+      read -p "Are you sure you want to proceed? (yes/no): " response
+      if [[ "$response" != "yes" && "$response" != "y" ]]; then
+          echo "Operation canceled."
+          exit 1
+      fi
+    fi
+    
+    echo "Proceeding..."
   fi
+
+  
 fi
 
 
