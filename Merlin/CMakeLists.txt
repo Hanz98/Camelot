@@ -1,3 +1,3 @@
-add_library(Camelot INTERFACE)
+add_library(Merlin INTERFACE)
 
-add_subdirectory("API")
+add_subdirectory("src")
