@@ -18,7 +18,7 @@ include(CTest)
 add_subdirectory(Avalon)
 add_subdirectory(Camelot)
 add_subdirectory(Excalibur)
-add_subdirectory(Merlin)
+add_subdirectory(Merlin )
 add_subdirectory(Nimue)
 add_subdirectory(Pendragon)
 
