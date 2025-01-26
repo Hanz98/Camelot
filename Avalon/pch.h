@@ -13,16 +13,11 @@
  * limitations under the License.
  */
 
-#ifndef AVALON_SRC_MAIN_AVALON_H_
-#define AVALON_SRC_MAIN_AVALON_H_
+#ifndef AVALON_PCH_H_
+#define AVALON_PCH_H_
 
-#include <pch.h>
+#include <vma/vk_mem_alloc.h>
 
 #include <iostream>
 
-class Avalon {
- public:
-  void test();
-};
-
-#endif  // AVALON_SRC_MAIN_AVALON_H_
+#endif  // AVALON_PCH_H_
