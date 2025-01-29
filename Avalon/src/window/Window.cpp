@@ -12,20 +12,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-#ifndef AVALON_SRC_MAIN_AVALON_H_
-#define AVALON_SRC_MAIN_AVALON_H_
-
-#include <Avalon/src/window/Window.h>
-#include <pch.h>
-
-#include <iostream>
-
-class Avalon {
-  Window m_Window;
-
- public:
-  void test();
-};
-
-#endif  // AVALON_SRC_MAIN_AVALON_H_
+#include "Window.h"

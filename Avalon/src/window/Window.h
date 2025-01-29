@@ -13,19 +13,26 @@
  * limitations under the License.
  */
 
-#ifndef AVALON_SRC_MAIN_AVALON_H_
-#define AVALON_SRC_MAIN_AVALON_H_
+#ifndef AVALON_SRC_WINDOW_WINDOW_H_
+#define AVALON_SRC_WINDOW_WINDOW_H_
 
-#include <Avalon/src/window/Window.h>
 #include <pch.h>
 
-#include <iostream>
+#include <string>
 
-class Avalon {
-  Window m_Window;
+class Window {
+ private:
+  GLFWindow* m_pWindow;
 
  public:
-  void test();
+  Window();
+  Window(const Window&) = delete;
+  Window(const Window&&) = delete;
+  Window& operator=(const Window&) = delete;
+
+  ~Window();
+
+  bool init(int width, int height, const std::string& title);
 };
 
-#endif  // AVALON_SRC_MAIN_AVALON_H_
+#endif  // AVALON_SRC_WINDOW_WINDOW_H_

@@ -9,7 +9,10 @@ ENDIF()
 set(Avalon_include_dirs ${CMAKE_CURRENT_SOURCE_DIR})
 
 
+find_package(glfw3 REQUIRED)
+target_include_directories(Avalon PUBLIC ${glfw3_INCLUDE_DIRS})
 include_directories(${VULKAN_SDK_PATH}/include)
+include_directories(${Camelot_include_dirs})
 
 #add_subdirectory("API")
 add_subdirectory("src")
@@ -20,5 +23,5 @@ target_include_directories(Avalon INTERFACE ${VULKAN_SDK_PATH}/include)
 
 target_precompile_headers(Avalon INTERFACE pch.h)
 
-message("Camelot_external_dirs: ${VULKAN_SDK_PATH}/include")
+message("Camelot_include_dirs: ${Camelot_include_dirs}")
 message(STATUS "VULKAN_SDK environment variable: $ENV{VULKAN_SDK}")
