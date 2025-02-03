@@ -16,13 +16,14 @@
 #ifndef AVALON_SRC_WINDOW_WINDOW_H_
 #define AVALON_SRC_WINDOW_WINDOW_H_
 
-#include <pch.h>
+//  #include <pch.h>
+#include <GLFW/glfw3.h>
 
 #include <string>
 
 class Window {
  private:
-  GLFWindow* m_pWindow;
+  //  GLFWindow* m_pWindow;
 
  public:
   Window();

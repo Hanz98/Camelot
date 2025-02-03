@@ -12,20 +12,22 @@
         "generator": "Ninja",
         "binaryDir": "${sourceDir}/build/debug",
         "cacheVariables": {
-          "CMAKE_BUILD_TYPE": "Debug",
+          "CMAKE_BUILD_TYPE": "debug",
           "CMAKE_CXX_STANDARD": "20",
-          "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+          "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+          "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/build/Debug/generators/conan_toolchain.cmake"
         }
       },
       {
         "name": "release",
-        "description": "Configure with Release build type",
+        "description": "Configure with  build type",
         "generator": "Ninja",
         "binaryDir": "${sourceDir}/build/release",
         "cacheVariables": {
-          "CMAKE_BUILD_TYPE": "Release",
+          "CMAKE_BUILD_TYPE": "release",
           "CMAKE_CXX_STANDARD": "20",
-          "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+          "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+          "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/build/Release/generators/conan_toolchain.cmake"
         }
       }
     ],
