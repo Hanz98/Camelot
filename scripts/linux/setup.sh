@@ -24,5 +24,5 @@ cd build
 
 echo Starting the build procedure!
 
-cmake .. -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=RELEASE
+cmake .. -DCMAKE_TOOLCHAIN_FILE=build/r elease/generators/conan_toolchain.cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=RELEASE
 cmake --build .
