@@ -14,6 +14,7 @@
  */
 
 #include <Camelot/src/main/MainModel.h>
+#include <unistd.h>
 
 #include <iostream>
 
@@ -21,5 +22,7 @@ int main(int argc, char *argv[]) {
   std::cout << "Hello world from Pendragon!" << std::endl;
   MainModel mainTest;
   mainTest.test();
+  usleep(10000000);
+
   return 0;
 }

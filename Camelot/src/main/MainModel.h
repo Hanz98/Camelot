@@ -16,11 +16,17 @@
 #ifndef CAMELOT_SRC_MAIN_MAINMODEL_H_
 #define CAMELOT_SRC_MAIN_MAINMODEL_H_
 
+#include <Avalon/src/window/Window.h>
+#include <Camelot/API/main/ICamelot.h>
+
 #include <iostream>
 
-class MainModel {
+class MainModel : public ICamelot {
+ private:
+  Window m_window;
+
  public:
-  void test() { std::cout << "Hello World from Camelot!" << std::endl; }
+  void test();
 };
 
 #endif  // CAMELOT_SRC_MAIN_MAINMODEL_H_

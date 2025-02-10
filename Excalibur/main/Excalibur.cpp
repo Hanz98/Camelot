@@ -14,3 +14,7 @@
  */
 
 #include "Excalibur.h"
+
+#include <Camelot/src/main/MainModel.h>
+
+void buildCamelot(ICamelot **camelot) { *camelot = new MainModel(); }
