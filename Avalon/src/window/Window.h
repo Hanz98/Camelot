@@ -18,6 +18,7 @@
 
 //  #include <pch.h>
 
+#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
 #include <string>
@@ -33,6 +34,7 @@ class Window {
   Window& operator=(const Window&) = delete;
 
   ~Window();
+  void cleanUp();
 
   bool init(int width, int height, const std::string& title);
 };

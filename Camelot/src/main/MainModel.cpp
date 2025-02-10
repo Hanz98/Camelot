@@ -14,3 +14,5 @@
  */
 
 #include "MainModel.h"
+
+void MainModel::test() { m_window.init(800, 600, "Camelot"); }
