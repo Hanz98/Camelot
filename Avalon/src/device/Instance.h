@@ -13,14 +13,28 @@
  * limitations under the License.
  */
 
-#ifndef AVALON_PCH_H_
-#define AVALON_PCH_H_
+#ifndef AVALON_SRC_DEVICE_INSTANCE_H_
+#define AVALON_SRC_DEVICE_INSTANCE_H_
 
-#include <vulkan/vulkan.h>
+#include <pch.h>
 
-#define VMA_IMPLEMENTATION
-#include <vma/vk_mem_alloc.h>
-//
-//  #include <iostream>
+class Instance {
+ private:
+  VkInstance m_instance;
 
-#endif  // AVALON_PCH_H_
+ public:
+  Instance();
+  Instance(Instance&& other);
+  Instance(const Instance& other) = delete;
+  Instance& operator=(Instance&& other);
+  Instance& operator=(const Instance& other) = delete;
+
+  ~Instance();
+
+  void cleanUp();
+
+  void init();
+  inline VkInstance& getInstance() { return m_instance; }
+};
+
+#endif  // AVALON_SRC_DEVICE_INSTANCE_H_

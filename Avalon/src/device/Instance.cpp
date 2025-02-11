@@ -13,14 +13,27 @@
  * limitations under the License.
  */
 
-#ifndef AVALON_PCH_H_
-#define AVALON_PCH_H_
+#include "Instance.h"
 
-#include <vulkan/vulkan.h>
+Instance::Instance() : m_instance(VK_NULL_HANDLE) {}
 
-#define VMA_IMPLEMENTATION
-#include <vma/vk_mem_alloc.h>
-//
-//  #include <iostream>
+Instance::Instance(Instance&& other) : m_instance(other.m_instance) {
+  other.m_instance = VK_NULL_HANDLE;
+}
 
-#endif  // AVALON_PCH_H_
+Instance& Instance::operator=(Instance&& other) {
+  m_instance = other.m_instance;
+  other.m_instance = VK_NULL_HANDLE;
+  return *this;
+}
+
+Instance::~Instance() { cleanUp(); }
+
+void Instance::cleanUp() {
+  if (m_instance) {
+    vkDestroyInstance(m_instance, nullptr);
+    m_instance = VK_NULL_HANDLE;
+  }
+}
+
+void Instance::init() {}

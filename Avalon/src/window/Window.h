@@ -29,8 +29,9 @@ class Window {
 
  public:
   Window();
+  Window(Window&&);
   Window(const Window&) = delete;
-  Window(const Window&&) = delete;
+  Window& operator=(Window&&);
   Window& operator=(const Window&) = delete;
 
   ~Window();

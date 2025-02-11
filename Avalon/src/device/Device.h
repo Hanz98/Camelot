@@ -16,4 +16,35 @@
 #ifndef AVALON_SRC_DEVICE_DEVICE_H_
 #define AVALON_SRC_DEVICE_DEVICE_H_
 
+#include <pch.h>
+
+class Device {
+ private:
+  VkDevice m_device;
+  VkPhysicalDevice m_physicalDevice;
+
+  VmaAllocation m_allocation;
+
+ public:
+  Device();
+  Device(Device&& other);
+  Device(const Device& other) = delete;
+  Device& operator=(Device&& other);
+  Device& operator=(const Device& other) = delete;
+
+  ~Device();
+
+  void cleanUp();
+
+ public:
+  VkDevice& getDevice() { return m_device; }
+  VkPhysicalDevice& getPhysicalDevice() { return m_physicalDevice; }
+
+  /*
+  static VkPhysicalDevice PickPhysicalDevice(VkInstance instance,
+  VkSurfaceKHR& surface,
+  VkPhysicalDevice& physicalDevice);
+  */
+};
+
 #endif  // AVALON_SRC_DEVICE_DEVICE_H_
