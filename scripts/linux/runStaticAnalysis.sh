@@ -51,22 +51,15 @@ if [ $? -ne 128 ]; then
           exit 1
       fi
     fi
-    
+
     echo "Proceeding..."
   fi
 
-  
+
 fi
 
 
 mapfile -t files < <(git -C "$(git rev-parse --show-toplevel)" ls-files | grep -E '\.(c|cpp|h|hpp)$')
-
-# Run clang-format
-printf "${CYAN}clang-format\n${NC}"
-clang-format -i --style=Google $files > /dev/null
-if [ $? -ne 0 ]; then
-  FAILED_ANALYZERS+=("clang-format")
-fi
 
 # Run clang-tidy
 printf "${CYAN}clang-tidy\n${NC}"
