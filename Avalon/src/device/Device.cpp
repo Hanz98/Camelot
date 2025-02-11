@@ -12,12 +12,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-#ifndef AVALON_PCH_H_
-#define AVALON_PCH_H_
-
-//  #include <vma/vk_mem_alloc.h>
-//
-//  #include <iostream>
-
-#endif  // AVALON_PCH_H_
+#include "Device.h"
