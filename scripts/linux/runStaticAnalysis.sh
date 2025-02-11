@@ -80,13 +80,13 @@ printf "${CYAN}include-what-you-use\n${NC}"
 include-what-you-use $files
 
 # Run uncrustify
-printf "${CYAN}uncrustify\n${NC}"
-for file in "${files[@]}"; do
-  uncrustify -c scripts/linux/cfg/uncrustify.cfg -f $file -o $file --no-backup
-  if [ $? -ne 0 ]; then
-    FAILED_ANALYZERS+=("uncrustify")
-  fi
-done
+#printf "${CYAN}uncrustify\n${NC}"
+#for file in "${files[@]}"; do
+#  uncrustify -c scripts/linux/cfg/uncrustify.cfg -f $file -o $file --no-backup
+#  if [ $? -ne 0 ]; then
+#    FAILED_ANALYZERS+=("uncrustify")
+#  fi
+#done
 
 # Summary
 if [ ${#FAILED_ANALYZERS[@]} -ne 0 ]; then

@@ -1,14 +1,5 @@
 fail_fast: false
 repos:
-  - repo: https://github.com/cpp-linter/cpp-linter-hooks
-    rev: v0.5.1
-    hooks:
-      - id: clang-format
-        args: [--style=Google]
-  - repo: https://github.com/cpplint/cpplint
-    rev: 2.0.0
-    hooks: 
-      - id: cpplint
   - repo: https://github.com/Lucas-C/pre-commit-hooks
     rev: v1.5.5
     hooks:
@@ -21,4 +12,23 @@ repos:
         - 'LICENSES/code_header'
         - --comment-style
         - "/*| *|*/"
-        - --fuzzy-match-generates-todo 
+        - --fuzzy-match-generates-todo
+      - id: insert-license
+        name: insert license header
+        files: \.h$
+        exclude: ^build
+        args:
+        - --license-filepath
+        - 'LICENSES/code_header'
+        - --comment-style
+        - "/*| *|*/"
+        - --fuzzy-match-generates-todo
+  - repo: https://github.com/cpp-linter/cpp-linter-hooks
+    rev: v0.5.1
+    hooks:
+      - id: clang-format
+        args: [--style=Google]
+  - repo: https://github.com/cpplint/cpplint
+    rev: 2.0.0
+    hooks:
+      - id: cpplint
