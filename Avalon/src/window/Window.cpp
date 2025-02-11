@@ -21,14 +21,26 @@
 
 Window::Window() : m_pWindow(nullptr) {}
 
-Window::~Window() { cleanUp(); }
+Window::Window(Window&& other) : m_pWindow(other.m_pWindow) {
+  other.m_pWindow = nullptr;
+}
+
+Window& Window::operator=(Window&& other) {
+  m_pWindow = other.m_pWindow;
+  other.m_pWindow = nullptr;
+  return *this;
+}
+
+Window::~Window() {
+  cleanUp();
+  glfwTerminate();
+}
 
 void Window::cleanUp() {
   if (m_pWindow) {
     glfwDestroyWindow(m_pWindow);
     m_pWindow = nullptr;
   }
-  glfwTerminate();
 }
 
 bool Window::init(int width, int height, const std::string& title) {
