@@ -28,19 +28,19 @@ jobs:
 
       - name: Build Project
         run: |
-          cmake \
+          sudo cmake \
               -S .  \
               -B build  \
               -G "Unix Makefiles" \
               -D CMAKE_TOOLCHAIN_FILE=Debug/generators/conan_toolchain.cmake \
               -D CMAKE_POLICY_DEFAULT_CMP0091=NEW \
               -D CMAKE_BUILD_TYPE=Debug
-          cmake --build build
+          sudo cmake --build build
 
       - name: Lint
-        run: pre-commit run --all-files
+        run: sudo pre-commit run --all-files
 
       - name: Run Tests
         run: |
-          cd build 
-          ctest
+          sudo cd build 
+          sudo ctest
