@@ -10,11 +10,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Install Vulkan libraries
-        run: |
-          sudo apt update
-          sudo apt install libvulkan-dev libxcb1-dev
-
       - name: Install Basic Dependencies
         run: |
           sudo apt-get update
@@ -25,7 +20,12 @@ jobs:
         run: |
           conan profile detect
           conan install . --build=missing -s build_type=Debug
-      
+
+      - name: Install Vulkan libraries
+        run: |
+          sudo apt update
+          sudo apt install libvulkan-dev libxcb1-dev
+
       - name: Build Project
         run: |
           cmake \
