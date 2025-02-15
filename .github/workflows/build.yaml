@@ -13,14 +13,13 @@ jobs:
       - name: Install Basic Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install libgl1-mesa-dev
           sudo apt-get install -y cmake g++ build-essential python3
           pip install conan pre-commit
 
       - name: Install Conan Dependencies
         run: |
           conan profile detect
-          conan install . -c tools.system.package_manager:mode=install --build=missing -s build_type=Debug
+          sudo conan install . -c tools.system.package_manager:mode=install --build=missing -s build_type=Debug
 
 
       - name: Install Vulkan libraries
