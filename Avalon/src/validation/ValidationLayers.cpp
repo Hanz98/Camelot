@@ -13,11 +13,4 @@
  * limitations under the License.
  */
 
-#ifndef AVALON_PCH_H_
-#define AVALON_PCH_H_
-#include <vulkan/vulkan.h>
-
-#include <iostream>
-#include <string>
-
-#endif  // AVALON_PCH_H_
+#include "ValidationLayers.h"
