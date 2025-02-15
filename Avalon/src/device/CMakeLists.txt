@@ -7,3 +7,4 @@ add_library(Avalon_device
 
 
 target_include_directories(Avalon_device PUBLIC ${Avalon_include_dirs})
+target_include_directories(Avalon_device PUBLIC ${Camelot_include_dirs})

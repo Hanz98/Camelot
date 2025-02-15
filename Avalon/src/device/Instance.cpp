@@ -15,6 +15,10 @@
 
 #include "Instance.h"
 
+#include <Avalon/src/validation/CheckResult.h>
+
+#include <Avalon/src/utils/Initializers.hpp>
+
 Instance::Instance() : m_instance(VK_NULL_HANDLE) {}
 
 Instance::Instance(Instance&& other) : m_instance(other.m_instance) {
@@ -36,4 +40,17 @@ void Instance::cleanUp() {
   }
 }
 
-void Instance::init() {}
+void Instance::init() {
+  uint32_t apiVersion;
+  VK_CHECK_RESULT(vkEnumerateInstanceVersion(&apiVersion));
+  if (apiVersion < VK_MAKE_API_VERSION(0, 1, 3, 0)) {
+    throw std::runtime_error("Vulkan API version is too low");
+  }
+
+  VkInstanceCreateInfo createInfo = Initializers::InstanceCreateInfo();
+  VkApplicationInfo appInfo = Initializers::ApplicationInfo();
+  createInfo.pApplicationInfo = &appInfo;
+  VkAllocationCallbacks* pAllocator = nullptr;
+
+  VK_CHECK_RESULT(vkCreateInstance(&createInfo, pAllocator, &m_instance));
+}

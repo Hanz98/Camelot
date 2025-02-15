@@ -13,11 +13,7 @@
  * limitations under the License.
  */
 
-#ifndef AVALON_PCH_H_
-#define AVALON_PCH_H_
-#include <vulkan/vulkan.h>
+#ifndef AVALON_SRC_VALIDATION_VALIDATIONLAYERS_H_
+#define AVALON_SRC_VALIDATION_VALIDATIONLAYERS_H_
 
-#include <iostream>
-#include <string>
-
-#endif  // AVALON_PCH_H_
+#endif  // AVALON_SRC_VALIDATION_VALIDATIONLAYERS_H_
