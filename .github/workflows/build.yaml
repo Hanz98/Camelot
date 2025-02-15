@@ -18,8 +18,8 @@ jobs:
 
       - name: Install Conan Dependencies
         run: |
-          conan profile detect
-          sudo conan install . -c tools.system.package_manager:mode=install --build=missing -s build_type=Debug
+          sudo -E conan profile detect
+          sudo -E conan install . -c tools.system.package_manager:mode=install --build=missing -s build_type=Debug
 
 
       - name: Install Vulkan libraries
