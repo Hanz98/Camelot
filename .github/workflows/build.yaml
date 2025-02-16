@@ -26,6 +26,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libvulkan-dev libxcb1-dev
 
+      - name: Set VULKAN_SDK automatically
+        run: |
+          if [ -f /usr/include/vulkan/vulkan.h ]; then
+            echo "VULKAN_SDK=/usr" >> $GITHUB_ENV
+          else
+            echo "Vulkan header not found!" && exit 1
+          fi
+
       - name: Build Project
         run: |
           sudo cmake \
