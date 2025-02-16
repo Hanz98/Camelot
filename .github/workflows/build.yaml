@@ -36,7 +36,7 @@ jobs:
 
       - name: Build Project
         run: |
-          cmake \
+          sudo cmake \
             -S .  \
             -B build  \
             -G "Unix Makefiles" \
@@ -44,12 +44,12 @@ jobs:
             -D CMAKE_POLICY_DEFAULT_CMP0091=NEW \
             -D CMAKE_BUILD_TYPE=Debug \
             -D VULKAN_SDK=/usr
-          cmake --build build
+          sudo cmake --build build
 
       - name: Lint
         run: sudo pre-commit run --all-files
 
       - name: Run Tests
         run: |
-          sudo cd build 
-          sudo ctest
+          sudo sudo cd build 
+          sudo sudo ctest
