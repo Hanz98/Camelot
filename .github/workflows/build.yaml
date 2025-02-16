@@ -34,6 +34,11 @@ jobs:
             echo "Vulkan header not found!" && exit 1
           fi
 
+      - name: Install Vulkan Memory Allocator
+        run: |
+          git clone https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git /tmp/VulkanMemoryAllocator
+          sudo cp -r /tmp/VulkanMemoryAllocator/include/vma /usr/local/include/
+    
       - name: Build Project
         run: |
           sudo cmake \
