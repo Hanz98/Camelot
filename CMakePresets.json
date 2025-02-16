@@ -1,0 +1,61 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+      "major": 3,
+      "minor": 19,
+      "patch": 0
+    },
+    "configurePresets": [
+      {
+        "name": "debug",
+        "description": "Configure with Debug build type",
+        "generator": "Ninja",
+        "binaryDir": "${sourceDir}/build/debug",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "debug",
+          "CMAKE_CXX_STANDARD": "20",
+          "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+          "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/build/Debug/generators/conan_toolchain.cmake"
+        }
+      },
+      {
+        "name": "release",
+        "description": "Configure with  build type",
+        "generator": "Ninja",
+        "binaryDir": "${sourceDir}/build/release",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "release",
+          "CMAKE_CXX_STANDARD": "20",
+          "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+          "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/build/Release/generators/conan_toolchain.cmake"
+        }
+      }
+    ],
+    "buildPresets": [
+      {
+        "name": "debug",
+        "description": "Build Debug configuration",
+        "configurePreset": "debug",
+        "jobs": 4
+      },
+      {
+        "name": "release",
+        "description": "Build Release configuration",
+        "configurePreset": "release",
+        "jobs": 4
+      }
+    ],
+    "testPresets": [
+      {
+        "name": "debug",
+        "description": "Test Debug configuration",
+        "configurePreset": "debug"
+      },
+      {
+        "name": "release",
+        "description": "Test Release configuration",
+        "configurePreset": "release"
+      }
+    ]
+  }
+  
