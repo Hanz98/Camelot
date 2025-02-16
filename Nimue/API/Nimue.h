@@ -13,10 +13,14 @@
  * limitations under the License.
  */
 
-#include <iostream>
-#include <vector>
+#ifndef NIMUE_API_NIMUE_H_
+#define NIMUE_API_NIMUE_H_
 
-int main() {
-  std::cout << "Hello, World!" << std::endl;
-  return 0;
-}
+#include <iostream>
+
+class MainModel {
+ public:
+  void test() { std::cout << "Hello World from Nimue!" << std::endl; }
+};
+
+#endif  // NIMUE_API_NIMUE_H_

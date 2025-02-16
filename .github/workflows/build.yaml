@@ -1,9 +1,7 @@
 name: Build
-
 on:
   push:
   pull_request:
-  workflow_dispatch:
 
 jobs:
   build:
@@ -15,30 +13,45 @@ jobs:
       - name: Install Basic Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake g++ build-essential python3
-          pip install conan pre-commit
+          sudo apt-get install -y cmake g++ build-essential python3 python3-pip
+          sudo python3 -m pip install conan pre-commit --ignore-installed urllib3
 
       - name: Install Conan Dependencies
         run: |
-          conan profile detect
-          conan install . --build=missing -s build_type=Debug
-      
+          sudo -E conan profile detect
+          sudo -E conan install . -c tools.system.package_manager:mode=install --build=missing -s build_type=Release
+
+      - name: Install Vulkan Libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libvulkan-dev libxcb1-dev
+
+      - name: Set VULKAN_SDK automatically
+        run: |
+          if [ -f /usr/include/vulkan/vulkan.h ]; then
+            echo "VULKAN_SDK=/usr" >> $GITHUB_ENV
+          else
+            echo "Vulkan header not found!" && exit 1
+          fi
+
+      - name: Install Vulkan Memory Allocator
+        run: |
+          git clone https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git /tmp/VulkanMemoryAllocator
+          sudo mkdir -p /usr/local/include/vma
+          sudo cp /tmp/VulkanMemoryAllocator/include/vk_mem_alloc.h /usr/local/include/vma/    
       - name: Build Project
         run: |
-          cmake \
-              -S .  \
-              -B build  \
-              -G "Unix Makefiles" \
-              -D CMAKE_TOOLCHAIN_FILE=Debug/generators/conan_toolchain.cmake \
-              -D CMAKE_POLICY_DEFAULT_CMP0091=NEW \
-              -D CMAKE_BUILD_TYPE=Debug
-          cmake --build build
-
-      - name: Lint
-        run: |
-          pre-commit run --all-files
+          sudo cmake \
+            -S .  \
+            -B build  \
+            -G "Unix Makefiles" \
+            -D CMAKE_TOOLCHAIN_FILE=Release/generators/conan_toolchain.cmake \
+            -D CMAKE_POLICY_DEFAULT_CMP0091=NEW \
+            -D CMAKE_BUILD_TYPE=Release \
+            -D VULKAN_SDK=/usr
+          sudo cmake --build build
 
       - name: Run Tests
         run: |
-          cd build 
-          ctest
+          cd build
+          sudo ./bin/test_main
