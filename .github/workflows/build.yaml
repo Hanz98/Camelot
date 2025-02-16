@@ -19,7 +19,7 @@ jobs:
       - name: Install Conan Dependencies
         run: |
           sudo -E conan profile detect
-          sudo -E conan install . -c tools.system.package_manager:mode=install --build=missing -s build_type=Debug
+          sudo -E conan install . -c tools.system.package_manager:mode=install --build=missing -s build_type=Release
 
       - name: Install Vulkan Libraries
         run: |
@@ -47,11 +47,13 @@ jobs:
             -G "Unix Makefiles" \
             -D CMAKE_TOOLCHAIN_FILE=Debug/generators/conan_toolchain.cmake \
             -D CMAKE_POLICY_DEFAULT_CMP0091=NEW \
-            -D CMAKE_BUILD_TYPE=Debug \
+            -D CMAKE_BUILD_TYPE=Release \
             -D VULKAN_SDK=/usr
           sudo cmake --build build
 
       - name: Run Tests
         run: |
-          sudo cd build 
-          sudo ctest
+          cd build
+          ls
+          ls release
+          sudo ./release/bin/test_main
