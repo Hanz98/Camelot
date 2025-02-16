@@ -54,6 +54,4 @@ jobs:
       - name: Run Tests
         run: |
           cd build
-          ls
-          ls release
-          sudo ./release/bin/test_main
+          sudo ./bin/test_main
