@@ -36,14 +36,15 @@ jobs:
 
       - name: Build Project
         run: |
-          sudo cmake \
-              -S .  \
-              -B build  \
-              -G "Unix Makefiles" \
-              -D CMAKE_TOOLCHAIN_FILE=Debug/generators/conan_toolchain.cmake \
-              -D CMAKE_POLICY_DEFAULT_CMP0091=NEW \
-              -D CMAKE_BUILD_TYPE=Debug
-          sudo cmake --build build
+          cmake \
+            -S .  \
+            -B build  \
+            -G "Unix Makefiles" \
+            -D CMAKE_TOOLCHAIN_FILE=Debug/generators/conan_toolchain.cmake \
+            -D CMAKE_POLICY_DEFAULT_CMP0091=NEW \
+            -D CMAKE_BUILD_TYPE=Debug \
+            -D VULKAN_SDK=/usr
+          cmake --build build
 
       - name: Lint
         run: sudo pre-commit run --all-files
