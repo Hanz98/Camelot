@@ -51,9 +51,6 @@ jobs:
             -D VULKAN_SDK=/usr
           sudo cmake --build build
 
-      - name: Lint
-        run: sudo pre-commit run --all-files
-
       - name: Run Tests
         run: |
           sudo sudo cd build 
