@@ -10,7 +10,6 @@ set(Avalon_include_dirs ${CMAKE_CURRENT_SOURCE_DIR})
 
 
 find_package(glfw3 REQUIRED)
-find_package(glog REQUIRED)
 
 include_directories(${VULKAN_SDK_PATH}/include/)
 include_directories(${glfw3_INCLUDE_DIRS}/include/)
