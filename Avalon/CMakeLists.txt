@@ -25,7 +25,6 @@ add_library(Avalon INTERFACE)
 target_include_directories(Avalon INTERFACE ${glfw3_INCLUDE_DIRS})
 target_include_directories(Avalon INTERFACE ${VULKAN_SDK_PATH}/include/)
 
-target_link_libraries(Avalon INTERFACE glog::glog)
 target_link_libraries(Avalon INTERFACE Avalon_src)
 target_link_libraries(Avalon INTERFACE Avalon_window)
 
