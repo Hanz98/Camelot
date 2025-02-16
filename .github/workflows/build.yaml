@@ -45,7 +45,7 @@ jobs:
             -S .  \
             -B build  \
             -G "Unix Makefiles" \
-            -D CMAKE_TOOLCHAIN_FILE=Debug/generators/conan_toolchain.cmake \
+            -D CMAKE_TOOLCHAIN_FILE=Release/generators/conan_toolchain.cmake \
             -D CMAKE_POLICY_DEFAULT_CMP0091=NEW \
             -D CMAKE_BUILD_TYPE=Release \
             -D VULKAN_SDK=/usr
