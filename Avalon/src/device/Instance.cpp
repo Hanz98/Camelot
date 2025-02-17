@@ -16,6 +16,7 @@
 #include "Instance.h"
 
 #include <Avalon/src/validation/CheckResult.h>
+#include <spdlog/spdlog.h>
 
 #include <Avalon/src/utils/Initializers.hpp>
 
@@ -44,6 +45,8 @@ void Instance::init() {
   uint32_t apiVersion;
   VK_CHECK_RESULT(vkEnumerateInstanceVersion(&apiVersion));
   if (apiVersion < VK_MAKE_API_VERSION(0, 1, 3, 0)) {
+    spdlog::info("Vulkan API version is too low! apiVersion: " +
+                 std::to_string(apiVersion));
     throw std::runtime_error("Vulkan API version is too low");
   }
 

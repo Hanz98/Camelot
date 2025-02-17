@@ -10,12 +10,13 @@ set(Avalon_include_dirs ${CMAKE_CURRENT_SOURCE_DIR})
 
 
 find_package(glfw3 REQUIRED)
+find_package(spdlog REQUIRED)
 
 include_directories(${VULKAN_SDK_PATH}/include/)
 include_directories(${glfw3_INCLUDE_DIRS}/include/)
-#include_directories(${glog_INCLUDE_DIRS}/include)
+include_directories(${spdlog_INCLUDE_DIRS})
 include_directories(${Camelot_include_dirs})
-
+# ...
 #add_subdirectory("API")
 add_subdirectory("src")
 
@@ -26,11 +27,8 @@ target_include_directories(Avalon INTERFACE ${VULKAN_SDK_PATH}/include/)
 
 target_link_libraries(Avalon INTERFACE Avalon_src)
 target_link_libraries(Avalon INTERFACE Avalon_window)
+target_link_libraries(Avalon INTERFACE spdlog::spdlog)
 
 target_precompile_headers(Avalon INTERFACE pch.h)
 
-message("Camelot_include_dirs: ${Camelot_include_dirs}")
-message("glfw3_INCLUDE_DIRS: ${glfw3_INCLUDE_DIRS}")
-message(STATUS "VULKAN_SDK environment variable: $ENV{VULKAN_SDK}")
-message("Current source directory: ${CMAKE_CURRENT_SOURCE_DIR}")
-message("Camelot_include_dirs: ${Camelot_include_dirs}")
+message("spdlogs_INCLUDE_DIRS: ${spdlog_INCLUDE_DIRS}")
