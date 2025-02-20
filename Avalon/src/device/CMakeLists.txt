@@ -12,4 +12,5 @@ include_directories(${spdlog_INCLUDE_DIRS})
 
 
 target_link_libraries(Avalon_device PRIVATE glfw
-                                            spdlog::spdlog)
+                                            spdlog::spdlog
+                                            vk-bootstrap::vk-bootstrap)

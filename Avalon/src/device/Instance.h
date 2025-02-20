@@ -18,6 +18,9 @@
 
 #include <pch.h>
 
+#include "VkBootstrap.h"
+#include "VkBootstrapDispatch.h"
+
 class Instance {
  private:
   VkInstance m_instance;
