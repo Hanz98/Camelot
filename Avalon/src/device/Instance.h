@@ -23,7 +23,7 @@
 
 class Instance {
  private:
-  VkInstance m_instance;
+  vkb::Instance m_instance;
 
  public:
   Instance();
@@ -37,7 +37,7 @@ class Instance {
   void cleanUp();
 
   void init();
-  inline VkInstance& getInstance() { return m_instance; }
+  inline VkInstance& getInstance() { return m_instance.instance; }
 };
 
 #endif  // AVALON_SRC_DEVICE_INSTANCE_H_

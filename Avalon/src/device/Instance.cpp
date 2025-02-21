@@ -20,15 +20,15 @@
 
 #include <Avalon/src/utils/Initializers.hpp>
 
-Instance::Instance() : m_instance(VK_NULL_HANDLE) {}
+Instance::Instance() : m_instance() {}
 
 Instance::Instance(Instance&& other) : m_instance(other.m_instance) {
-  other.m_instance = VK_NULL_HANDLE;
+  other.m_instance = {};
 }
 
 Instance& Instance::operator=(Instance&& other) {
   m_instance = other.m_instance;
-  other.m_instance = VK_NULL_HANDLE;
+  other.m_instance = {};
   return *this;
 }
 
@@ -37,23 +37,22 @@ Instance::~Instance() { cleanUp(); }
 void Instance::cleanUp() {
   if (m_instance) {
     vkDestroyInstance(m_instance, nullptr);
-    m_instance = VK_NULL_HANDLE;
+    m_instance = {};
   }
 }
 
 void Instance::init() {
-  uint32_t apiVersion;
-  VK_CHECK_RESULT(vkEnumerateInstanceVersion(&apiVersion));
-  if (apiVersion < VK_MAKE_API_VERSION(0, 1, 3, 0)) {
-    spdlog::info("Vulkan API version is too low! apiVersion: " +
-                 std::to_string(apiVersion));
-    throw std::runtime_error("Vulkan API version is too low");
+  vkb::InstanceBuilder builder;
+
+  auto inst_ret = builder.set_app_name("Example Vulkan Application")
+                      .request_validation_layers()
+                      .use_default_debug_messenger()
+                      .build();
+  if (!inst_ret) {
+    spdlog::info("Failed to create Vulkan instance. Error: " +
+                 inst_ret.error().message());
+    throw std::runtime_error("Failed to create Vulkan instance. Error: " +
+                             inst_ret.error().message());
   }
-
-  VkInstanceCreateInfo createInfo = Initializers::InstanceCreateInfo();
-  VkApplicationInfo appInfo = Initializers::ApplicationInfo();
-  createInfo.pApplicationInfo = &appInfo;
-  VkAllocationCallbacks* pAllocator = nullptr;
-
-  VK_CHECK_RESULT(vkCreateInstance(&createInfo, pAllocator, &m_instance));
+  vkb::Instance vkb_inst = inst_ret.value();
 }
