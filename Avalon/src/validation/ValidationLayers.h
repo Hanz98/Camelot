@@ -16,4 +16,16 @@
 #ifndef AVALON_SRC_VALIDATION_VALIDATIONLAYERS_H_
 #define AVALON_SRC_VALIDATION_VALIDATIONLAYERS_H_
 
+#include <pch.h>
+
+class ValidationLayerWrapper {
+ private:
+ public:
+  static VKAPI_ATTR VkBool32 VKAPI_CALL
+  debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+                VkDebugUtilsMessageTypeFlagsEXT messageType,
+                const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
+                void *pUserData);
+};
+
 #endif  // AVALON_SRC_VALIDATION_VALIDATIONLAYERS_H_
