@@ -14,8 +14,6 @@
  */
 #include "Device.h"
 
-#include <spdlog/spdlog.h>
-
 #include <stdexcept>
 
 Device::Device() : m_device(), m_physicalDevice() {}
@@ -63,4 +61,5 @@ void Device::PickPhysicalDevice(const Instance& instance,
   }
 
   m_device = dev_ret.value();
+  volkLoadDevice(m_device.device);
 }
