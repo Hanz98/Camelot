@@ -4,4 +4,6 @@ add_Library(Avalon_main
 )
 
 target_include_directories(Avalon_main PUBLIC ${Avalon_include_dirs})
-target_link_libraries(Avalon_main Avalon_window)
+target_link_libraries(Avalon_main Avalon_window
+                                  Avalon_device
+                                  spdlog::spdlog)

@@ -12,9 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #include "Avalon.h"
 
-#include <iostream>
+#include <pch.h>
 
-void Avalon::test() { std::cout << "Hello World from Avalon!" << std::endl; }
+#include <iostream>
+void Avalon::test() {
+  std::cout << "Hello World from Avalon!" << std::endl;
+  if (volkInitialize() != VK_SUCCESS) {
+    spdlog::error("Failed to initialize volk.");
+    throw std::runtime_error("Failed to initialize volk.");
+  }
+}
