@@ -11,10 +11,12 @@ set(Avalon_include_dirs ${CMAKE_CURRENT_SOURCE_DIR})
 
 find_package(glfw3 REQUIRED)
 find_package(spdlog REQUIRED)
+find_package(vk-bootstrap REQUIRED)
 
 include_directories(${VULKAN_SDK_PATH}/include/)
 include_directories(${glfw3_INCLUDE_DIRS}/include/)
 include_directories(${spdlog_INCLUDE_DIRS})
+include_directories(${vk-bootstrap_INCLUDE_DIRS})
 include_directories(${Camelot_include_dirs})
 # ...
 #add_subdirectory("API")
@@ -31,4 +33,4 @@ target_link_libraries(Avalon INTERFACE spdlog::spdlog)
 
 target_precompile_headers(Avalon INTERFACE pch.h)
 
-message("spdlogs_INCLUDE_DIRS: ${spdlog_INCLUDE_DIRS}")
+message("vk-bootstrap_INCLUDE_DIRS: ${vk-bootstrap_INCLUDE_DIRS}")

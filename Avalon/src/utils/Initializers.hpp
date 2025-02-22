@@ -17,27 +17,6 @@
 #define AVALON_SRC_UTILS_INITIALIZERS_HPP_
 #include <pch.h>
 
-namespace Initializers {
-inline VkInstanceCreateInfo InstanceCreateInfo() {
-  VkInstanceCreateInfo createInfo = {};
-  createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-  createInfo.pNext = nullptr;
-  createInfo.flags = 0;
-  return createInfo;
-}
-
-inline VkApplicationInfo ApplicationInfo() {
-  VkApplicationInfo appInfo = {};
-  appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-  appInfo.pNext = nullptr;
-  appInfo.pApplicationName = "Camelot";
-  appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-  appInfo.pEngineName = "Avalon";
-  appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-  appInfo.apiVersion = VK_API_VERSION_1_3;
-  return appInfo;
-}
-
-}  // namespace Initializers
+namespace Initializers {}  // namespace Initializers
 
 #endif  // AVALON_SRC_UTILS_INITIALIZERS_HPP_

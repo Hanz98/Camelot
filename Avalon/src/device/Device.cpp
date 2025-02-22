@@ -14,21 +14,23 @@
  */
 #include "Device.h"
 
+#include <spdlog/spdlog.h>
+
 #include <stdexcept>
 
-Device::Device() : m_device(VK_NULL_HANDLE), m_physicalDevice(VK_NULL_HANDLE) {}
+Device::Device() : m_device(), m_physicalDevice() {}
 
 Device::Device(Device&& other)
     : m_device(other.m_device), m_physicalDevice(other.m_physicalDevice) {
-  other.m_device = VK_NULL_HANDLE;
-  other.m_physicalDevice = VK_NULL_HANDLE;
+  other.m_device = {};
+  other.m_physicalDevice = {};
 }
 
 Device& Device::operator=(Device&& other) {
   m_device = other.m_device;
   m_physicalDevice = other.m_physicalDevice;
-  other.m_device = VK_NULL_HANDLE;
-  other.m_physicalDevice = VK_NULL_HANDLE;
+  other.m_device = {};
+  other.m_physicalDevice = {};
   return *this;
 }
 
@@ -36,30 +38,29 @@ Device::~Device() { cleanUp(); }
 
 void Device::cleanUp() {
   if (m_device) {
-    vkDestroyDevice(m_device, nullptr);
-    m_device = VK_NULL_HANDLE;
+    vkb::destroy_device(m_device);
+    m_device = {};
   }
 }
 
-/*
-VkPhysicalDevice Device::PickPhysicalDevice(VkInstance instance) {
-  uint32_t deviceCount = 0;
-  vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
-
-  if (deviceCount == 0) {
-    throw std::runtime_error("Failed to find GPUs with Vulkan support!");
+void Device::PickPhysicalDevice(const Instance& instance,
+                                const VkSurfaceKHR& surface) {
+  vkb::PhysicalDeviceSelector selector{instance.getVkbInstance()};
+  auto phys_ret = selector.set_surface(surface).select();
+  m_physicalDevice = phys_ret.value();
+  if (!phys_ret) {
+    spdlog::error("Failed to select Vulkan Physical Device. Error: " +
+                  phys_ret.error().message());
+    throw std::runtime_error("Failed to select Vulkan Physical Device.");
   }
 
-  std::vector<VkPhysicalDevice> devices(deviceCount);
-  vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
-  for (const auto& device : devices) {
-    VkPhysicalDeviceProperties deviceProperties;
-    vkGetPhysicalDeviceProperties(device, &deviceProperties);
-    if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
-      return device;
-    }
+  vkb::DeviceBuilder device_builder{phys_ret.value()};
+  auto dev_ret = device_builder.build();
+  if (!dev_ret) {
+    spdlog::error("Failed to create Vulkan device. Error: " +
+                  dev_ret.error().message());
+    throw std::runtime_error("Failed to create Vulkan device.");
   }
-  return devices[0];
+
+  m_device = dev_ret.value();
 }
-
-*/

@@ -2,6 +2,7 @@
 gtest/1.15.0
 glfw/3.4
 spdlog/1.15.0
+vk-bootstrap/0.7
 
 [generators]
 CMakeDeps
