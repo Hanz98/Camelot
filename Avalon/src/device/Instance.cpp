@@ -16,7 +16,6 @@
 #include "Instance.h"
 
 #include <Avalon/src/validation/CheckResult.h>
-#include <spdlog/spdlog.h>
 
 #include <Avalon/src/utils/Initializers.hpp>
 
@@ -54,4 +53,5 @@ void Instance::init() {
     throw std::runtime_error("Failed to create Vulkan instance.");
   }
   vkb::Instance vkb_inst = inst_ret.value();
+  volkLoadInstance(vkb_inst.instance);
 }
