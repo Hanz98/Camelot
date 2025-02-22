@@ -51,6 +51,5 @@ bool Window::init(int width, int height, const std::string& title) {
   }
 
   glfwSetWindowUserPointer(m_pWindow, this);
-
   return true;
 }

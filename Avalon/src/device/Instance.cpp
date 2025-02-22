@@ -36,7 +36,7 @@ Instance::~Instance() { cleanUp(); }
 
 void Instance::cleanUp() {
   if (m_instance) {
-    vkDestroyInstance(m_instance, nullptr);
+    vkb::destroy_instance(m_instance);
     m_instance = {};
   }
 }
@@ -44,15 +44,14 @@ void Instance::cleanUp() {
 void Instance::init() {
   vkb::InstanceBuilder builder;
 
-  auto inst_ret = builder.set_app_name("Example Vulkan Application")
+  auto inst_ret = builder.set_app_name("Camelot")
                       .request_validation_layers()
                       .use_default_debug_messenger()
                       .build();
   if (!inst_ret) {
-    spdlog::info("Failed to create Vulkan instance. Error: " +
-                 inst_ret.error().message());
-    throw std::runtime_error("Failed to create Vulkan instance. Error: " +
-                             inst_ret.error().message());
+    spdlog::error("Failed to create Vulkan instance. Error: " +
+                  inst_ret.error().message());
+    throw std::runtime_error("Failed to create Vulkan instance.");
   }
   vkb::Instance vkb_inst = inst_ret.value();
 }

@@ -16,10 +16,9 @@
 #ifndef AVALON_SRC_DEVICE_INSTANCE_H_
 #define AVALON_SRC_DEVICE_INSTANCE_H_
 
+#include <VkBootstrap.h>
+#include <VkBootstrapDispatch.h>
 #include <pch.h>
-
-#include "VkBootstrap.h"
-#include "VkBootstrapDispatch.h"
 
 class Instance {
  private:
@@ -37,6 +36,7 @@ class Instance {
   void cleanUp();
 
   void init();
+  inline const vkb::Instance& getVkbInstance() const { return m_instance; }
   inline VkInstance& getInstance() { return m_instance.instance; }
 };
 
