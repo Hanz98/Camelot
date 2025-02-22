@@ -19,12 +19,15 @@
 #include <pch.h>
 
 #define VMA_IMPLEMENTATION
+#include <VkBootstrap.h>
+#include <VkBootstrapDispatch.h>
 #include <vma/vk_mem_alloc.h>
 
+#include "Instance.h"
 class Device {
  private:
-  VkDevice m_device;
-  VkPhysicalDevice m_physicalDevice;
+  vkb::Device m_device;
+  vkb::PhysicalDevice m_physicalDevice;
 
   VmaAllocation m_allocation;
 
@@ -40,14 +43,13 @@ class Device {
   void cleanUp();
 
  public:
-  VkDevice& getDevice() { return m_device; }
-  VkPhysicalDevice& getPhysicalDevice() { return m_physicalDevice; }
+  VkDevice& getDevice() { return m_device.device; }
+  VkPhysicalDevice& getPhysicalDevice() {
+    return m_physicalDevice.physical_device;
+  }
 
-  /*
-  static VkPhysicalDevice PickPhysicalDevice(VkInstance instance,
-  VkSurfaceKHR& surface,
-  VkPhysicalDevice& physicalDevice);
-  */
+  void PickPhysicalDevice(const Instance& instance,
+                          const VkSurfaceKHR& surface);
 };
 
 #endif  // AVALON_SRC_DEVICE_DEVICE_H_
