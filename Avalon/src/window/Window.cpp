@@ -15,8 +15,6 @@
 
 #include "Window.h"
 
-#include <glog/logging.h>
-
 #include <string>
 
 Window::Window() : m_pWindow(nullptr) {}
@@ -44,14 +42,11 @@ void Window::cleanUp() {
 }
 
 bool Window::init(int width, int height, const std::string& title) {
-  google::InitGoogleLogging("Avalon");
-  LOG(INFO) << "Initializing window: " << title;
   glfwInit();
   glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
   m_pWindow = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
   if (m_pWindow == nullptr) {
-    LOG(ERROR) << "Failed to create window: " << title;
     return false;
   }
 
