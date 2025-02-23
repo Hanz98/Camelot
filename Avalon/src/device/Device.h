@@ -23,6 +23,7 @@
 #include <vma/vk_mem_alloc.h>
 
 #include "Instance.h"
+
 class Device {
  private:
   vkb::Device m_device;

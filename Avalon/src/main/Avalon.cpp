@@ -17,10 +17,33 @@
 #include <pch.h>
 
 #include <iostream>
-void Avalon::test() {
-  std::cout << "Hello World from Avalon!" << std::endl;
+
+Avalon::Avalon() : m_window(), m_device(), m_instance() {}
+
+Avalon::~Avalon() { cleanUp(); }
+
+void Avalon::cleanUp() {
+  m_window.cleanUp();
+  m_instance.cleanUp();
+  m_device.cleanUp();
+}
+
+void Avalon::init() {
   if (volkInitialize() != VK_SUCCESS) {
     spdlog::error("Failed to initialize volk.");
     throw std::runtime_error("Failed to initialize volk.");
   }
+  try {
+    m_window.init(
+        400, 400,
+        "Avalon");  // TO DO: Make window size and title read from settings
+    m_instance.init();
+    //    m_device.PickPhysicalDevice(m_instance, m_window.getSurface());
+  } catch (const std::exception& e) {
+    spdlog::error("Failed to initialize Avalon. Error: {}", e.what());
+    throw std::runtime_error("Failed to initialize Avalon.");
+  }
+  //  m_device.PickPhysicalDevice(m_instance, m_window.getSurface());
 }
+
+void Avalon::test() { std::cout << "Hello World from Avalon!" << std::endl; }
