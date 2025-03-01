@@ -11,6 +11,7 @@ target_include_directories(Avalon_device PUBLIC ${Camelot_include_dirs})
 include_directories(${spdlog_INCLUDE_DIRS})
 
 
-target_link_libraries(Avalon_device PRIVATE glfw
+target_link_libraries(Avalon_device PRIVATE Avalon
+                                            glfw
                                             spdlog::spdlog
                                             vk-bootstrap::vk-bootstrap)
