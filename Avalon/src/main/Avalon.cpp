@@ -15,6 +15,7 @@
 #include "Avalon.h"
 
 #include <pch.h>
+#include <volk.h>
 
 #include <iostream>
 

@@ -8,6 +8,7 @@ add_library(Avalon_window
 target_include_directories(Avalon_window PUBLIC ${Avalon_include_dirs})
 target_include_directories(Avalon_window PUBLIC ${glfw3_INCLUDE_DIRS})
 
-target_link_libraries(Avalon_window PUBLIC glfw)
+target_link_libraries(Avalon_window PUBLIC  Avalon
+                                            glfw)
 
 message("Avalon_window added")

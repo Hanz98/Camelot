@@ -16,6 +16,7 @@
 #include "Instance.h"
 
 #include <Avalon/src/validation/CheckResult.h>
+#include <volk.h>
 
 #include <Avalon/src/utils/Initializers.hpp>
 

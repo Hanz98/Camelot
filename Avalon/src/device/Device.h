@@ -19,8 +19,6 @@
 #include <VkBootstrap.h>
 #include <VkBootstrapDispatch.h>
 #include <pch.h>
-#define VMA_IMPLEMENTATION
-#include <vma/vk_mem_alloc.h>
 
 #include "Instance.h"
 
@@ -28,8 +26,6 @@ class Device {
  private:
   vkb::Device m_device;
   vkb::PhysicalDevice m_physicalDevice;
-
-  VmaAllocation m_allocation;
 
  public:
   Device();

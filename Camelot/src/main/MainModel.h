@@ -16,14 +16,14 @@
 #ifndef CAMELOT_SRC_MAIN_MAINMODEL_H_
 #define CAMELOT_SRC_MAIN_MAINMODEL_H_
 
-#include <Avalon/src/window/Window.h>
+#include <Avalon/src/main/Avalon.h>
 #include <Camelot/API/main/ICamelot.h>
 
 #include <iostream>
 
 class MainModel : public ICamelot {
  private:
-  Window m_window;
+  Avalon m_avalon;
 
  public:
   void test();

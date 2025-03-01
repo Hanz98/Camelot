@@ -17,6 +17,7 @@
 #define AVALON_SRC_VALIDATION_VALIDATIONLAYERS_H_
 
 #include <pch.h>
+#include <vulkan/vulkan.h>
 
 class ValidationLayerWrapper {
  private:
