@@ -14,15 +14,18 @@
  */
 
 #include <Camelot/src/main/MainModel.h>
-#include <unistd.h>
 
+#ifndef _WIN32
+#include <unistd.h>
+#endif
 #include <iostream>
 
 int main(int argc, char *argv[]) {
   std::cout << "Hello world from Pendragon!" << std::endl;
   MainModel mainTest;
-  //  mainTest.test();
+  // mainTest.test();
+#ifndef _WIN32
   usleep(10000000);
-
+#endif
   return 0;
 }
