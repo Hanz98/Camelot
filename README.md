@@ -1,5 +1,6 @@
 # Camelot
-![Build and Test status](https://github.com/Hanz98/Camelot/actions/workflows/build.yaml/badge.svg)
+![Build and Test status](https://github.com/Hanz98/Camelot/actions/workflows/build_linux.yaml/badge.svg)
+![Build and Test status](https://github.com/Hanz98/Camelot/actions/workflows/build_windows.yaml/badge.svg)
 
 ## Setup project 
 
