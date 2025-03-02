@@ -18,7 +18,7 @@ repos:
     rev: v0.5.1
     hooks:
       - id: clang-format
-        args: [--style=Google, --version=18]
+        args: [--style=Google, --version=18, --verbose]
   - repo: https://github.com/cpplint/cpplint
     rev: 2.0.0
     hooks:
