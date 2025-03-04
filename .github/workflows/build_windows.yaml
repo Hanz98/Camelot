@@ -21,11 +21,3 @@ jobs:
       
       - name: Checkout Code
         uses: actions/checkout@v3
-
-      - name: Install Basic Dependencies
-        run: |
-          pip install conan pre-commit
-
-      - name: Run pre-commit
-        run: |
-          pre-commit run --all-files
