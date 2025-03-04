@@ -8,12 +8,13 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Prepare Vulkan SDK
-        uses: humbletim/setup-vulkan-sdk@v1.2.0
+        uses: NcStudios/VulkanCI@v1.0
         with:
-          vulkan-query-version: 1.3.204.0
-          vulkan-components: Vulkan-Headers, Vulkan-Loader
-          vulkan-use-cache: true
-      
+          # VulkanSDK version to use
+          # Must be a supported version
+          # The default value is 1.3.283.0
+          sdkVersion: 1.3.283.0
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
