@@ -10,7 +10,7 @@ jobs:
       - name: Install Vulkan SDK
         shell: pwsh
         run: |
-          Invoke-WebRequest -Uri "https://sdk.lunarg.com/sdk/download/1.3.216.0/windows/VulkanSDK-1.3.216.0-Installer.exe" -OutFile VulkanSDK-Installer.exe
+          curl -LO "https://sdk.lunarg.com/sdk/download/1.3.296.0/windows/VulkanSDK-1.3.296.0-Installer.exe"
           
           Start-Process -FilePath .\VulkanSDK-Installer.exe -ArgumentList "/S" -Wait
           Remove-Item VulkanSDK-Installer.exe
