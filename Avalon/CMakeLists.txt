@@ -15,11 +15,14 @@ find_package(spdlog REQUIRED)
 find_package(vk-bootstrap REQUIRED)
 find_package(volk REQUIRED)
 
+add_library(Avalon INTERFACE)
+
+target_include_directories(Avalon INTERFACE ${glfw3_INCLUDE_DIRS}/include/)
+target_include_directories(Avalon INTERFACE ${spdlog_INCLUDE_DIRS})
+target_include_directories(Avalon INTERFACE ${vk-bootstrap_INCLUDE_DIRS})
+target_include_directories(Avalon INTERFACE ${Camelot_include_dirs})
+
 include_directories(${VULKAN_SDK_PATH}/include/)
-include_directories(${glfw3_INCLUDE_DIRS}/include/)
-include_directories(${spdlog_INCLUDE_DIRS})
-include_directories(${vk-bootstrap_INCLUDE_DIRS})
-include_directories(${Camelot_include_dirs})
 include_directories(${volk_INCLUDE_DIRS})
 
 # ...
@@ -27,7 +30,6 @@ include_directories(${volk_INCLUDE_DIRS})
 add_subdirectory("src")
 
 
-add_library(Avalon INTERFACE)
 
 target_compile_definitions(Avalon INTERFACE VK_NO_PROTOTYPES)
 

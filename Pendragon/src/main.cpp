@@ -14,15 +14,22 @@
  */
 
 #include <Camelot/src/main/MainModel.h>
+#include <Pendragon/src/mcap/McapReader.h>
 #include <unistd.h>
 
 #include <iostream>
 
 int main(int argc, char *argv[]) {
+  if (argc < 2) {
+    std::cerr << "Usage: " << argv[0] << " <mcap_file>" << std::endl;
+    return 1;
+  }
+
   std::cout << "Hello world from Pendragon!" << std::endl;
   MainModel mainTest;
   mainTest.test();
-  usleep(10000000);
 
+  McapFileReader reader;
+  reader.openFile(argv[1]);
   return 0;
 }
