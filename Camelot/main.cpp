@@ -13,13 +13,6 @@
  * limitations under the License.
  */
 
-#include <Camelot/src/main/MainModel.h>
-
 #include <iostream>
 
-int main(int argc, char *argv[]) {
-  std::cout << "Hello world from Pendragon!" << std::endl;
-  MainModel mainTest;
-  mainTest.test();
-  return 0;
-}
+int main() { return 0; }

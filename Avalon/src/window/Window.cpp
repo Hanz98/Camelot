@@ -15,17 +15,30 @@
 
 #include "Window.h"
 
+#include <Avalon/interface/window/GlfWrapper.h>
+
+#include <memory>
 #include <string>
 
-Window::Window() : m_pWindow(nullptr) {}
+Window::Window(std::shared_ptr<IGlfWrapper> glfWrapper)
+    : m_pWindow(nullptr), m_glfWrapper(glfWrapper) {
+  if (glfWrapper == nullptr) {
+    m_glfWrapper = std::make_shared<GlfWrapper>();
+  }
+}
 
-Window::Window(Window&& other) : m_pWindow(other.m_pWindow) {
+Window::Window(Window&& other)
+    : m_pWindow(other.m_pWindow), m_glfWrapper(other.m_glfWrapper) {
   other.m_pWindow = nullptr;
+  other.m_glfWrapper = nullptr;
 }
 
 Window& Window::operator=(Window&& other) {
   m_pWindow = other.m_pWindow;
+  m_glfWrapper = other.m_glfWrapper;
+
   other.m_pWindow = nullptr;
+  other.m_glfWrapper = nullptr;
   return *this;
 }
 
@@ -36,20 +49,23 @@ Window::~Window() {
 
 void Window::cleanUp() {
   if (m_pWindow) {
-    glfwDestroyWindow(m_pWindow);
+    m_glfWrapper->destroyWindow(m_pWindow);
     m_pWindow = nullptr;
   }
 }
 
 bool Window::init(int width, int height, const std::string& title) {
-  glfwInit();
-  glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+  m_glfWrapper->init();
+  m_glfWrapper->windowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
-  m_pWindow = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+  m_pWindow = m_glfWrapper->createWindow(width, height, title.c_str(), nullptr,
+                                         nullptr);
   if (m_pWindow == nullptr) {
     return false;
   }
 
-  glfwSetWindowUserPointer(m_pWindow, this);
+  m_glfWrapper->setWindowUserPointer(m_pWindow, this);
   return true;
 }
+
+GLFWwindow* Window::getWindow() const { return m_pWindow; }
