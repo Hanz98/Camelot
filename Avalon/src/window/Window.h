@@ -19,16 +19,19 @@
 //  #include <pch.h>
 
 #define GLFW_INCLUDE_VULKAN
+#include <Avalon/interface/window/IGlfWrapper.h>
 #include <GLFW/glfw3.h>
 
+#include <memory>
 #include <string>
 
 class Window {
  private:
+  std::shared_ptr<IGlfWrapper> m_glfWrapper;
   GLFWwindow* m_pWindow;
 
  public:
-  Window();
+  explicit Window(std::shared_ptr<IGlfWrapper> glfWrapper = nullptr);
   Window(Window&&);
   Window(const Window&) = delete;
   Window& operator=(Window&&);
@@ -38,6 +41,8 @@ class Window {
   void cleanUp();
 
   bool init(int width, int height, const std::string& title);
+
+  GLFWwindow* getWindow() const;
 };
 
 #endif  // AVALON_SRC_WINDOW_WINDOW_H_

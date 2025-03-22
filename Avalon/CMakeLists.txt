@@ -14,8 +14,7 @@ find_package(spdlog REQUIRED)
 find_package(vk-bootstrap REQUIRED)
 find_package(volk REQUIRED)
 
-# ...
-#add_subdirectory("API")
+add_subdirectory("interface")
 add_subdirectory("src")
 
 add_library(Avalon "main.cpp")
