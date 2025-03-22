@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 
+#include <Avalon/src/window/Window.h>
 #include <gtest/gtest.h>
 
 #include <utility>
 
-#include "Window.h"
 // Test that the window initializes correctly and that get() returns a valid
 // pointer.
 TEST(WindowTest, Initialization) {
@@ -68,4 +68,9 @@ TEST(WindowTest, MoveAssignment) {
       << "After move assignment, the original window should be empty.";
   EXPECT_EQ(window2.getWindow(), window1Ptr)
       << "The new window should hold the pointer from the moved window.";
+}
+
+int main(int argc, char** argv) {
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
 }
