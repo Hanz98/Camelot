@@ -1,13 +1,24 @@
-// IGlfwWrapper.h
-#include <GLFW/glfw3.h>
+add_library(Test_Avalon_Window
+    WindowTest.cpp
+)
 
-class IGlfwWrapper {
-public:
-    virtual ~IGlfwWrapper() = default;
-    virtual int init() = 0;
-    virtual void terminate() = 0;
-    virtual void windowHint(int hint, int value) = 0;
-    virtual GLFWwindow* createWindow(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share) = 0;
-    virtual void destroyWindow(GLFWwindow* window) = 0;
-    virtual void setWindowUserPointer(GLFWwindow* window, void* pointer) = 0;
-};
+find_package(GTest REQUIRED)
+
+target_link_libraries(Test_Avalon_Window
+    PRIVATE  # Changed from PUBLIC to PRIVATE since tests are end targets
+        Avalon
+        GTest::gtest
+        GTest::gtest_main
+        pthread
+)
+
+# Add the test to be discovered by CTest
+add_test(NAME Test_Avalon_Window COMMAND Test_Avalon_Window)
+
+# If you need to add this test source to a global collection
+target_sources(Test_Main
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/WindowTest.cpp
+)
+
+message("ADDING AVALON WINDOW TEST SOURCES")
