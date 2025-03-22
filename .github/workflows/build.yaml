@@ -38,7 +38,7 @@ jobs:
         run: |
           git clone https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git /tmp/VulkanMemoryAllocator
           sudo mkdir -p /usr/local/include/vma
-          sudo cp /tmp/VulkanMemoryAllocator/include/vk_mem_alloc.h /usr/local/include/vma/    
+          sudo cp /tmp/VulkanMemoryAllocator/include/vk_mem_alloc.h /usr/local/include/vma/
       - name: Build Project
         run: |
           sudo cmake \
@@ -54,4 +54,4 @@ jobs:
       - name: Run Tests
         run: |
           cd build
-          sudo ./bin/test_main
+          sudo ./bin/Test_Main
