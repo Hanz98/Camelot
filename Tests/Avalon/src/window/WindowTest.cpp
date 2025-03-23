@@ -19,9 +19,6 @@
 #include <memory>
 #include <utility>
 
-// Test that the window initializes correctly and that get() returns a valid
-// pointer.
-
 struct GLFWwindow {
   int dummy;
 };
@@ -59,21 +56,16 @@ TEST_F(WindowTest, Initialization) {
       << "get() should return a valid pointer after initialization.";
 }
 
-// Test that cleanUp() correctly destroys the window and sets the pointer to
-// nullptr.
 TEST_F(WindowTest, Cleanup) {
   ASSERT_TRUE(window.init(800, 600, "Test Window"));
   window.cleanUp();
   EXPECT_EQ(window.getWindow(), nullptr)
       << "After cleanup, get() should return nullptr.";
 
-  // Calling cleanup a second time should be safe.
   window.cleanUp();
   EXPECT_EQ(window.getWindow(), nullptr);
 }
 
-// Test the move constructor by verifying that after moving, the original window
-// loses ownership.
 TEST_F(WindowTest, MoveConstructor) {
   ASSERT_TRUE(window.init(800, 600, "Test Window"));
   GLFWwindow* originalPtr = window.getWindow();
@@ -85,7 +77,6 @@ TEST_F(WindowTest, MoveConstructor) {
       << "The moved-to window should hold the original pointer.";
 }
 
-// Test the move assignment operator.
 TEST_F(WindowTest, MoveAssignment) {
   ASSERT_TRUE(window.init(800, 600, "Test Window 1"));
   GLFWwindow* window1Ptr = window.getWindow();
