@@ -88,8 +88,3 @@ TEST_F(WindowTest, MoveAssignment) {
   EXPECT_EQ(window2.getWindow(), window1Ptr)
       << "The new window should hold the pointer from the moved window.";
 }
-
-int main(int argc, char** argv) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}

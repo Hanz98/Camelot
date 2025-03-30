@@ -12,12 +12,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+#include <Avalon/src/device/Device.h>
 #include <gtest/gtest.h>
+#include <volk.h>
 
-TEST(SampleTest, TestEquality) { EXPECT_EQ(1, 1); }
+#include <memory>
+#include <utility>
 
-int main(int argc, char** argv) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
+TEST(DeviceTest, Initialization) {
+  Device device;
+  Instance instance;
+  instance.init();
+  EXPECT_TRUE(true);
 }

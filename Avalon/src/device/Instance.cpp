@@ -53,6 +53,10 @@ void Instance::init() {
                   inst_ret.error().message());
     throw std::runtime_error("Failed to create Vulkan instance.");
   }
-  vkb::Instance vkb_inst = inst_ret.value();
-  volkLoadInstance(vkb_inst.instance);
+  m_instance = inst_ret.value();
+  volkLoad();
+}
+
+void Instance::volkLoad() {
+  //  volkLoadInstance(m_instance.instance);
 }

@@ -38,6 +38,9 @@ class Device {
 
   void cleanUp();
 
+ private:
+  virtual void volkLoad();
+
  public:
   VkDevice& getDevice() { return m_device.device; }
   VkPhysicalDevice& getPhysicalDevice() {
