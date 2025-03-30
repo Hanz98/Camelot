@@ -66,5 +66,12 @@ void Device::PickPhysicalDevice(const Instance& instance,
   }
 
   m_device = dev_ret.value();
-  volkLoadDevice(m_device.device);
+  VkPhysicalDeviceProperties deviceProperties;
+
+  vkGetPhysicalDeviceProperties(m_device.physical_device, &deviceProperties);
+  volkLoad();
+}
+
+void Device::volkLoad() {
+  //  volkLoadDevice(m_device.device);
 }

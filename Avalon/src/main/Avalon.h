@@ -41,6 +41,9 @@ class Avalon {
   void init();
 
   void test();
+
+ private:
+  virtual void initVolk();
 };
 
 #endif  // AVALON_SRC_MAIN_AVALON_H_

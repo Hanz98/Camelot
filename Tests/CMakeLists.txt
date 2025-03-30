@@ -1,12 +1,19 @@
 # In Tests/CMakeLists.txt
-add_executable(Test_Main test_main.cpp)
+
+enable_testing()
 
 find_package(GTest REQUIRED)
+
+add_executable(Test_Main test_main.cpp)
+
 
 # Include directories for all tests
 target_include_directories(Test_Main PRIVATE
     ${CMAKE_SOURCE_DIR}
 )
+
+add_subdirectory("ext")
+add_subdirectory(Avalon)
 
 target_link_libraries(Test_Main
     PRIVATE
@@ -16,8 +23,6 @@ target_link_libraries(Test_Main
         Avalon
 )
 
+
 include(GoogleTest)
 gtest_discover_tests(Test_Main)
-
-# Add all test source files
-add_subdirectory(Avalon)

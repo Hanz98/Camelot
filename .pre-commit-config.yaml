@@ -22,3 +22,4 @@ repos:
     rev: 2.0.0
     hooks:
       - id: cpplint
+exclude: ^Tests/ext
