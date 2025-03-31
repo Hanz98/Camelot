@@ -56,6 +56,7 @@ jobs:
           cd build
           export VK_ICD_FILENAMES=Release/lib/VkICD_mock_icd.json
           echo $VK_ICD_FILENAMES
+          ls
           ls Release
           ls Release/lib
           cat Release/lib/VkICD_mock_icd.json
