@@ -54,10 +54,8 @@ jobs:
       - name: Run Tests
         run: |
           cd build
-          export VK_ICD_FILENAMES=Release/lib/VkICD_mock_icd.json
+          export VK_ICD_FILENAMES=lib/VkICD_mock_icd.json
           echo $VK_ICD_FILENAMES
-          ls
-          ls Release
-          ls Release/lib
-          cat Release/lib/VkICD_mock_icd.json
+          ls lib
+          cat lib/VkICD_mock_icd.json
           sudo ./bin/Test_Main
