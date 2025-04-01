@@ -17,7 +17,10 @@
 #define VMA_IMPLEMENTATION
 #include <vma/vk_mem_alloc.h>
 
+#include <iostream>
+#include <sstream>
 #include <stdexcept>
+#include <vector>
 
 Device::Device() : m_device(), m_physicalDevice() {}
 
@@ -46,25 +49,43 @@ void Device::cleanUp() {
 
 void Device::PickPhysicalDevice(const Instance& instance,
                                 const VkSurfaceKHR& surface) {
+  /*
   vkb::PhysicalDeviceSelector selector{instance.getVkbInstance()};
   auto phys_ret = selector.set_surface(surface).select();
   m_physicalDevice = phys_ret.value();
   if (!phys_ret) {
-    spdlog::error("Failed to select Vulkan Physical Device. Error: " +
-                  phys_ret.error().message());
-    throw std::runtime_error("Failed to select Vulkan Physical Device.");
+      spdlog::error("Failed to select Vulkan Physical Device. Error: " +
+                    phys_ret.error().message());
+                    throw std::runtime_error("Failed to select Vulkan Physical
+  Device.");
+                  }
+
+                  vkb::DeviceBuilder device_builder{phys_ret.value()};
+    auto dev_ret = device_builder.build();
+    if (!dev_ret) {
+      spdlog::error("Failed to create Vulkan device. Error: " +
+      dev_ret.error().message());
+      throw std::runtime_error("Failed to create Vulkan device.");
+    }
+
+    m_device = dev_ret.value();
+    */
+
+  std::vector<VkPhysicalDevice> physicalDevices;
+  uint32_t deviceCount = 0;
+  vkEnumeratePhysicalDevices(instance.getInstance(), &deviceCount, nullptr);
+
+  physicalDevices.resize(deviceCount);
+  vkEnumeratePhysicalDevices(instance.getInstance(), &deviceCount,
+                             physicalDevices.data());
+  std::stringstream msg;
+  msg << "Physical devices count: " << deviceCount << " (";
+
+  for (auto& device : physicalDevices) {
+    VkPhysicalDeviceProperties deviceProperties;
+    vkGetPhysicalDeviceProperties(device, &deviceProperties);
+    msg << deviceProperties.deviceName << ", ";
   }
 
-  vkb::DeviceBuilder device_builder{phys_ret.value()};
-  auto dev_ret = device_builder.build();
-  if (!dev_ret) {
-    spdlog::error("Failed to create Vulkan device. Error: " +
-                  dev_ret.error().message());
-    throw std::runtime_error("Failed to create Vulkan device.");
-  }
-
-  m_device = dev_ret.value();
-  VkPhysicalDeviceProperties deviceProperties;
-
-  vkGetPhysicalDeviceProperties(m_device.physical_device, &deviceProperties);
+  std::cout << msg.str() << std::endl;
 }
