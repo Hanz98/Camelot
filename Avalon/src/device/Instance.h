@@ -38,8 +38,6 @@ class Instance {
   void init();
 
  private:
-  virtual void volkLoad();
-
  public:
   inline const vkb::Instance& getVkbInstance() const { return m_instance; }
   inline VkInstance& getInstance() { return m_instance.instance; }

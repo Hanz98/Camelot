@@ -14,8 +14,6 @@
  */
 #include "Device.h"
 
-#include <volk.h>
-
 #define VMA_IMPLEMENTATION
 #include <vma/vk_mem_alloc.h>
 
@@ -69,9 +67,4 @@ void Device::PickPhysicalDevice(const Instance& instance,
   VkPhysicalDeviceProperties deviceProperties;
 
   vkGetPhysicalDeviceProperties(m_device.physical_device, &deviceProperties);
-  volkLoad();
-}
-
-void Device::volkLoad() {
-  //  volkLoadDevice(m_device.device);
 }
