@@ -55,5 +55,4 @@ jobs:
         run: |
           cd build
           export VK_ICD_FILENAMES=lib/VkICD_mock_icd.json
-          vulkanCapsViewer -s test
           sudo ./bin/Test_Main
