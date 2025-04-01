@@ -15,7 +15,6 @@
 #include "Avalon.h"
 
 #include <pch.h>
-#include <volk.h>
 
 #include <iostream>
 
@@ -31,7 +30,6 @@ void Avalon::cleanUp() {
 
 void Avalon::init() {
   try {
-    initVolk();
     m_window.init(
         400, 400,
         "Avalon");  // TO DO: Make window size and title read from settings
@@ -42,13 +40,6 @@ void Avalon::init() {
     throw std::runtime_error("Failed to initialize Avalon.");
   }
   //  m_device.PickPhysicalDevice(m_instance, m_window.getSurface());
-}
-
-void Avalon::initVolk() {
-  if (volkInitialize() != VK_SUCCESS) {
-    spdlog::error("Failed to initialize volk.");
-    throw std::runtime_error("Failed to initialize volk.");
-  }
 }
 
 void Avalon::test() { std::cout << "Hello World from Avalon!" << std::endl; }

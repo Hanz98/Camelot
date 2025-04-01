@@ -10,7 +10,6 @@ target_link_libraries(Test_Avalon_Device
         GTest::gtest
         GTest::gtest_main
         pthread
-
 )
 
 

@@ -14,7 +14,6 @@
  */
 #include <Avalon/src/device/Device.h>
 #include <gtest/gtest.h>
-#include <volk.h>
 
 #include <memory>
 #include <utility>

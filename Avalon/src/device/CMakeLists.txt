@@ -18,4 +18,6 @@ target_include_directories(Avalon_device
 target_link_libraries(Avalon_device PRIVATE Avalon
                                             glfw
                                             spdlog::spdlog
-                                            vk-bootstrap::vk-bootstrap)
+                                            vk-bootstrap::vk-bootstrap
+                                            Vulkan::Vulkan
+)

@@ -19,6 +19,7 @@
 #include <VkBootstrap.h>
 #include <VkBootstrapDispatch.h>
 #include <pch.h>
+#include <vulkan/vulkan.h>
 
 #include "Instance.h"
 
@@ -37,9 +38,6 @@ class Device {
   ~Device();
 
   void cleanUp();
-
- private:
-  virtual void volkLoad();
 
  public:
   VkDevice& getDevice() { return m_device.device; }

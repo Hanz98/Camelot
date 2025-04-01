@@ -12,7 +12,7 @@ set(Avalon_include_dirs ${CMAKE_CURRENT_SOURCE_DIR})
 find_package(glfw3 REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(vk-bootstrap REQUIRED)
-find_package(volk REQUIRED)
+find_package(Vulkan REQUIRED)
 
 add_subdirectory("interface")
 add_subdirectory("src")
@@ -26,10 +26,7 @@ target_include_directories(Avalon
         ${glfw3_INCLUDE_DIRS}/include/
         ${spdlog_INCLUDE_DIRS}
         ${vk-bootstrap_INCLUDE_DIRS}
-        ${volk_INCLUDE_DIRS}
 )
-
-target_compile_definitions(Avalon PUBLIC VK_NO_PROTOTYPES)
 
 target_link_libraries(Avalon
     PUBLIC
@@ -37,13 +34,7 @@ target_link_libraries(Avalon
         Avalon_window
         Avalon_main
         spdlog::spdlog
-    PRIVATE
-        volk::volk
 )
 
-target_compile_definitions(Avalon
-    PUBLIC
-        VK_NO_PROTOTYPES
-)
 
 target_precompile_headers(Avalon PUBLIC "pch.h")
