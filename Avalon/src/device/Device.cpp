@@ -49,27 +49,24 @@ void Device::cleanUp() {
 
 void Device::PickPhysicalDevice(const Instance& instance,
                                 const VkSurfaceKHR& surface) {
-  /*
   vkb::PhysicalDeviceSelector selector{instance.getVkbInstance()};
   auto phys_ret = selector.set_surface(surface).select();
   m_physicalDevice = phys_ret.value();
   if (!phys_ret) {
-      spdlog::error("Failed to select Vulkan Physical Device. Error: " +
-                    phys_ret.error().message());
-                    throw std::runtime_error("Failed to select Vulkan Physical
-  Device.");
-                  }
+    spdlog::error("Failed to select Vulkan Physical Device. Error: " +
+                  phys_ret.error().message());
+    throw std::runtime_error("Failed to select Vulkan Physical Device.");
+  }
 
-                  vkb::DeviceBuilder device_builder{phys_ret.value()};
-    auto dev_ret = device_builder.build();
-    if (!dev_ret) {
-      spdlog::error("Failed to create Vulkan device. Error: " +
-      dev_ret.error().message());
-      throw std::runtime_error("Failed to create Vulkan device.");
-    }
+  vkb::DeviceBuilder device_builder{phys_ret.value()};
+  auto dev_ret = device_builder.build();
+  if (!dev_ret) {
+    spdlog::error("Failed to create Vulkan device. Error: " +
+                  dev_ret.error().message());
+    throw std::runtime_error("Failed to create Vulkan device.");
+  }
 
-    m_device = dev_ret.value();
-    */
+  m_device = dev_ret.value();
 
   std::vector<VkPhysicalDevice> physicalDevices;
   uint32_t deviceCount = 0;
