@@ -40,7 +40,7 @@ class Instance {
  private:
  public:
   inline const vkb::Instance& getVkbInstance() const { return m_instance; }
-  inline VkInstance& getInstance() { return m_instance.instance; }
+  inline const VkInstance& getInstance() const { return m_instance.instance; }
 };
 
 #endif  // AVALON_SRC_DEVICE_INSTANCE_H_

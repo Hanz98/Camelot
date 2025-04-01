@@ -22,5 +22,6 @@ TEST(DeviceTest, Initialization) {
   Device device;
   Instance instance;
   instance.init();
+  device.PickPhysicalDevice(instance, VK_NULL_HANDLE);
   EXPECT_TRUE(true);
 }
