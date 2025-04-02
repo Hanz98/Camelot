@@ -13,36 +13,35 @@
  * limitations under the License.
  */
 
-#ifndef AVALON_SRC_WINDOW_WINDOW_H_
-#define AVALON_SRC_WINDOW_WINDOW_H_
+#ifndef AVALON_SRC_WINDOW_SURFACEMANAGER_H_
+#define AVALON_SRC_WINDOW_SURFACEMANAGER_H_
 
-//  #include <pch.h>
-
-#define GLFW_INCLUDE_VULKAN
-#include <Avalon/interface/window/IGlfWrapper.h>
 #include <GLFW/glfw3.h>
+#include <vulkan/vulkan.h>
 
 #include <memory>
-#include <string>
+#include <vector>
 
-class Window {
+#include "Surface.h"
+#include "Window.h"
+
+class SurfaceManager {
  private:
-  std::shared_ptr<IGlfWrapper> m_glfWrapper;
-  GLFWwindow* m_pWindow;
+  std::vector<std::shared_ptr<Surface>> m_surfaces;
+  std::shared_ptr<Window> m_window;
 
  public:
-  explicit Window(std::shared_ptr<IGlfWrapper> glfWrapper = nullptr);
-  Window(Window&&);
-  Window(const Window&) = delete;
-  Window& operator=(Window&&);
-  Window& operator=(const Window&) = delete;
+  SurfaceManager();
+  SurfaceManager(const SurfaceManager&) = delete;
+  SurfaceManager& operator=(const SurfaceManager&) = delete;
+  SurfaceManager(SurfaceManager&&) = delete;
+  SurfaceManager& operator=(SurfaceManager&&) = delete;
+  ~SurfaceManager();
 
-  virtual ~Window();
+  void init();
   void cleanUp();
 
-  bool init(int width, int height, const std::string& title);
-
-  GLFWwindow* getWindow() const;
+ private:
 };
 
-#endif  // AVALON_SRC_WINDOW_WINDOW_H_
+#endif  // AVALON_SRC_WINDOW_SURFACEMANAGER_H_

@@ -1,8 +1,10 @@
 add_library(Avalon_window
 "Window.cpp"
 "Window.h"
-"WindowManager.cpp"
-"WindowManager.h"
+"Surface.cpp"
+"Surface.h"
+"SurfaceManager.cpp"
+"SurfaceManager.h"
 )
 
 target_include_directories(Avalon_window PUBLIC ${Avalon_include_dirs})

@@ -13,4 +13,17 @@
  * limitations under the License.
  */
 
-#include "WindowManager.h"
+#include "Surface.h"
+
+#include <Avalon/src/validation/CheckResult.h>
+
+Surface::Surface() : m_surface(VK_NULL_HANDLE) {}
+
+Surface::~Surface() { cleanUp(); }
+
+void Surface::init() {
+  //    VK_CHECK_RESULT(glfwCreateWindow(m_instance, m_window, nullptr,
+  //    m_surface));
+}
+
+void Surface::cleanUp() {}
