@@ -13,7 +13,20 @@
  * limitations under the License.
  */
 
-#ifndef AVALON_SRC_WINDOW_WINDOWMANAGER_H_
-#define AVALON_SRC_WINDOW_WINDOWMANAGER_H_
+#include "SurfaceManager.h"
 
-#endif  // AVALON_SRC_WINDOW_WINDOWMANAGER_H_
+#include <Avalon/src/validation/CheckResult.h>
+
+#include <memory>
+
+SurfaceManager::SurfaceManager() : m_window(nullptr) {}
+
+SurfaceManager::~SurfaceManager() { cleanUp(); }
+
+void SurfaceManager::init() {
+  m_window = std::make_shared<Window>();
+
+  m_window->init(400, 600, "Camelot");
+
+  //    VK_CHECK_RESULT(glfwCreateWindowSurface(m_instance, ))
+}
