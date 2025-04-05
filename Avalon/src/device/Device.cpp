@@ -18,6 +18,7 @@
 #include <vma/vk_mem_alloc.h>
 
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 #include <vector>
@@ -47,10 +48,10 @@ void Device::cleanUp() {
   }
 }
 
-void Device::PickPhysicalDevice(const Instance& instance,
-                                const VkSurfaceKHR& surface) {
-  vkb::PhysicalDeviceSelector selector{instance.getVkbInstance()};
-  auto phys_ret = selector.set_surface(surface).select();
+void Device::PickPhysicalDevice(std::shared_ptr<Instance> instance,
+                                std::shared_ptr<Surface> surface) {
+  vkb::PhysicalDeviceSelector selector{instance->getVkbInstance()};
+  auto phys_ret = selector.set_surface(surface->getSurface()).select();
   m_physicalDevice = phys_ret.value();
   if (!phys_ret) {
     spdlog::error("Failed to select Vulkan Physical Device. Error: " +
@@ -70,10 +71,10 @@ void Device::PickPhysicalDevice(const Instance& instance,
 
   std::vector<VkPhysicalDevice> physicalDevices;
   uint32_t deviceCount = 0;
-  vkEnumeratePhysicalDevices(instance.getInstance(), &deviceCount, nullptr);
+  vkEnumeratePhysicalDevices(instance->getInstance(), &deviceCount, nullptr);
 
   physicalDevices.resize(deviceCount);
-  vkEnumeratePhysicalDevices(instance.getInstance(), &deviceCount,
+  vkEnumeratePhysicalDevices(instance->getInstance(), &deviceCount,
                              physicalDevices.data());
   std::stringstream msg;
   msg << "Physical devices count: " << deviceCount << " (";

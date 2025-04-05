@@ -16,10 +16,13 @@
 #ifndef AVALON_SRC_DEVICE_DEVICE_H_
 #define AVALON_SRC_DEVICE_DEVICE_H_
 
+#include <Avalon/src/window/Surface.h>
 #include <VkBootstrap.h>
 #include <VkBootstrapDispatch.h>
 #include <pch.h>
 #include <vulkan/vulkan.h>
+
+#include <memory>
 
 #include "Instance.h"
 
@@ -45,8 +48,7 @@ class Device {
     return m_physicalDevice.physical_device;
   }
 
-  void PickPhysicalDevice(const Instance& instance,
-                          const VkSurfaceKHR& surface);
+  void PickPhysicalDevice(std::shared_ptr<Instance>, std::shared_ptr<Surface>);
 };
 
 #endif  // AVALON_SRC_DEVICE_DEVICE_H_

@@ -17,23 +17,35 @@
 #include <pch.h>
 
 #include <iostream>
+#include <memory>
 
-Avalon::Avalon() : m_window(), m_device(), m_instance() {}
+Avalon::Avalon()
+    : m_surfaceManager(nullptr),
+      m_device(nullptr),
+      m_instance(nullptr),
+      m_window(nullptr) {}
 
 Avalon::~Avalon() { cleanUp(); }
 
 void Avalon::cleanUp() {
-  m_window.cleanUp();
-  m_instance.cleanUp();
-  m_device.cleanUp();
+  m_surfaceManager->cleanUp();
+  m_window->cleanUp();
+  m_instance->cleanUp();
+  m_device->cleanUp();
 }
 
 void Avalon::init() {
+  m_instance = std::make_shared<Instance>();
+  m_device = std::make_shared<Device>();
+  m_window = std::make_shared<Window>();
+  m_surfaceManager = std::make_shared<SurfaceManager>(m_instance, m_window);
+
   try {
-    m_window.init(
+    m_window->init(
         400, 400,
         "Avalon");  // TO DO: Make window size and title read from settings
-    m_instance.init();
+    m_instance->init();
+    m_device->PickPhysicalDevice(m_instance, m_surfaceManager->getSurface());
     //    m_device.PickPhysicalDevice(m_instance, m_window.getSurface());
   } catch (const std::exception& e) {
     spdlog::error("Failed to initialize Avalon. Error: {}", e.what());

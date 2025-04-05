@@ -34,7 +34,7 @@ class SurfaceManager {
   std::shared_ptr<Window> m_window;
 
  public:
-  SurfaceManager();
+  SurfaceManager(std::shared_ptr<Instance>, std::shared_ptr<Window>);
   SurfaceManager(const SurfaceManager&) = delete;
   SurfaceManager& operator=(const SurfaceManager&) = delete;
   SurfaceManager(SurfaceManager&&) = delete;
@@ -43,6 +43,8 @@ class SurfaceManager {
 
   void init();
   void cleanUp();
+
+  std::shared_ptr<Surface> getSurface(int id = 0);
 
  private:
 };

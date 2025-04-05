@@ -19,7 +19,9 @@
 #include <Avalon/src/device/Instance.h>
 #include <Avalon/src/validation/CheckResult.h>
 #include <GLFW/glfw3.h>
+#include <spdlog/spdlog.h>
 
+#include <exception>
 #include <memory>
 
 #include "Window.h"
@@ -31,8 +33,21 @@ Surface::Surface(std::shared_ptr<Instance> instance,
 Surface::~Surface() { cleanUp(); }
 
 void Surface::init() {
+  if (m_instance == nullptr || m_window == nullptr) {
+    spdlog::error(
+        "Cannot initialize Surface without valid instance and window pointer!");
+    throw std::runtime_error(
+        "Cannot initialize Surface without valid instance and window pointer!");
+  }
+
   VK_CHECK_RESULT(glfwCreateWindowSurface(
       m_instance->getInstance(), m_window->getWindow(), nullptr, &m_surface));
 }
 
-void Surface::cleanUp() {}
+void Surface::cleanUp() {
+  if (m_surface != VK_NULL_HANDLE || m_instance != nullptr) {
+    vkDestroySurfaceKHR(m_instance->getInstance(), m_surface, nullptr);
+  }
+}
+
+const VkSurfaceKHR& Surface::getSurface() const { return m_surface; }
