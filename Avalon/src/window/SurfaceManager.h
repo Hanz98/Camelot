@@ -16,6 +16,7 @@
 #ifndef AVALON_SRC_WINDOW_SURFACEMANAGER_H_
 #define AVALON_SRC_WINDOW_SURFACEMANAGER_H_
 
+#include <Avalon/src/device/Instance.h>
 #include <GLFW/glfw3.h>
 #include <vulkan/vulkan.h>
 
@@ -27,6 +28,8 @@
 
 class SurfaceManager {
  private:
+  std::shared_ptr<Instance> m_instance;
+
   std::vector<std::shared_ptr<Surface>> m_surfaces;
   std::shared_ptr<Window> m_window;
 
