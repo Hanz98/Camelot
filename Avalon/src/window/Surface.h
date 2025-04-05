@@ -40,6 +40,7 @@ class Surface {
 
   virtual ~Surface();
 
+  const VkSurfaceKHR& getSurface() const;
   void init();
   void cleanUp();
 };

@@ -76,8 +76,8 @@ if [ $? -ne 0 ]; then
 fi
 
 # Run include-what-you-use
-printf "${CYAN}include-what-you-use\n${NC}"
-include-what-you-use $files
+# printf "${CYAN}include-what-you-use\n${NC}"
+#include-what-you-use $files
 
 # Run uncrustify
 #printf "${CYAN}uncrustify\n${NC}"

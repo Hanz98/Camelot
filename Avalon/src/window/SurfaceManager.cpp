@@ -19,14 +19,31 @@
 
 #include <memory>
 
-SurfaceManager::SurfaceManager() : m_window(nullptr) {}
+SurfaceManager::SurfaceManager(std::shared_ptr<Instance> instance,
+                               std::shared_ptr<Window> window)
+    : m_window(window), m_instance(instance) {}
 
 SurfaceManager::~SurfaceManager() { cleanUp(); }
 
 void SurfaceManager::init() {
-  m_window = std::make_shared<Window>();
+  m_surfaces.push_back(std::make_shared<Surface>(m_instance, m_window));
 
-  m_window->init(400, 600, "Camelot");
+  for (auto surface : m_surfaces) {
+    surface->init();
+  }
+}
 
-  //    VK_CHECK_RESULT(glfwCreateWindowSurface(m_instance, ))
+void SurfaceManager::cleanUp() {
+  for (auto surface : m_surfaces) {
+    surface->cleanUp();
+  }
+  m_surfaces.clear();
+}
+
+std::shared_ptr<Surface> SurfaceManager::getSurface(int id) {
+  if (id < m_surfaces.size()) {
+    return nullptr;
+  }
+
+  return m_surfaces.at(id);
 }
