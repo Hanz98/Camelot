@@ -15,15 +15,24 @@
 
 #include "Surface.h"
 
+#define GLFW_INCLUDE_VULKAN
+#include <Avalon/src/device/Instance.h>
 #include <Avalon/src/validation/CheckResult.h>
+#include <GLFW/glfw3.h>
 
-Surface::Surface() : m_surface(VK_NULL_HANDLE) {}
+#include <memory>
+
+#include "Window.h"
+
+Surface::Surface(std::shared_ptr<Instance> instance,
+                 std::shared_ptr<Window> window)
+    : m_instance(instance), m_window(window), m_surface(VK_NULL_HANDLE) {}
 
 Surface::~Surface() { cleanUp(); }
 
 void Surface::init() {
-  //    VK_CHECK_RESULT(glfwCreateWindow(m_instance, m_window, nullptr,
-  //    m_surface));
+  VK_CHECK_RESULT(glfwCreateWindowSurface(
+      m_instance->getInstance(), m_window->getWindow(), nullptr, &m_surface));
 }
 
 void Surface::cleanUp() {}

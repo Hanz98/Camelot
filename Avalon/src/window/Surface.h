@@ -16,15 +16,23 @@
 #ifndef AVALON_SRC_WINDOW_SURFACE_H_
 #define AVALON_SRC_WINDOW_SURFACE_H_
 
+#define GLFW_INCLUDE_VULKAN
+#include <Avalon/src/device/Instance.h>
 #include <GLFW/glfw3.h>
 #include <vulkan/vulkan.h>
+
+#include <memory>
+
+#include "Window.h"
 
 class Surface {
  private:
   VkSurfaceKHR m_surface;
+  std::shared_ptr<Instance> m_instance;
+  std::shared_ptr<Window> m_window;
 
  public:
-  Surface();
+  Surface(std::shared_ptr<Instance>, std::shared_ptr<Window>);
   Surface(const Surface&) = delete;
   Surface& operator==(const Surface&) = delete;
   Surface(Surface&&) = delete;
