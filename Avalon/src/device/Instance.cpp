@@ -22,16 +22,6 @@
 
 Instance::Instance() : m_instance() {}
 
-Instance::Instance(Instance&& other) : m_instance(other.m_instance) {
-  other.m_instance = {};
-}
-
-Instance& Instance::operator=(Instance&& other) {
-  m_instance = other.m_instance;
-  other.m_instance = {};
-  return *this;
-}
-
 Instance::~Instance() { cleanUp(); }
 
 void Instance::cleanUp() {

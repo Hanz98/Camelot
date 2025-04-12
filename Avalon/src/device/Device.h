@@ -48,7 +48,7 @@ class Device {
     return m_physicalDevice.physical_device;
   }
 
-  void PickPhysicalDevice(std::shared_ptr<Instance>, std::shared_ptr<Surface>);
+  void pickPhysicalDevice(std::shared_ptr<Instance>, std::shared_ptr<Surface>);
 };
 
 #endif  // AVALON_SRC_DEVICE_DEVICE_H_

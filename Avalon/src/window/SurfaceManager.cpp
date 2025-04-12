@@ -41,7 +41,7 @@ void SurfaceManager::cleanUp() {
 }
 
 std::shared_ptr<Surface> SurfaceManager::getSurface(int id) {
-  if (id < m_surfaces.size()) {
+  if (m_surfaces.size() < id) {
     return nullptr;
   }
 

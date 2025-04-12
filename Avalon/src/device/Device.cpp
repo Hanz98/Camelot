@@ -48,8 +48,13 @@ void Device::cleanUp() {
   }
 }
 
-void Device::PickPhysicalDevice(std::shared_ptr<Instance> instance,
+void Device::pickPhysicalDevice(std::shared_ptr<Instance> instance,
                                 std::shared_ptr<Surface> surface) {
+  if (surface == nullptr || instance == nullptr) {
+    spdlog::error("Device::pickPhysicalDevice invaliad arguments!");
+    throw std::runtime_error("Device::pickPhysicalDevice invaliad arguments!");
+  }
+
   vkb::PhysicalDeviceSelector selector{instance->getVkbInstance()};
   auto phys_ret = selector.set_surface(surface->getSurface()).select();
   m_physicalDevice = phys_ret.value();
@@ -69,13 +74,14 @@ void Device::PickPhysicalDevice(std::shared_ptr<Instance> instance,
 
   m_device = dev_ret.value();
 
-  std::vector<VkPhysicalDevice> physicalDevices;
-  uint32_t deviceCount = 0;
-  vkEnumeratePhysicalDevices(instance->getInstance(), &deviceCount, nullptr);
+  /*
+    std::vector<VkPhysicalDevice> physicalDevices;
+    uint32_t deviceCount = 0;
+    vkEnumeratePhysicalDevices(instance->getInstance(), &deviceCount, nullptr);
 
-  physicalDevices.resize(deviceCount);
-  vkEnumeratePhysicalDevices(instance->getInstance(), &deviceCount,
-                             physicalDevices.data());
+    physicalDevices.resize(deviceCount);
+    vkEnumeratePhysicalDevices(instance->getInstance(), &deviceCount,
+                               physicalDevices.data());
   std::stringstream msg;
   msg << "Physical devices count: " << deviceCount << " (";
 
@@ -86,4 +92,5 @@ void Device::PickPhysicalDevice(std::shared_ptr<Instance> instance,
   }
 
   std::cout << msg.str() << std::endl;
+  */
 }

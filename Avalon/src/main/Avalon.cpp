@@ -28,10 +28,10 @@ Avalon::Avalon()
 Avalon::~Avalon() { cleanUp(); }
 
 void Avalon::cleanUp() {
+  m_device->cleanUp();
   m_surfaceManager->cleanUp();
   m_window->cleanUp();
   m_instance->cleanUp();
-  m_device->cleanUp();
 }
 
 void Avalon::init() {
@@ -45,13 +45,15 @@ void Avalon::init() {
         400, 400,
         "Avalon");  // TO DO: Make window size and title read from settings
     m_instance->init();
-    m_device->PickPhysicalDevice(m_instance, m_surfaceManager->getSurface());
-    //    m_device.PickPhysicalDevice(m_instance, m_window.getSurface());
+    m_surfaceManager->init();
+    m_device->pickPhysicalDevice(m_instance, m_surfaceManager->getSurface());
   } catch (const std::exception& e) {
+    cleanUp();
     spdlog::error("Failed to initialize Avalon. Error: {}", e.what());
     throw std::runtime_error("Failed to initialize Avalon.");
   }
-  //  m_device.PickPhysicalDevice(m_instance, m_window.getSurface());
+
+  cleanUp();
 }
 
 void Avalon::test() { std::cout << "Hello World from Avalon!" << std::endl; }
