@@ -26,9 +26,9 @@ class Instance {
 
  public:
   Instance();
-  Instance(Instance&& other);
+  Instance(Instance&& other) = delete;
   Instance(const Instance& other) = delete;
-  Instance& operator=(Instance&& other);
+  Instance& operator=(Instance&& other) = delete;
   Instance& operator=(const Instance& other) = delete;
 
   ~Instance();
