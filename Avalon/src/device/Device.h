@@ -19,7 +19,6 @@
 #include <Avalon/src/window/Surface.h>
 #include <VkBootstrap.h>
 #include <VkBootstrapDispatch.h>
-#include <pch.h>
 #include <vulkan/vulkan.h>
 
 #include <memory>

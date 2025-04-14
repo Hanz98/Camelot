@@ -24,11 +24,13 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 
 class Window {
  private:
   std::shared_ptr<IGlfWrapper> m_glfWrapper;
   GLFWwindow* m_pWindow;
+  std::pair<uint16_t, uint16_t> m_dimensions;
 
  public:
   explicit Window(std::shared_ptr<IGlfWrapper> glfWrapper = nullptr);
@@ -43,6 +45,9 @@ class Window {
   bool init(int width, int height, const std::string& title);
 
   GLFWwindow* getWindow() const;
+
+  uint16_t getWidth() const;
+  uint16_t getHeight() const;
 };
 
 #endif  // AVALON_SRC_WINDOW_WINDOW_H_
