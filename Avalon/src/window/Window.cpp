@@ -19,6 +19,7 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 
 Window::Window(std::shared_ptr<IGlfWrapper> glfWrapper)
     : m_pWindow(nullptr), m_glfWrapper(glfWrapper) {
@@ -55,6 +56,8 @@ void Window::cleanUp() {
 }
 
 bool Window::init(int width, int height, const std::string& title) {
+  m_dimensions = std::make_pair(static_cast<uint16_t>(width),
+                                static_cast<uint16_t>(height));
   m_glfWrapper->init();
   m_glfWrapper->windowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
@@ -69,3 +72,7 @@ bool Window::init(int width, int height, const std::string& title) {
 }
 
 GLFWwindow* Window::getWindow() const { return m_pWindow; }
+
+uint16_t Window::getWidth() const { return m_dimensions.first; }
+
+uint16_t Window::getHeight() const { return m_dimensions.second; }
