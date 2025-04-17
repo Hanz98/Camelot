@@ -13,13 +13,4 @@
  * limitations under the License.
  */
 
-#ifndef AVALON_SRC_PRESENTATION_IMAGE_IMAGE_H_
-#define AVALON_SRC_PRESENTATION_IMAGE_IMAGE_H_
-
-class Image {
- private:
- public:
-  Image();
-};
-
-#endif  // AVALON_SRC_PRESENTATION_IMAGE_IMAGE_H_
+#include <ResourceDescriptor.h>

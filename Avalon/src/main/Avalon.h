@@ -17,6 +17,7 @@
 #define AVALON_SRC_MAIN_AVALON_H_
 #include <Avalon/src/device/Device.h>
 #include <Avalon/src/device/Instance.h>
+#include <Avalon/src/utils/ResourceDescriptor.h>
 #include <Avalon/src/window/SurfaceManager.h>
 #include <Avalon/src/window/Window.h>
 #include <pch.h>
@@ -30,6 +31,7 @@ class Avalon {
   std::shared_ptr<Window> m_window;
   std::shared_ptr<Device> m_device;
   std::shared_ptr<Instance> m_instance;
+  std::shared_ptr<ResourceDescriptor> m_resourceDescriptor;
 
  public:
   Avalon();
