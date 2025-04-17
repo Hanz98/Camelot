@@ -14,6 +14,7 @@
  */
 #include "Avalon.h"
 
+#include <Avalon/src/utils/ResourceDescriptor.h>
 #include <pch.h>
 
 #include <iostream>
@@ -23,7 +24,8 @@ Avalon::Avalon()
     : m_surfaceManager(nullptr),
       m_device(nullptr),
       m_instance(nullptr),
-      m_window(nullptr) {}
+      m_window(nullptr),
+      m_resourceDescriptor(std::make_shared<ResourceDescriptor>) {}
 
 Avalon::~Avalon() { cleanUp(); }
 
