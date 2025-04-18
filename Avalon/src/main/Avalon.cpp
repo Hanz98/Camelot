@@ -25,7 +25,7 @@ Avalon::Avalon()
       m_device(nullptr),
       m_instance(nullptr),
       m_window(nullptr),
-      m_resourceDescriptor(std::make_shared<ResourceDescriptor>) {}
+      m_allocator(nullptr) {}
 
 Avalon::~Avalon() { cleanUp(); }
 
@@ -34,13 +34,22 @@ void Avalon::cleanUp() {
   m_surfaceManager->cleanUp();
   m_window->cleanUp();
   m_instance->cleanUp();
+
+  vmaDestroyAllocator(*m_allocator.get());
 }
 
 void Avalon::init() {
+  Resource::Descriptor->device = m_device;
+  Resource::Descriptor->instance = m_instance;
+  Resource::Descriptor->window = m_window;
+  Resource::Descriptor->surfaceManager = m_surfaceManager;
+  Resource::Descriptor->allocator = m_allocator;
+
   m_instance = std::make_shared<Instance>();
   m_device = std::make_shared<Device>();
   m_window = std::make_shared<Window>();
   m_surfaceManager = std::make_shared<SurfaceManager>(m_instance, m_window);
+  m_allocator = std::make_shared<VmaAllocator>();
 
   try {
     m_window->init(
@@ -59,3 +68,19 @@ void Avalon::init() {
 }
 
 void Avalon::test() { std::cout << "Hello World from Avalon!" << std::endl; }
+
+void Avalon::initVma() {
+  VmaVulkanFunctions vulkanFunctions = {};
+  vulkanFunctions.vkGetInstanceProcAddr = &vkGetInstanceProcAddr;
+  vulkanFunctions.vkGetDeviceProcAddr = &vkGetDeviceProcAddr;
+
+  VmaAllocatorCreateInfo allocatorCreateInfo = {};
+  allocatorCreateInfo.flags = VMA_ALLOCATOR_CREATE_EXT_MEMORY_BUDGET_BIT;
+  allocatorCreateInfo.vulkanApiVersion = VK_API_VERSION_1_2;
+  allocatorCreateInfo.physicalDevice = m_device->getPhysicalDevice();
+  allocatorCreateInfo.device = m_device->getDevice();
+  allocatorCreateInfo.instance = m_instance->getInstance();
+  allocatorCreateInfo.pVulkanFunctions = &vulkanFunctions;
+
+  vmaCreateAllocator(&allocatorCreateInfo, m_allocator.get());
+}
