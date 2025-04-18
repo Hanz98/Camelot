@@ -20,7 +20,10 @@
 #include <Avalon/src/utils/ResourceDescriptor.h>
 #include <Avalon/src/window/SurfaceManager.h>
 #include <Avalon/src/window/Window.h>
+#define VMA_STATIC_VULKAN_FUNCTIONS 0
+#define VMA_DYNAMIC_VULKAN_FUNCTIONS 1
 #include <pch.h>
+#include <vma/vk_mem_alloc.h>
 
 #include <iostream>
 #include <memory>
@@ -31,7 +34,7 @@ class Avalon {
   std::shared_ptr<Window> m_window;
   std::shared_ptr<Device> m_device;
   std::shared_ptr<Instance> m_instance;
-  std::shared_ptr<ResourceDescriptor> m_resourceDescriptor;
+  std::shared_ptr<VmaAllocator> m_allocator;
 
  public:
   Avalon();
@@ -46,6 +49,9 @@ class Avalon {
   void init();
 
   void test();
+
+ private:
+  void initVma();
 };
 
 #endif  // AVALON_SRC_MAIN_AVALON_H_

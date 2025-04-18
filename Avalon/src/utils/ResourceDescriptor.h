@@ -16,6 +16,10 @@
 #ifndef AVALON_SRC_UTILS_RESOURCEDESCRIPTOR_H_
 #define AVALON_SRC_UTILS_RESOURCEDESCRIPTOR_H_
 
+#define VMA_STATIC_VULKAN_FUNCTIONS 0
+#define VMA_DYNAMIC_VULKAN_FUNCTIONS 1
+#include <vma/vk_mem_alloc.h>
+
 #include <memory>
 
 class Device;
@@ -26,7 +30,8 @@ class SurfaceManager;
 class RenderPass;
 class SwapChainModel;
 
-struct ResourceDescriptor {
+namespace Resource {
+struct DescriptorInfo {
   std::shared_ptr<Device> device;
   std::shared_ptr<Instance> instance;
   std::shared_ptr<Window> window;
@@ -34,5 +39,10 @@ struct ResourceDescriptor {
   std::shared_ptr<SurfaceManager> surfaceManager;
   std::shared_ptr<RenderPass> renderPass;
   std::shared_ptr<SwapChainModel> swapchainModel;
+  std::shared_ptr<VmaAllocator> allocator;
 };
+
+static std::shared_ptr<DescriptorInfo> Descriptor;
+}  // namespace Resource
+
 #endif  // AVALON_SRC_UTILS_RESOURCEDESCRIPTOR_H_
