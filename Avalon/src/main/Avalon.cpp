@@ -43,7 +43,7 @@ void Avalon::init() {
   Resource::Descriptor->instance = m_instance;
   Resource::Descriptor->window = m_window;
   Resource::Descriptor->surfaceManager = m_surfaceManager;
-  Resource::Descriptor->allocator = m_allocator;
+  //  Resource::Descriptor->allocator = m_allocator;
 
   m_instance = std::make_shared<Instance>();
   m_device = std::make_shared<Device>();
