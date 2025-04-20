@@ -15,10 +15,7 @@
 
 #ifndef AVALON_SRC_UTILS_RESOURCEDESCRIPTOR_H_
 #define AVALON_SRC_UTILS_RESOURCEDESCRIPTOR_H_
-
-#define VMA_STATIC_VULKAN_FUNCTIONS 0
-#define VMA_DYNAMIC_VULKAN_FUNCTIONS 1
-#include <vma/vk_mem_alloc.h>
+#include <Avalon/src/allocator/VmaAllocator.h>
 
 #include <memory>
 
@@ -39,7 +36,7 @@ struct DescriptorInfo {
   std::shared_ptr<SurfaceManager> surfaceManager;
   std::shared_ptr<RenderPass> renderPass;
   std::shared_ptr<SwapChainModel> swapchainModel;
-  std::shared_ptr<VmaAllocator> allocator;
+  std::shared_ptr<VmaAllocatorWrapper> allocator;
 };
 
 static std::shared_ptr<DescriptorInfo> Descriptor;

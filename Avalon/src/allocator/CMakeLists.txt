@@ -1,7 +1,7 @@
 add_library(
     Avalon_allocator
             "VmaAllocator.h"
-#            "VmaAllocator.cpp"
+            "VmaAllocator.cpp"
 )
 
 target_include_directories(Avalon_allocator PUBLIC ${Avalon_include_dirs})

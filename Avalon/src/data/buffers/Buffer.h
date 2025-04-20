@@ -26,7 +26,7 @@ class Buffer {
  private:
   VkBuffer m_buffer;
   VmaAllocation m_allocation;
-  std::shared_ptr<VmaAllocator> m_allocator;
+  std::shared_ptr<VmaAllocatorWrapper> m_allocator;
 
  public:
   Buffer();

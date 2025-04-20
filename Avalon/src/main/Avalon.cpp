@@ -35,7 +35,7 @@ void Avalon::cleanUp() {
   m_window->cleanUp();
   m_instance->cleanUp();
 
-  vmaDestroyAllocator(*m_allocator.get());
+  vmaDestroyAllocator(m_allocator->allocator);
 }
 
 void Avalon::init() {
@@ -49,7 +49,7 @@ void Avalon::init() {
   m_device = std::make_shared<Device>();
   m_window = std::make_shared<Window>();
   m_surfaceManager = std::make_shared<SurfaceManager>(m_instance, m_window);
-  m_allocator = std::make_shared<VmaAllocator>();
+  m_allocator = std::make_shared<VmaAllocatorWrapper>();
 
   try {
     m_window->init(
@@ -82,5 +82,5 @@ void Avalon::initVma() {
   allocatorCreateInfo.instance = m_instance->getInstance();
   allocatorCreateInfo.pVulkanFunctions = &vulkanFunctions;
 
-  vmaCreateAllocator(&allocatorCreateInfo, m_allocator.get());
+  vmaCreateAllocator(&allocatorCreateInfo, &m_allocator->allocator);
 }
