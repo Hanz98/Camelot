@@ -19,7 +19,7 @@ Buffer::Buffer()
     : m_allocator(Resource::Descriptor->allocator), m_buffer(VK_NULL_HANDLE) {}
 
 Buffer::~Buffer() {
-  vmaDestroyBuffer(*m_allocator.get(), m_buffer, m_allocation);
+  vmaDestroyBuffer(m_allocator->allocator, m_buffer, m_allocation);
 }
 
 void Buffer::createBuffer() {
@@ -32,6 +32,6 @@ void Buffer::createBuffer() {
   allocInfo.usage = VMA_MEMORY_USAGE_AUTO;
 
   VkBuffer buffer;
-  vmaCreateBuffer(*m_allocator.get(), &bufferInfo, &allocInfo, &m_buffer,
+  vmaCreateBuffer(m_allocator->allocator, &bufferInfo, &allocInfo, &m_buffer,
                   &m_allocation, nullptr);
 }
