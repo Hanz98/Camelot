@@ -32,8 +32,8 @@ class SwapchainModel {
   Image m_depth;
   Image m_color;
 
-  std::vector<Image> m_swapChainImage;
-  std::vector<VkFrameBuffer> m_swapChainImage;
+  //  std::vector<Image> m_swapChainImage;
+  std::vector<VkFramebuffer> m_swapChainImage;
 
  private:
   SwapchainModel();

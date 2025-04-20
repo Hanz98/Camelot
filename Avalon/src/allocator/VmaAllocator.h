@@ -13,26 +13,13 @@
  * limitations under the License.
  */
 
-#ifndef AVALON_SRC_DATA_BUFFERS_BUFFER_H_
-#define AVALON_SRC_DATA_BUFFERS_BUFFER_H_
+#ifndef AVALON_SRC_ALLOCATOR_VMAALLOCATOR_H_
+#define AVALON_SRC_ALLOCATOR_VMAALLOCATOR_H_
 
-#include <Avalon/src/utils/ResourceDescriptor.h>
 #include <vma/vk_mem_alloc.h>
 
-#include <memory>
-#include <vulkan/vulkan.hpp>
+struct VmaAllocatorWrapper {
+  VmaAllocator allocator;
+}
 
-class Buffer {
- private:
-  VkBuffer m_buffer;
-  VmaAllocation m_allocation;
-  std::shared_ptr<VmaAllocator> m_allocator;
-
- public:
-  Buffer();
-  ~Buffer();
-
-  void createBuffer();
-};
-
-#endif  // AVALON_SRC_DATA_BUFFERS_BUFFER_H_
+#endif  // AVALON_SRC_ALLOCATOR_VMAALLOCATOR_H_

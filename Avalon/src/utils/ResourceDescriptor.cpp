@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-#include <ResourceDescriptor.h>
+#include "ResourceDescriptor.h"
 
 #include <memory>
 
-std::shared_ptr<Resource::DescriptorInfo> Resource::Descriptor =
+static std::shared_ptr<Resource::DescriptorInfo> Descriptor =
     std::make_shared<Resource::DescriptorInfo>();
