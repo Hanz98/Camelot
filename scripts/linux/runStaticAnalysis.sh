@@ -66,11 +66,20 @@ mapfile -t files < <(
 )
 
 # Run clang-tidy
-# printf "${CYAN}clang-tidy\n${NC}"
-# clang-tidy $files -p build/release/compile_commands.json -warnings-as-errors=*
-# if [ $? -ne 0 ]; then
-#   FAILED_ANALYZERS+=("clang-tidy")
-# fi
+printf "${CYAN}clang-tidy\n${NC}"
+clang_tidy_failed=0
+
+for file in "${files[@]}"; do
+  clang-tidy \
+    -p build/release/compile_commands.json \
+    --warnings-as-errors='*' \
+    "$file" \
+  || clang_tidy_failed=1
+done
+
+if (( clang_tidy_failed )); then
+  FAILED_ANALYZERS+=( "clang-tidy" )
+fi
 
 # Run cppcheck
 printf "${CYAN}cppcheck\n${NC}"
@@ -93,15 +102,6 @@ fi
 # Run include-what-you-use
 # printf "${CYAN}include-what-you-use\n${NC}"
 #include-what-you-use $files
-
-# Run uncrustify
-printf "${CYAN}uncrustify\n${NC}"
-for file in "${files[@]}"; do
-  uncrustify -c scripts/linux/cfg/uncrustify.cfg -f $file -o $file --no-backup
-  if [ $? -ne 0 ]; then
-    FAILED_ANALYZERS+=("uncrustify")
-  fi
-done
 
 # Summary
 if [ ${#FAILED_ANALYZERS[@]} -ne 0 ]; then
