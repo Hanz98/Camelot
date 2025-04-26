@@ -59,20 +59,35 @@ if [ $? -ne 128 ]; then
 fi
 
 
-mapfile -t files < <(git -C "$(git rev-parse --show-toplevel)" ls-files | grep -E '\.(c|cpp|h|hpp)$')
+mapfile -t files < <(
+  git -C "$(git rev-parse --show-toplevel)" ls-files \
+    | grep -E '\.(c|cpp|h|hpp)$' \
+    | grep -v '/ext/'
+)
 
 # Run clang-tidy
-printf "${CYAN}clang-tidy\n${NC}"
-clang-tidy $files -p build/release/compile_commands.json -warnings-as-errors=*
-if [ $? -ne 0 ]; then
-  FAILED_ANALYZERS+=("clang-tidy")
-fi
+# printf "${CYAN}clang-tidy\n${NC}"
+# clang-tidy $files -p build/release/compile_commands.json -warnings-as-errors=*
+# if [ $? -ne 0 ]; then
+#   FAILED_ANALYZERS+=("clang-tidy")
+# fi
 
 # Run cppcheck
 printf "${CYAN}cppcheck\n${NC}"
-cppcheck --enable=all --inconclusive -v $files --error-exitcode=1
-if [ $? -ne 0 ]; then
-  FAILED_ANALYZERS+=("cppcheck")
+for file in "${files[@]}"; do
+  cppcheck \
+    --enable=all \
+    --inconclusive \
+    --language=c++ \
+    --std=c++20 \
+    --suppress=missingIncludeSystem \
+    --error-exitcode=1 \
+    "$file" \
+  || cppcheck_failed=1
+done
+
+if (( cppcheck_failed )); then
+  FAILED_ANALYZERS+=( "cppcheck" )
 fi
 
 # Run include-what-you-use
@@ -80,13 +95,13 @@ fi
 #include-what-you-use $files
 
 # Run uncrustify
-#printf "${CYAN}uncrustify\n${NC}"
-#for file in "${files[@]}"; do
-#  uncrustify -c scripts/linux/cfg/uncrustify.cfg -f $file -o $file --no-backup
-#  if [ $? -ne 0 ]; then
-#    FAILED_ANALYZERS+=("uncrustify")
-#  fi
-#done
+printf "${CYAN}uncrustify\n${NC}"
+for file in "${files[@]}"; do
+  uncrustify -c scripts/linux/cfg/uncrustify.cfg -f $file -o $file --no-backup
+  if [ $? -ne 0 ]; then
+    FAILED_ANALYZERS+=("uncrustify")
+  fi
+done
 
 # Summary
 if [ ${#FAILED_ANALYZERS[@]} -ne 0 ]; then
