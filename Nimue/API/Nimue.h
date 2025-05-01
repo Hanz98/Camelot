@@ -20,7 +20,6 @@
 
 class MainModel {
  public:
-  void test() { std::cout << "Hello World from Nimue!" << std::endl; }
 };
 
 #endif  // NIMUE_API_NIMUE_H_

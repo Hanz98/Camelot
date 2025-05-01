@@ -16,5 +16,3 @@
 #include "Merlin.h"
 
 #include <iostream>
-
-void Merlin::test() { std::cout << "Hello World from Merlin!" << std::endl; }

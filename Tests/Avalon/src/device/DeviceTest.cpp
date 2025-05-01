@@ -18,14 +18,14 @@
 #include <memory>
 #include <utility>
 
+/*
 TEST(DeviceTest, Initialization) {
-  /*
     Device device;
     Instance instance;
     instance.init();
     VkSurfaceKHR surface;
 
     device.PickPhysicalDevice(instance, surface);
-  */
-  EXPECT_TRUE(true);
-}
+    EXPECT_TRUE(true);
+  }
+*/

@@ -18,9 +18,6 @@
 
 #include <Avalon/src/device/Device.h>
 #include <spdlog/spdlog.h>
-#define VMA_STATIC_VULKAN_FUNCTIONS 0
-#define VMA_DYNAMIC_VULKAN_FUNCTIONS 1
-#include <vma/vk_mem_alloc.h>
 
 #include <memory>
 #include <vulkan/vulkan.hpp>
@@ -32,7 +29,7 @@ class Image {
   VkImageView m_imageView;
 
   std::shared_ptr<Device> m_device;
-  std::shared_ptr<VmaAllocator> m_allocator;
+  //  std::shared_ptr<VmaAllocator> m_allocator;
 
  public:
   Image();

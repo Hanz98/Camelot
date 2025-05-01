@@ -28,8 +28,8 @@
 
 class Window {
  private:
-  std::shared_ptr<IGlfWrapper> m_glfWrapper;
   GLFWwindow* m_pWindow;
+  std::shared_ptr<IGlfWrapper> m_glfWrapper;
   std::pair<uint16_t, uint16_t> m_dimensions;
 
  public:

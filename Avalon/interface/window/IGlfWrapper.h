@@ -21,6 +21,13 @@ struct GLFWmonitor;
 
 class IGlfWrapper {
  public:
+  IGlfWrapper() = default;
+  IGlfWrapper(IGlfWrapper&&) = delete;
+  IGlfWrapper(const IGlfWrapper&) = delete;
+
+  IGlfWrapper& operator=(IGlfWrapper&&) = delete;
+  IGlfWrapper& operator=(const IGlfWrapper&) = delete;
+
   virtual ~IGlfWrapper() = default;
   virtual int init() = 0;
   virtual void terminate() = 0;
