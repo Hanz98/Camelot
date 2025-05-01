@@ -20,7 +20,6 @@
 
 class Merlin {
  public:
-  void test();
 };
 
 #endif  // MERLIN_SRC_MAIN_MERLIN_H_

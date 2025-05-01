@@ -19,17 +19,18 @@
 #include <memory>
 #include <utility>
 
-struct GLFWwindow {
-  int dummy;
-};
+struct GLFWwindow {};
 
 class FakeGlfWrapper : public IGlfWrapper {
  private:
   GLFWwindow* ptr;
 
  public:
+  FakeGlfWrapper() : ptr(nullptr) {}
   int init() override {
-    ptr = new GLFWwindow();
+    if (ptr != nullptr) {
+      ptr = new GLFWwindow();
+    }
     return 0;
   }
   void terminate() override {}
