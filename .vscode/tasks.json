@@ -1,0 +1,78 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Conan Install Debug",
+        "type": "shell",
+        "command": "conan",
+        "args": ["install", ".",  "--build=missing", "-s", "build_type=Debug"],
+        "group": {
+          "kind": "build",
+          "isDefault": false
+        },
+        "detail": "Install dependencies using Conan."
+      },
+      {
+        "label": "Conan Install Release",
+        "type": "shell",
+        "command": "conan",
+        "args": ["install", ".", "--build=missing", "-s", "build_type=Release"],
+        "group": {
+          "kind": "build",
+          "isDefault": false
+        },
+        "detail": "Install dependencies using Conan."
+      },
+      {
+        "label": "Configure Debug",
+        "type": "shell",
+        "command": "cmake",
+        "args": ["--preset", "debug"],
+        "problemMatcher": [],
+        "detail": "Configure the Debug build using CMakePresets."
+      },
+      {
+        "label": "Configure Release",
+        "type": "shell",
+        "command": "cmake",
+        "args": ["--preset", "release"],
+        "problemMatcher": [],
+        "detail": "Configure the Release build using CMakePresets."
+      },
+      {
+        "label": "Build Debug",
+        "type": "shell",
+        "command": "cmake",
+        "args": ["--build", "--preset", "debug"],
+        "group": {
+          "kind": "build",
+          "isDefault": false
+        },
+        "dependsOn": "Configure Debug",
+        "problemMatcher": [],
+        "detail": "Build the Debug configuration using CMakePresets."
+      },
+      {
+        "label": "Build Release",
+        "type": "shell",
+        "command": "cmake",
+        "args": ["--build", "--preset", "release"],
+        "group": {
+          "kind": "build",
+          "isDefault": false
+        },
+        "dependsOn": "Configure Release",
+        "problemMatcher": [],
+        "detail": "Build the Release configuration using CMakePresets."
+      },
+      {
+        "label": "Build Both (Debug and Release)",
+        "type": "shell",
+        "command": "echo",
+        "args": [],
+        "dependsOn": ["Build Debug", "Build Release"],
+        "problemMatcher": [],
+        "detail": "Build both Debug and Release configurations."
+      }
+    ]
+  }
