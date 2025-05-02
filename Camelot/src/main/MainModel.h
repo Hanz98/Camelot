@@ -26,6 +26,7 @@ class MainModel : public ICamelot {
   Avalon m_avalon;
 
  public:
+  MainModel() = default;
   void test();
 };
 
