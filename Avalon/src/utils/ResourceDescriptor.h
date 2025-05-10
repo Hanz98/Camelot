@@ -39,7 +39,8 @@ struct DescriptorInfo {
   std::shared_ptr<VmaAllocatorWrapper> allocator;
 };
 
-static std::shared_ptr<DescriptorInfo> Descriptor;
+inline const std::shared_ptr<DescriptorInfo> Descriptor =
+    std::make_shared<DescriptorInfo>();
 }  // namespace Resource
 
 #endif  // AVALON_SRC_UTILS_RESOURCEDESCRIPTOR_H_

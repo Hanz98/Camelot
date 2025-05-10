@@ -5,12 +5,14 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "~/.conan2/**",
-                "${VULKAN_SDK}/include",
-                "/usr/include/c++/15.1.1/"
+                "${VULKAN_SDK}/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",
-            "intelliSenseMode": "linux-clang-x64"
+            "intelliSenseMode": "linux-clang-x64",
+            "compileCommands": [
+                "${workspaceFolder}/build/debug/compile_commands.json"
+            ]
         }
     ],
     "version": 4

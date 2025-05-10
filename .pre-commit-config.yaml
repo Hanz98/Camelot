@@ -22,4 +22,6 @@ repos:
     rev: 2.0.0
     hooks:
       - id: cpplint
+        args: [--filter=-whitespace/indent_namespace]
+
 exclude: ^Tests/ext

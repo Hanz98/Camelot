@@ -114,7 +114,11 @@
         "spanstream": "cpp",
         "stacktrace": "cpp",
         "stdfloat": "cpp",
-        "syncstream": "cpp"
+        "syncstream": "cpp",
+        "flat_map": "cpp",
+        "flat_set": "cpp",
+        "queue": "cpp",
+        "stack": "cpp"
     },
     "files.insertFinalNewline": true,
     "files.trimFinalNewlines": true,
@@ -285,5 +289,9 @@
     "C_Cpp_Runner.showCompilationTime": false,
     "C_Cpp_Runner.useLinkTimeOptimization": false,
     "C_Cpp_Runner.msvcSecureNoWarnings": false,
-    "C_Cpp_Runner.msvcBatchPath": ""
+    "C_Cpp_Runner.msvcBatchPath": "",
+    "C_Cpp.intelliSenseEngine": "Disabled",
+    "clangd.arguments": [
+        "--compile-commands-dir=build/debug"
+    ]
 }

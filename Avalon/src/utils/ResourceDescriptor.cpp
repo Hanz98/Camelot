@@ -14,8 +14,3 @@
  */
 
 #include "ResourceDescriptor.h"
-
-#include <memory>
-
-static std::shared_ptr<Resource::DescriptorInfo> Descriptor =
-    std::make_shared<Resource::DescriptorInfo>();
