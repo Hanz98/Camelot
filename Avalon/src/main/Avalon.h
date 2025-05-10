@@ -23,7 +23,6 @@
 #include <Avalon/src/window/Window.h>
 #include <pch.h>
 
-#include <iostream>
 #include <memory>
 
 class Avalon {

@@ -13,19 +13,19 @@
  * limitations under the License.
  */
 #include <Avalon/src/device/Device.h>
+#include <Avalon/src/device/Instance.h>
+#include <Avalon/src/window/Surface.h>
 #include <gtest/gtest.h>
 
 #include <memory>
 #include <utility>
 
-/*
 TEST(DeviceTest, Initialization) {
-    Device device;
-    Instance instance;
-    instance.init();
-    VkSurfaceKHR surface;
+  Device device;
+  std::shared_ptr<Instance> instance;
+  std::shared_ptr<Surface> surface;
+  instance->init();
 
-    device.PickPhysicalDevice(instance, surface);
-    EXPECT_TRUE(true);
-  }
-*/
+  device.pickPhysicalDevice(instance, surface);
+  EXPECT_TRUE(true);
+}
