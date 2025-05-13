@@ -3,6 +3,14 @@ add_library(Test_Avalon_Window
 )
 
 find_package(GTest REQUIRED)
+find_package(glfw3 REQUIRED)
+
+target_include_directories(
+Test_Main
+    PRIVATE
+        ${CMAKE_SOURCE_DIR}
+        ${glfw3_INCLUDE_DIRS}/include/
+)
 
 target_link_libraries(Test_Avalon_Window
     PRIVATE  # Changed from PUBLIC to PRIVATE since tests are end targets
@@ -10,6 +18,7 @@ target_link_libraries(Test_Avalon_Window
         GTest::gtest
         GTest::gtest_main
         pthread
+        glfw
 )
 
 # Add the test to be discovered by CTest

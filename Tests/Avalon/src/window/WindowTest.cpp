@@ -19,35 +19,9 @@
 #include <memory>
 #include <utility>
 
-struct GLFWwindow {};
-
-class FakeGlfWrapper : public IGlfWrapper {
- private:
-  GLFWwindow* ptr;
-
- public:
-  FakeGlfWrapper() : ptr(nullptr) {}
-  int init() override {
-    if (ptr != nullptr) {
-      ptr = new GLFWwindow();
-    }
-    return 0;
-  }
-  void terminate() override {}
-  void windowHint(int hint, int value) override {}
-  GLFWwindow* createWindow(int width, int height, const char* title,
-                           GLFWmonitor* monitor, GLFWwindow* share) override {
-    return ptr;
-  }
-  void destroyWindow(GLFWwindow* window) override { delete ptr; }
-  void setWindowUserPointer(GLFWwindow* window, void* pointer) override {}
-};
-
 class WindowTest : public testing::Test {
  public:
-  std::shared_ptr<FakeGlfWrapper> m_glfWrapper =
-      std::make_shared<FakeGlfWrapper>();
-  Window window = Window(m_glfWrapper);
+  Window window = Window();
 };
 
 TEST_F(WindowTest, Initialization) {
@@ -69,7 +43,7 @@ TEST_F(WindowTest, Cleanup) {
 
 TEST_F(WindowTest, MoveConstructor) {
   ASSERT_TRUE(window.init(800, 600, "Test Window"));
-  GLFWwindow* originalPtr = window.getWindow();
+  std::shared_ptr<GLFWwindow> originalPtr = window.getWindow();
 
   Window moved(std::move(window));
   EXPECT_EQ(window.getWindow(), nullptr)
@@ -80,9 +54,9 @@ TEST_F(WindowTest, MoveConstructor) {
 
 TEST_F(WindowTest, MoveAssignment) {
   ASSERT_TRUE(window.init(800, 600, "Test Window 1"));
-  GLFWwindow* window1Ptr = window.getWindow();
+  std::shared_ptr<GLFWwindow> window1Ptr = window.getWindow();
 
-  Window window2(m_glfWrapper);
+  Window window2;
   window2 = std::move(window);
   EXPECT_EQ(window.getWindow(), nullptr)
       << "After move assignment, the original window should be empty.";

@@ -40,8 +40,9 @@ void Surface::init() {
         "Cannot initialize Surface without valid instance and window pointer!");
   }
 
-  VK_CHECK_RESULT(glfwCreateWindowSurface(
-      m_instance->getInstance(), m_window->getWindow(), nullptr, &m_surface));
+  VK_CHECK_RESULT(glfwCreateWindowSurface(m_instance->getInstance(),
+                                          m_window->getWindow().get(), nullptr,
+                                          &m_surface));
 }
 
 void Surface::cleanUp() {
