@@ -16,30 +16,24 @@
 #include "Window.h"
 
 #include <Avalon/interface/window/GlfWrapper.h>
+#include <GLFW/glfw3.h>
 
 #include <memory>
 #include <string>
 #include <utility>
 
-Window::Window(std::shared_ptr<IGlfWrapper> glfWrapper)
-    : m_pWindow(nullptr), m_glfWrapper(glfWrapper) {
-  if (glfWrapper == nullptr) {
-    m_glfWrapper = std::make_shared<GlfWrapper>();
-  }
-}
+#include "interface/window/IGlfWrapper.h"
 
-Window::Window(Window&& other)
-    : m_pWindow(other.m_pWindow), m_glfWrapper(other.m_glfWrapper) {
+Window::Window() : m_pWindow(nullptr) {}
+
+Window::Window(Window&& other) noexcept : m_pWindow(other.m_pWindow) {
   other.m_pWindow = nullptr;
-  other.m_glfWrapper = nullptr;
 }
 
-Window& Window::operator=(Window&& other) {
+Window& Window::operator=(Window&& other) noexcept {
   m_pWindow = other.m_pWindow;
-  m_glfWrapper = other.m_glfWrapper;
 
   other.m_pWindow = nullptr;
-  other.m_glfWrapper = nullptr;
   return *this;
 }
 
@@ -50,7 +44,7 @@ Window::~Window() {
 
 void Window::cleanUp() {
   if (m_pWindow) {
-    m_glfWrapper->destroyWindow(m_pWindow);
+    glfwDestroyWindow(m_pWindow.get());
     m_pWindow = nullptr;
   }
 }
@@ -58,20 +52,23 @@ void Window::cleanUp() {
 bool Window::init(int width, int height, const std::string& title) {
   m_dimensions = std::make_pair(static_cast<uint16_t>(width),
                                 static_cast<uint16_t>(height));
-  m_glfWrapper->init();
-  m_glfWrapper->windowHint(GLFW_CLIENT_API, GLFW_NO_API);
-
-  m_pWindow = m_glfWrapper->createWindow(width, height, title.c_str(), nullptr,
-                                         nullptr);
+  glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+  GLFWwindow* window =
+      glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+  m_pWindow = std::shared_ptr<GLFWwindow>(window, [](GLFWwindow* window) {
+    if (window) glfwDestroyWindow(window);
+  });
   if (m_pWindow == nullptr) {
     return false;
   }
 
-  m_glfWrapper->setWindowUserPointer(m_pWindow, this);
+  glfwSetWindowUserPointer(m_pWindow.get(), this);
   return true;
 }
 
-GLFWwindow* Window::getWindow() const { return m_pWindow; }
+[[nodiscard]] std::shared_ptr<GLFWwindow> Window::getWindow() const {
+  return m_pWindow;
+}
 
 uint16_t Window::getWidth() const { return m_dimensions.first; }
 

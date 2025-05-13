@@ -9,6 +9,22 @@ list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}")
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+#if (MSVC)
+#  add_compile_options(/experimental:module)
+#elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+#  add_compile_options(
+#    -fmodules-ts
+#    -fcxx-modules
+#    -fimplicit-modules
+#    -fimplicit-module-maps
+#  )
+#elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+#  add_compile_options(
+#    -fmodules-ts
+#    -fcxx-modules
+#  )
+#endif()
+
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")

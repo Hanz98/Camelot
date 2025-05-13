@@ -37,10 +37,13 @@ class Instance {
 
   void init();
 
- private:
  public:
-  inline const vkb::Instance& getVkbInstance() const { return m_instance; }
-  inline const VkInstance& getInstance() const { return m_instance.instance; }
+  [[nodiscard]] inline const vkb::Instance& getVkbInstance() const {
+    return m_instance;
+  }
+  [[nodiscard]] inline const VkInstance& getInstance() const {
+    return m_instance.instance;
+  }
 };
 
 #endif  // AVALON_SRC_DEVICE_INSTANCE_H_

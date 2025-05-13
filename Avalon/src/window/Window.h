@@ -28,15 +28,14 @@
 
 class Window {
  private:
-  GLFWwindow* m_pWindow;
-  std::shared_ptr<IGlfWrapper> m_glfWrapper;
+  std::shared_ptr<GLFWwindow> m_pWindow;
   std::pair<uint16_t, uint16_t> m_dimensions;
 
  public:
-  explicit Window(std::shared_ptr<IGlfWrapper> glfWrapper = nullptr);
-  Window(Window&&);
+  explicit Window();
+  Window(Window&&) noexcept;
   Window(const Window&) = delete;
-  Window& operator=(Window&&);
+  Window& operator=(Window&&) noexcept;
   Window& operator=(const Window&) = delete;
 
   virtual ~Window();
@@ -44,10 +43,10 @@ class Window {
 
   bool init(int width, int height, const std::string& title);
 
-  GLFWwindow* getWindow() const;
+  [[nodiscard]] std::shared_ptr<GLFWwindow> getWindow() const;
 
-  uint16_t getWidth() const;
-  uint16_t getHeight() const;
+  [[nodiscard]] uint16_t getWidth() const;
+  [[nodiscard]] uint16_t getHeight() const;
 };
 
 #endif  // AVALON_SRC_WINDOW_WINDOW_H_

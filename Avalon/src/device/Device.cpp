@@ -57,12 +57,12 @@ void Device::pickPhysicalDevice(std::shared_ptr<Instance> instance,
 
   vkb::PhysicalDeviceSelector selector{instance->getVkbInstance()};
   auto phys_ret = selector.set_surface(surface->getSurface()).select();
-  m_physicalDevice = phys_ret.value();
   if (!phys_ret) {
     spdlog::error("Failed to select Vulkan Physical Device. Error: " +
                   phys_ret.error().message());
     throw std::runtime_error("Failed to select Vulkan Physical Device.");
   }
+  m_physicalDevice = phys_ret.value();
 
   vkb::DeviceBuilder device_builder{phys_ret.value()};
   auto dev_ret = device_builder.build();
