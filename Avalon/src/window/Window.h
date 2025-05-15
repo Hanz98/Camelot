@@ -22,13 +22,12 @@
 #include <Avalon/interface/window/IGlfWrapper.h>
 #include <GLFW/glfw3.h>
 
-#include <memory>
 #include <string>
 #include <utility>
 
 class Window {
  private:
-  std::shared_ptr<GLFWwindow> m_pWindow;
+  GLFWwindow* m_pWindow;
   std::pair<uint16_t, uint16_t> m_dimensions;
 
  public:
@@ -43,7 +42,7 @@ class Window {
 
   bool init(int width, int height, const std::string& title);
 
-  [[nodiscard]] std::shared_ptr<GLFWwindow> getWindow() const;
+  [[nodiscard]] GLFWwindow* getWindow() const;
 
   [[nodiscard]] uint16_t getWidth() const;
   [[nodiscard]] uint16_t getHeight() const;

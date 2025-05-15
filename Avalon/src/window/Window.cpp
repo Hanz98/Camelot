@@ -44,31 +44,27 @@ Window::~Window() {
 
 void Window::cleanUp() {
   if (m_pWindow) {
-    glfwDestroyWindow(m_pWindow.get());
+    glfwDestroyWindow(m_pWindow);
     m_pWindow = nullptr;
   }
 }
 
 bool Window::init(int width, int height, const std::string& title) {
+  glfwInit();
   m_dimensions = std::make_pair(static_cast<uint16_t>(width),
                                 static_cast<uint16_t>(height));
   glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-  GLFWwindow* window =
-      glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
-  m_pWindow = std::shared_ptr<GLFWwindow>(window, [](GLFWwindow* window) {
-    if (window) glfwDestroyWindow(window);
-  });
+  m_pWindow = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+
   if (m_pWindow == nullptr) {
     return false;
   }
 
-  glfwSetWindowUserPointer(m_pWindow.get(), this);
+  glfwSetWindowUserPointer(m_pWindow, this);
   return true;
 }
 
-[[nodiscard]] std::shared_ptr<GLFWwindow> Window::getWindow() const {
-  return m_pWindow;
-}
+[[nodiscard]] GLFWwindow* Window::getWindow() const { return m_pWindow; }
 
 uint16_t Window::getWidth() const { return m_dimensions.first; }
 

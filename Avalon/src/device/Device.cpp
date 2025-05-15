@@ -73,24 +73,4 @@ void Device::pickPhysicalDevice(std::shared_ptr<Instance> instance,
   }
 
   m_device = dev_ret.value();
-
-  /*
-    std::vector<VkPhysicalDevice> physicalDevices;
-    uint32_t deviceCount = 0;
-    vkEnumeratePhysicalDevices(instance->getInstance(), &deviceCount, nullptr);
-
-    physicalDevices.resize(deviceCount);
-    vkEnumeratePhysicalDevices(instance->getInstance(), &deviceCount,
-                               physicalDevices.data());
-  std::stringstream msg;
-  msg << "Physical devices count: " << deviceCount << " (";
-
-  for (auto& device : physicalDevices) {
-    VkPhysicalDeviceProperties deviceProperties;
-    vkGetPhysicalDeviceProperties(device, &deviceProperties);
-    msg << deviceProperties.deviceName << ", ";
-  }
-
-  std::cout << msg.str() << std::endl;
-  */
 }
