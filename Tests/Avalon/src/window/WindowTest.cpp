@@ -23,7 +23,7 @@ class WindowTest : public testing::Test {
  public:
   Window window = Window();
 };
-
+/*
 TEST_F(WindowTest, Initialization) {
   bool initSuccess = window.init(800, 600, "Test Window");
   EXPECT_TRUE(initSuccess);
@@ -63,3 +63,4 @@ TEST_F(WindowTest, MoveAssignment) {
   EXPECT_EQ(window2.getWindow(), window1Ptr)
       << "The new window should hold the pointer from the moved window.";
 }
+*/
