@@ -15,7 +15,7 @@
 
 #include "MainModel.h"
 
-#include <unistd.h>
+//  #include <unistd.h>
 
 void MainModel::test() {
   m_avalon.init();
