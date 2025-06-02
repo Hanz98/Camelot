@@ -1,28 +1,103 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-          "label": "Conan Install Release",
-          "type": "shell",
-          "command": "conan",
-          "args": ["install", ".", "-s", "build_type=Release",  "--build=missing", "--output-folder=build\\conan", "--profile=profiles/Camelot"],
-          "group": {
-            "kind": "build",
-            "isDefault": false
-          },
-          "detail": "Install dependencies using Conan for release."
-        },
-        {
-          "label": "Conan Install Debug",
-          "type": "shell",
-          "command": "conan",
-          "args": ["install", ".", "-s", "build_type=Debug",  "--build=missing", "--output-folder=build\\conan", "--profile=profiles/Camelot"],
-          "group": {
-            "kind": "build",
-            "isDefault": false
-          },
-          "detail": "Install dependencies using Conan for debug."
-        }
-    ]
-}
+  "version": "2.0.0",
+  "tasks": [
 
+    // ───────────────────────────────────────────────────────────
+    // 1) Conan Install (Debug)
+    //    – On Windows:   uses Camelot‐Win‐Debug → output to build\conan\Win\Debug
+    //    – On Linux:     uses Camelot‐Lin‐Debug → output to build/conan/Lin/Debug
+    // ───────────────────────────────────────────────────────────
+    {
+      "label": "Conan Install Debug",
+      "type": "shell",
+      "command": "conan",
+      "args": [
+        "install", ".", 
+        "-s", "build_type=Debug",
+        "--build=missing",
+        // these are the *default* values—Linux users will hit these,
+        // Windows blocks will override them.
+        "--output-folder=build/conan",
+        "--profile=profiles/Camelot-Linux"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      // On Windows, override the folder‐slashes and profile name:
+      "windows": {
+        "args": [
+          "install", ".", 
+          "-s", "build_type=Debug",
+          "--build=missing",
+          "--output-folder=build\\conan",
+          "--profile=profiles/Camelot-Win"
+        ]
+      },
+      // On Linux, the “default” block above is already correct,
+      // so we could in fact omit this entire Linux section. But
+      // we’re showing it here to illustrate how you *would* override
+      // if you had to:
+      "linux": {
+        "args": [
+          "install", ".", 
+          "-s", "build_type=Debug",
+          "--build=missing",
+          "--output-folder=build/conan",
+          "--profile=profiles/Camelot-Linux"
+        ]
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "detail": "Run `conan install` with the Debug profile (Windows vs. Linux)."
+    },
+
+    // ───────────────────────────────────────────────────────────
+    // 2) Conan Install (Release)
+    //    – On Windows:   uses Camelot‐Win‐Release → output to build\conan\Win\Release
+    //    – On Linux:     uses Camelot‐Lin‐Release → output to build/conan/Lin/Release
+    // ───────────────────────────────────────────────────────────
+    {
+      "label": "Conan Install Release",
+      "type": "shell",
+      "command": "conan",
+      "args": [
+        "install", ".", 
+        "-s", "build_type=Release",
+        "--build=missing",
+        "--output-folder=build/conan",
+        "--profile=profiles/Camelot-Linux"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "windows": {
+        "args": [
+          "install", ".", 
+          "-s", "build_type=Release",
+          "--build=missing",
+          "--output-folder=build\\conan",
+          "--profile=profiles/Camelot-Win"
+        ]
+      },
+      "linux": {
+        "args": [
+          "install", ".", 
+          "-s", "build_type=Release",
+          "--build=missing",
+          "--output-folder=build/conan",
+          "--profile=profiles/Camelot-Linux"
+        ]
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "detail": "Run `conan install` with the Release profile (Windows vs. Linux)."
+    }
+
+  ]
+}
