@@ -16,20 +16,11 @@
 #include "Instance.h"
 
 #include <Avalon/src/validation/CheckResult.h>
+#include <vulkan/vulkan.h>
 
 #include <Avalon/src/utils/Initializers.hpp>
 
 Instance::Instance() : m_instance() {}
-
-Instance::Instance(Instance&& other) : m_instance(other.m_instance) {
-  other.m_instance = {};
-}
-
-Instance& Instance::operator=(Instance&& other) {
-  m_instance = other.m_instance;
-  other.m_instance = {};
-  return *this;
-}
 
 Instance::~Instance() { cleanUp(); }
 
@@ -52,6 +43,5 @@ void Instance::init() {
                   inst_ret.error().message());
     throw std::runtime_error("Failed to create Vulkan instance.");
   }
-  vkb::Instance vkb_inst = inst_ret.value();
-  volkLoadInstance(vkb_inst.instance);
+  m_instance = inst_ret.value();
 }

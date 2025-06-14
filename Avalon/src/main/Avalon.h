@@ -15,17 +15,40 @@
 
 #ifndef AVALON_SRC_MAIN_AVALON_H_
 #define AVALON_SRC_MAIN_AVALON_H_
-
+#include <Avalon/src/allocator/VmaAllocator.h>
+#include <Avalon/src/device/Device.h>
+#include <Avalon/src/device/Instance.h>
+#include <Avalon/src/utils/ResourceDescriptor.h>
+#include <Avalon/src/window/SurfaceManager.h>
 #include <Avalon/src/window/Window.h>
 #include <pch.h>
 
-#include <iostream>
+#include <memory>
 
 class Avalon {
-  Window m_Window;
+ private:
+  std::shared_ptr<SurfaceManager> m_surfaceManager;
+  std::shared_ptr<Window> m_window;
+  std::shared_ptr<Device> m_device;
+  std::shared_ptr<Instance> m_instance;
+  std::shared_ptr<VmaAllocatorWrapper> m_allocator;
 
  public:
+  Avalon();
+  Avalon(const Avalon& other) = delete;
+  Avalon(Avalon&& other) = delete;
+  Avalon& operator=(const Avalon& other) = delete;
+  Avalon& operator=(Avalon&& other) = delete;
+
+  ~Avalon();
+  void cleanUp();
+
+  void init();
+
   void test();
+
+ private:
+  void initVma();
 };
 
 #endif  // AVALON_SRC_MAIN_AVALON_H_

@@ -15,16 +15,24 @@
 
 #include "Window.h"
 
+#include <Avalon/interface/window/GlfWrapper.h>
+#include <GLFW/glfw3.h>
+
+#include <memory>
 #include <string>
+#include <utility>
+
+#include "interface/window/IGlfWrapper.h"
 
 Window::Window() : m_pWindow(nullptr) {}
 
-Window::Window(Window&& other) : m_pWindow(other.m_pWindow) {
+Window::Window(Window&& other) noexcept : m_pWindow(other.m_pWindow) {
   other.m_pWindow = nullptr;
 }
 
-Window& Window::operator=(Window&& other) {
+Window& Window::operator=(Window&& other) noexcept {
   m_pWindow = other.m_pWindow;
+
   other.m_pWindow = nullptr;
   return *this;
 }
@@ -43,9 +51,11 @@ void Window::cleanUp() {
 
 bool Window::init(int width, int height, const std::string& title) {
   glfwInit();
+  m_dimensions = std::make_pair(static_cast<uint16_t>(width),
+                                static_cast<uint16_t>(height));
   glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-
   m_pWindow = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+
   if (m_pWindow == nullptr) {
     return false;
   }
@@ -53,3 +63,9 @@ bool Window::init(int width, int height, const std::string& title) {
   glfwSetWindowUserPointer(m_pWindow, this);
   return true;
 }
+
+[[nodiscard]] GLFWwindow* Window::getWindow() const { return m_pWindow; }
+
+uint16_t Window::getWidth() const { return m_dimensions.first; }
+
+uint16_t Window::getHeight() const { return m_dimensions.second; }

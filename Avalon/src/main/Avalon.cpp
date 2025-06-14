@@ -14,13 +14,73 @@
  */
 #include "Avalon.h"
 
+#include <Avalon/src/utils/ResourceDescriptor.h>
 #include <pch.h>
 
 #include <iostream>
-void Avalon::test() {
-  std::cout << "Hello World from Avalon!" << std::endl;
-  if (volkInitialize() != VK_SUCCESS) {
-    spdlog::error("Failed to initialize volk.");
-    throw std::runtime_error("Failed to initialize volk.");
+#include <memory>
+
+Avalon::Avalon()
+    : m_surfaceManager(nullptr),
+      m_device(nullptr),
+      m_instance(nullptr),
+      m_window(nullptr),
+      m_allocator(nullptr) {}
+
+Avalon::~Avalon() { cleanUp(); }
+
+void Avalon::cleanUp() {
+  m_device->cleanUp();
+  m_surfaceManager->cleanUp();
+  m_window->cleanUp();
+  m_instance->cleanUp();
+
+  vmaDestroyAllocator(m_allocator->allocator);
+}
+
+void Avalon::init() {
+  Resource::Descriptor->device = m_device;
+  Resource::Descriptor->instance = m_instance;
+  Resource::Descriptor->window = m_window;
+  Resource::Descriptor->surfaceManager = m_surfaceManager;
+  //  Resource::Descriptor->allocator = m_allocator;
+
+  m_instance = std::make_shared<Instance>();
+  m_device = std::make_shared<Device>();
+  m_window = std::make_shared<Window>();
+  m_surfaceManager = std::make_shared<SurfaceManager>(m_instance, m_window);
+  m_allocator = std::make_shared<VmaAllocatorWrapper>();
+
+  try {
+    m_window->init(
+        400, 400,
+        "Avalon");  // TO DO: Make window size and title read from settings
+    m_instance->init();
+    m_surfaceManager->init();
+    m_device->initialize(m_instance, m_surfaceManager->getSurface());
+  } catch (const std::exception& e) {
+    cleanUp();
+    spdlog::error("Failed to initialize Avalon. Error: {}", e.what());
+    throw std::runtime_error("Failed to initialize Avalon.");
   }
+
+  cleanUp();
+}
+
+void Avalon::test() { std::cout << "Hello World from Avalon!" << std::endl; }
+
+void Avalon::initVma() {
+  VmaVulkanFunctions vulkanFunctions = {};
+  vulkanFunctions.vkGetInstanceProcAddr = &vkGetInstanceProcAddr;
+  vulkanFunctions.vkGetDeviceProcAddr = &vkGetDeviceProcAddr;
+
+  VmaAllocatorCreateInfo allocatorCreateInfo = {};
+  allocatorCreateInfo.flags = VMA_ALLOCATOR_CREATE_EXT_MEMORY_BUDGET_BIT;
+  allocatorCreateInfo.vulkanApiVersion = VK_API_VERSION_1_2;
+  allocatorCreateInfo.physicalDevice = m_device->getPhysicalDevice();
+  allocatorCreateInfo.device = m_device->getDevice();
+  allocatorCreateInfo.instance = m_instance->getInstance();
+  allocatorCreateInfo.pVulkanFunctions = &vulkanFunctions;
+
+  vmaCreateAllocator(&allocatorCreateInfo, &m_allocator->allocator);
 }

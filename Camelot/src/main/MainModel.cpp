@@ -15,4 +15,10 @@
 
 #include "MainModel.h"
 
-void MainModel::test() { m_window.init(800, 600, "Camelot"); }
+//  #include <unistd.h>
+
+void MainModel::test() {
+  m_avalon.init();
+  m_avalon.test();
+  m_avalon.cleanUp();
+}

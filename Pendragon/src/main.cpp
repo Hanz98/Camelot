@@ -14,15 +14,25 @@
  */
 
 #include <Camelot/src/main/MainModel.h>
-#include <unistd.h>
+#include <spdlog/sinks/basic_file_sink.h>
 
 #include <iostream>
 
+void basicLogfileSetup() {
+  try {
+    auto logger = spdlog::basic_logger_mt("Logger", "logs/basic-log.txt");
+    spdlog::flush_every(std::chrono::seconds(1));
+    spdlog::set_pattern("[%H:%M:%S %z] [%n] [%^---%L---%$] [thread %t] %v");
+  } catch (const spdlog::spdlog_ex &ex) {
+    std::cout << "Log init failed: " << ex.what() << std::endl;
+  }
+}
+
 int main(int argc, char *argv[]) {
   std::cout << "Hello world from Pendragon!" << std::endl;
+  basicLogfileSetup();
   MainModel mainTest;
-  mainTest.test();
-  usleep(10000000);
 
+  mainTest.test();
   return 0;
 }

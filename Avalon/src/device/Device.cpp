@@ -14,7 +14,14 @@
  */
 #include "Device.h"
 
+#define VMA_IMPLEMENTATION
+#include <vma/vk_mem_alloc.h>
+
+#include <iostream>
+#include <memory>
+#include <sstream>
 #include <stdexcept>
+#include <vector>
 
 Device::Device() : m_device(), m_physicalDevice() {}
 
@@ -24,7 +31,7 @@ Device::Device(Device&& other)
   other.m_physicalDevice = {};
 }
 
-Device& Device::operator=(Device&& other) {
+Device& Device::operator=(Device&& other) noexcept {
   m_device = other.m_device;
   m_physicalDevice = other.m_physicalDevice;
   other.m_device = {};
@@ -41,25 +48,45 @@ void Device::cleanUp() {
   }
 }
 
-void Device::PickPhysicalDevice(const Instance& instance,
-                                const VkSurfaceKHR& surface) {
-  vkb::PhysicalDeviceSelector selector{instance.getVkbInstance()};
-  auto phys_ret = selector.set_surface(surface).select();
-  m_physicalDevice = phys_ret.value();
-  if (!phys_ret) {
-    spdlog::error("Failed to select Vulkan Physical Device. Error: " +
-                  phys_ret.error().message());
-    throw std::runtime_error("Failed to select Vulkan Physical Device.");
+void Device::initialize(std::shared_ptr<Instance> instance,
+                        std::shared_ptr<Surface> surface) {
+  if (surface == nullptr || instance == nullptr) {
+    spdlog::error("Device::pickPhysicalDevice invaliad arguments!");
+    throw std::runtime_error("Device::pickPhysicalDevice invaliad arguments!");
   }
 
-  vkb::DeviceBuilder device_builder{phys_ret.value()};
-  auto dev_ret = device_builder.build();
-  if (!dev_ret) {
+  vkb::PhysicalDeviceSelector selector{instance->getVkbInstance()};
+  auto vkbPhysicalDevice = selector.set_surface(surface->getSurface()).select();
+  if (!vkbPhysicalDevice) {
+    spdlog::error("Failed to select Vulkan Physical Device. Error: " +
+                  vkbPhysicalDevice.error().message());
+    throw std::runtime_error("Failed to select Vulkan Physical Device.");
+  }
+  m_physicalDevice = vkbPhysicalDevice.value();
+
+  vkb::DeviceBuilder deviceBuilder{vkbPhysicalDevice.value()};
+  auto devRet = deviceBuilder.build();
+  if (!devRet) {
     spdlog::error("Failed to create Vulkan device. Error: " +
-                  dev_ret.error().message());
+                  devRet.error().message());
     throw std::runtime_error("Failed to create Vulkan device.");
   }
 
-  m_device = dev_ret.value();
-  volkLoadDevice(m_device.device);
+  m_device = devRet.value();
+
+  auto graphicsQueueRet = m_device.get_queue(vkb::QueueType::graphics);
+  if (!graphicsQueueRet) {
+    spdlog::error("Failed to create Vulkan queue. Error: " +
+                  graphicsQueueRet.error().message());
+    throw std::runtime_error("Failed to create Vulkan queue.");
+  }
+  m_graphicsQueue = graphicsQueueRet.value();
+
+  auto presentQueueRet = m_device.get_queue(vkb::QueueType::present);
+  if (!presentQueueRet) {
+    spdlog::error("Failed to create Vulkan queue. Error: " +
+                  presentQueueRet.error().message());
+    throw std::runtime_error("Failed to create Vulkan queue.");
+  }
+  m_presentQueue = presentQueueRet.value();
 }

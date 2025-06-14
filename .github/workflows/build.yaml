@@ -38,7 +38,7 @@ jobs:
         run: |
           git clone https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git /tmp/VulkanMemoryAllocator
           sudo mkdir -p /usr/local/include/vma
-          sudo cp /tmp/VulkanMemoryAllocator/include/vk_mem_alloc.h /usr/local/include/vma/    
+          sudo cp /tmp/VulkanMemoryAllocator/include/vk_mem_alloc.h /usr/local/include/vma/
       - name: Build Project
         run: |
           sudo cmake \
@@ -54,4 +54,6 @@ jobs:
       - name: Run Tests
         run: |
           cd build
-          sudo ./bin/test_main
+          export VK_ICD_FILENAMES=lib/VkICD_mock_icd.json
+#          sudo ./bin/Test_Main testing not currently present
+# TODO: Uncomment and configure this line when the test suite is implemented.

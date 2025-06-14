@@ -1,5 +1,7 @@
+add_subdirectory("allocator")
 add_subdirectory("device")
 add_subdirectory("main")
+add_subdirectory("presentation")
 add_subdirectory("utils")
 add_subdirectory("validation")
 add_subdirectory("window")
