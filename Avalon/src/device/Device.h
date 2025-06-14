@@ -42,14 +42,17 @@ class Device {
   ~Device();
 
   void cleanUp();
+  void initialize(std::shared_ptr<Instance>, std::shared_ptr<Surface>);
 
  public:
-  VkDevice& getDevice() { return m_device.device; }
-  VkPhysicalDevice& getPhysicalDevice() {
+  inline VkDevice& getDevice() { return m_device.device; }
+  inline VkPhysicalDevice& getPhysicalDevice() {
     return m_physicalDevice.physical_device;
   }
-
-  void initialize(std::shared_ptr<Instance>, std::shared_ptr<Surface>);
+  inline vkb::Device& getVkbDevice() { return m_device; }
+  inline vkb::PhysicalDevice& getVkbPhysicalDevice() {
+    return m_physicalDevice;
+  }
 };
 
 #endif  // AVALON_SRC_DEVICE_DEVICE_H_

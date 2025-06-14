@@ -29,14 +29,27 @@ class SwapchainModel {
   std::shared_ptr<Device> m_device;
   std::shared_ptr<Window> m_window;
 
-  Image m_depth;
-  Image m_color;
+  vkb::Swapchain m_swapchain;
 
-  std::vector<Image> m_swapChainImage;
-  std::vector<VkFramebuffer> m_frameBuffers;
+  //  Image m_depth;
+  //  Image m_color;
+
+  //  std::vector<Image> m_swapChainImage;
+  //  std::vector<VkFramebuffer> m_frameBuffers;
 
  private:
   SwapchainModel();
+  SwapchainModel(const SwapchainModel&) = delete;
+  SwapchainModel(SwapchainModel&&) noexcept;
+  SwapchainModel& operator=(const SwapchainModel&) = delete;
+  SwapchainModel& operator=(SwapchainModel&&) noexcept;
+
+  ~SwapchainModel();
+  void cleanUp();
+
+  void initialize();
+
+  void recreateSwapchain();
 };
 
 #endif  // AVALON_SRC_PRESENTATION_SWAPCHAIN_SWAPCHAINMODEL_H_

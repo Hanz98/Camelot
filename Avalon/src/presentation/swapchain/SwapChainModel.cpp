@@ -14,3 +14,74 @@
  */
 
 #include "SwapChainModel.h"
+
+#include <Avalon/src/utils/ResourceDescriptor.h>
+
+#include <utility>
+
+SwapchainModel::SwapchainModel() {
+  m_device = Resource::Descriptor->device;
+  m_window = Resource::Descriptor->window;
+}
+
+SwapchainModel::SwapchainModel(SwapchainModel&& other) noexcept
+    : m_device(std::move(other.m_device)),
+      m_window(std::move(other.m_window)) {  //,
+  //   m_depth(std::move(other.m_depth)),
+  //       m_color(std::move(other.m_color)),
+  //       m_swapChainImage(std::move(other.m_swapChainImage)),
+  //       m_frameBuffers(std::move(other.m_frameBuffers))
+  //{
+  other.m_device = nullptr;
+  other.m_window = nullptr;
+}
+
+SwapchainModel& SwapchainModel::operator=(SwapchainModel&& other) noexcept {
+  if (this != &other) {
+    m_device = std::move(other.m_device);
+    m_window = std::move(other.m_window);
+    //    m_depth = std::move(other.m_depth);
+    //    m_color = std::move(other.m_color);
+    //    m_swapChainImage = std::move(other.m_swapChainImage);
+    //    m_frameBuffers = std::move(other.m_frameBuffers);
+    other.m_device = nullptr;
+    other.m_window = nullptr;
+  }
+  return *this;
+}
+
+SwapchainModel::~SwapchainModel() { cleanUp(); }
+
+void SwapchainModel::cleanUp() { vkb::destroy_swapchain(m_swapchain); }
+
+void SwapchainModel::initialize() {
+  if (m_device == nullptr || m_window == nullptr) {
+    spdlog::error("SwapchainModel: Device or Window is not initialized.");
+    throw std::runtime_error(
+        "SwapchainModel: Device or Window is not initialized.");
+  }
+
+  vkb::SwapchainBuilder swapchainBuilder{m_device->getVkbDevice()};
+  auto swapRet = swapchainBuilder.build();
+  if (!swapRet) {
+    spdlog::error("Failed to create Vulkan swapchain. Error: " +
+                  swapRet.error().message());
+    throw std::runtime_error("Failed to create Vulkan swapchain.");
+  }
+
+  m_swapchain = swapRet.value();
+}
+
+void SwapchainModel::recreateSwapchain() {
+  vkb::SwapchainBuilder swapchain_builder{m_device->getVkbDevice()};
+  auto swapRet = swapchain_builder.set_old_swapchain(m_swapchain).build();
+  if (!swapRet) {
+    m_swapchain.swapchain = VK_NULL_HANDLE;
+    spdlog::error("Failed to recreate Vulkan swapchain. Error: " +
+                  swapRet.error().message());
+    throw std::runtime_error("Failed to recreate Vulkan swapchain.");
+  }
+
+  vkb::destroy_swapchain(m_swapchain);
+  m_swapchain = swapRet.value();
+}
