@@ -45,8 +45,9 @@ void Surface::init() {
 }
 
 void Surface::cleanUp() {
-  if (m_surface != VK_NULL_HANDLE || m_instance != nullptr) {
+  if (m_surface != VK_NULL_HANDLE && m_instance != nullptr) {
     vkDestroySurfaceKHR(m_instance->getInstance(), m_surface, nullptr);
+    m_surface = VK_NULL_HANDLE;
   }
 }
 

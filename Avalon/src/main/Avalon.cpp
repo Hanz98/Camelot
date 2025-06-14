@@ -57,7 +57,7 @@ void Avalon::init() {
         "Avalon");  // TO DO: Make window size and title read from settings
     m_instance->init();
     m_surfaceManager->init();
-    m_device->pickPhysicalDevice(m_instance, m_surfaceManager->getSurface());
+    m_device->initialize(m_instance, m_surfaceManager->getSurface());
   } catch (const std::exception& e) {
     cleanUp();
     spdlog::error("Failed to initialize Avalon. Error: {}", e.what());
