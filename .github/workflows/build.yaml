@@ -55,4 +55,4 @@ jobs:
         run: |
           cd build
           export VK_ICD_FILENAMES=lib/VkICD_mock_icd.json
-          sudo ./bin/Test_Main
+#          sudo ./bin/Test_Main testing not currently present
