@@ -29,12 +29,14 @@ class Device {
  private:
   vkb::Device m_device;
   vkb::PhysicalDevice m_physicalDevice;
+  VkQueue m_graphicsQueue;
+  VkQueue m_presentQueue;
 
  public:
   Device();
   Device(Device&& other);
   Device(const Device& other) = delete;
-  Device& operator=(Device&& other);
+  Device& operator=(Device&& other) noexcept;
   Device& operator=(const Device& other) = delete;
 
   ~Device();
@@ -47,7 +49,7 @@ class Device {
     return m_physicalDevice.physical_device;
   }
 
-  void pickPhysicalDevice(std::shared_ptr<Instance>, std::shared_ptr<Surface>);
+  void initialize(std::shared_ptr<Instance>, std::shared_ptr<Surface>);
 };
 
 #endif  // AVALON_SRC_DEVICE_DEVICE_H_
