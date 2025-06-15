@@ -16,6 +16,7 @@
 
 #include <Avalon/src/utils/ResourceDescriptor.h>
 #include <Avalon/src/validation/CheckResult.h>
+#include <vma/vk_mem_alloc.h>
 
 #include <utility>
 

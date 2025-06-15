@@ -26,9 +26,9 @@ SwapchainModel::SwapchainModel() {
 
 SwapchainModel::SwapchainModel(SwapchainModel&& other) noexcept
     : m_device(std::move(other.m_device)),
-      m_window(std::move(other.m_window)) {  //,
-  //   m_depth(std::move(other.m_depth)),
-  //       m_color(std::move(other.m_color)),
+      m_window(std::move(other.m_window)),
+      m_depth(std::move(other.m_depth)),
+      m_color(std::move(other.m_color)) {  //,
   //       m_swapChainImage(std::move(other.m_swapChainImage)),
   //       m_frameBuffers(std::move(other.m_frameBuffers))
   //{
@@ -40,8 +40,8 @@ SwapchainModel& SwapchainModel::operator=(SwapchainModel&& other) noexcept {
   if (this != &other) {
     m_device = std::move(other.m_device);
     m_window = std::move(other.m_window);
-    //    m_depth = std::move(other.m_depth);
-    //    m_color = std::move(other.m_color);
+    m_depth = std::move(other.m_depth);
+    m_color = std::move(other.m_color);
     //    m_swapChainImage = std::move(other.m_swapChainImage);
     //    m_frameBuffers = std::move(other.m_frameBuffers);
     other.m_device = nullptr;
@@ -84,4 +84,38 @@ void SwapchainModel::recreateSwapchain() {
 
   vkb::destroy_swapchain(m_swapchain);
   m_swapchain = swapRet.value();
+
+  createDepthImage();
+  createColorImage();
+}
+
+void SwapchainModel::createDepthImage() {
+  Camelot::ImageCreateInfo depthInfo = {
+      .width = m_window->getWidth(),
+      .height = m_window->getHeight(),
+      .mipLevels = 1,
+      .numSample = m_device->getMaxUsableSampleCount(),
+      .format = m_device->getDepthFormat(),
+      .tiling = VK_IMAGE_TILING_OPTIMAL,
+      .usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+      .properties = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+      .aspectFlags = VK_IMAGE_ASPECT_DEPTH_BIT};
+
+  m_depth.createImage(depthInfo);
+}
+
+void SwapchainModel::createColorImage() {
+  Camelot::ImageCreateInfo colorInfo = {
+      .width = m_window->getWidth(),
+      .height = m_window->getHeight(),
+      .mipLevels = 1,
+      .numSample = m_device->getMaxUsableSampleCount(),
+      .format = m_swapchain.image_format,
+      .tiling = VK_IMAGE_TILING_OPTIMAL,
+      .usage = VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT |
+               VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+      .properties = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+      .aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT};
+
+  m_color.createImage(colorInfo);
 }
