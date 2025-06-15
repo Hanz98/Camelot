@@ -25,19 +25,18 @@
 #include <vulkan/vulkan.hpp>
 
 class SwapchainModel {
- public:
+ private:
   std::shared_ptr<Device> m_device;
   std::shared_ptr<Window> m_window;
 
   vkb::Swapchain m_swapchain;
 
-  //  Image m_depth;
-  //  Image m_color;
+  Image m_depth;
+  Image m_color;
 
-  //  std::vector<Image> m_swapChainImage;
   //  std::vector<VkFramebuffer> m_frameBuffers;
 
- private:
+ public:
   SwapchainModel();
   SwapchainModel(const SwapchainModel&) = delete;
   SwapchainModel(SwapchainModel&&) noexcept;
@@ -50,6 +49,10 @@ class SwapchainModel {
   void initialize();
 
   void recreateSwapchain();
+
+ private:
+  void createDepthImage();
+  void createColorImage();
 };
 
 #endif  // AVALON_SRC_PRESENTATION_SWAPCHAIN_SWAPCHAINMODEL_H_

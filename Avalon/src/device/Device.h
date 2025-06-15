@@ -32,6 +32,8 @@ class Device {
   VkQueue m_graphicsQueue;
   VkQueue m_presentQueue;
 
+  VkPhysicalDeviceProperties m_physicalDeviceProperties;
+
  public:
   Device();
   Device(Device&& other);
@@ -53,6 +55,13 @@ class Device {
   inline vkb::PhysicalDevice& getVkbPhysicalDevice() {
     return m_physicalDevice;
   }
+
+ public:
+  VkSampleCountFlagBits getMaxUsableSampleCount();
+  VkFormat getDepthFormat();
+
+ private:
+  void initializeQueues();
 };
 
 #endif  // AVALON_SRC_DEVICE_DEVICE_H_
