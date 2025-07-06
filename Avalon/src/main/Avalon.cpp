@@ -39,10 +39,12 @@ void Avalon::cleanUp() {
 }
 
 void Avalon::init() {
-  Resource::Descriptor->device = m_device;
-  Resource::Descriptor->instance = m_instance;
-  Resource::Descriptor->window = m_window;
-  Resource::Descriptor->surfaceManager = m_surfaceManager;
+  std::shared_ptr<Resource::Descriptor> resourceDescriptor =
+      Resource::Descriptor::GetDescriptor();
+  resourceDescriptor->getDevice() = m_device;
+  resourceDescriptor->getInstance() = m_instance;
+  resourceDescriptor->getWindow() = m_window;
+  resourceDescriptor->getSurfaceManager() = m_surfaceManager;
   //  Resource::Descriptor->allocator = m_allocator;
 
   m_instance = std::make_shared<Instance>();
