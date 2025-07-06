@@ -18,6 +18,7 @@
 
 #include <Avalon/src/allocator/VmaAllocator.h>
 #include <Avalon/src/device/Device.h>
+#include <Avalon/src/utils/ResourceDescriptor.h>
 #include <spdlog/spdlog.h>
 
 #include <memory>
@@ -43,8 +44,7 @@ class Image {
   VkImageView m_imageView;
 
   VmaAllocation m_allocation;
-  std::shared_ptr<Device> m_device;
-  std::shared_ptr<VmaAllocatorWrapper> m_allocator;
+  std::shared_ptr<Resource::Descriptor> m_resourceDescriptor;
 
  public:
   Image();
