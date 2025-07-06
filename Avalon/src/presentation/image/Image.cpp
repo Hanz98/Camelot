@@ -21,26 +21,23 @@
 #include <utility>
 
 Image::Image()
-    : m_device(Resource::Descriptor->device),
+    : m_resourceDescriptor(Resource::Descriptor::GetDescriptor()),
       m_image(VK_NULL_HANDLE),
       m_imageView(VK_NULL_HANDLE),
-      m_allocation(VK_NULL_HANDLE),
-      m_allocator(Resource::Descriptor->allocator) {}
+      m_allocation(VK_NULL_HANDLE) {}
 
 Image::Image(Image&& other) noexcept
-    : m_device(std::move(other.m_device)),
+    : m_resourceDescriptor(std::move(other.m_resourceDescriptor)),
       m_image(std::exchange(other.m_image, VK_NULL_HANDLE)),
       m_imageView(std::exchange(other.m_imageView, VK_NULL_HANDLE)),
-      m_allocation(std::exchange(other.m_allocation, VK_NULL_HANDLE)),
-      m_allocator(std::move(other.m_allocator)) {}
+      m_allocation(std::exchange(other.m_allocation, VK_NULL_HANDLE)) {}
 
 Image& Image::operator=(Image&& other) noexcept {
   if (this != &other) {
-    m_device = std::move(other.m_device);
+    m_resourceDescriptor = std::move(other.m_resourceDescriptor);
     m_image = std::exchange(other.m_image, VK_NULL_HANDLE);
     m_imageView = std::exchange(other.m_imageView, VK_NULL_HANDLE);
     m_allocation = std::exchange(other.m_allocation, VK_NULL_HANDLE);
-    m_allocator = std::move(other.m_allocator);
   }
   return *this;
 }
@@ -49,12 +46,14 @@ Image::~Image() { cleanUp(); }
 
 void Image::cleanUp() {
   if (m_imageView != VK_NULL_HANDLE) {
-    vkDestroyImageView(m_device->getDevice(), m_imageView, nullptr);
+    vkDestroyImageView(m_resourceDescriptor->getDevice()->getDevice(),
+                       m_imageView, nullptr);
     m_imageView = VK_NULL_HANDLE;
   }
 
   if (m_image != VK_NULL_HANDLE) {
-    vmaDestroyImage(m_allocator->allocator, m_image, m_allocation);
+    vmaDestroyImage(m_resourceDescriptor->getAllocator()->allocator, m_image,
+                    m_allocation);
     m_image = VK_NULL_HANDLE;
     m_allocation = VK_NULL_HANDLE;
   }
@@ -78,9 +77,9 @@ void Image::createImage(const Camelot::ImageCreateInfo& createInfo) {
 
   VmaAllocationCreateInfo vmaCreateInfo = {};
   vmaCreateInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
-  VK_CHECK_RESULT(vmaCreateImage(m_allocator->allocator, &imageInfo,
-                                 &vmaCreateInfo, &m_image, &m_allocation,
-                                 nullptr));
+  VK_CHECK_RESULT(vmaCreateImage(
+      m_resourceDescriptor->getAllocator()->allocator, &imageInfo,
+      &vmaCreateInfo, &m_image, &m_allocation, nullptr));
 
   VkImageViewCreateInfo viewInfo{};
   viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -93,6 +92,7 @@ void Image::createImage(const Camelot::ImageCreateInfo& createInfo) {
   viewInfo.subresourceRange.baseArrayLayer = 0;
   viewInfo.subresourceRange.layerCount = 1;
 
-  VK_CHECK_RESULT(vkCreateImageView(m_device->getDevice(), &viewInfo, nullptr,
-                                    &m_imageView));
+  VK_CHECK_RESULT(
+      vkCreateImageView(m_resourceDescriptor->getDevice()->getDevice(),
+                        &viewInfo, nullptr, &m_imageView));
 }
