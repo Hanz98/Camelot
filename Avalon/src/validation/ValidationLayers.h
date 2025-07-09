@@ -33,7 +33,11 @@ class LayerWrapper : public ILayerWrapper {
 
 }  // namespace Validation
 
-// Legacy alias for backward compatibility
-using ValidationLayerWrapper = Validation::LayerWrapper;
+// Legacy alias for backward compatibility - place outside namespace
+class ValidationLayerWrapper : public Validation::LayerWrapper {
+public:
+  // Inherit all constructors and methods
+  using Validation::LayerWrapper::LayerWrapper;
+};
 
 #endif  // AVALON_SRC_VALIDATION_VALIDATIONLAYERS_H_

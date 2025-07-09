@@ -17,7 +17,7 @@
 
 #include <string>
 
-namespace Window {
+namespace WindowNS {
 
 Model::Model() : m_pWindow(nullptr) {}
 
@@ -56,4 +56,4 @@ bool Model::init(int width, int height, const std::string& title) {
   return true;
 }
 
-}  // namespace Window
+}  // namespace WindowNS

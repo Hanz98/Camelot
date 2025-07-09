@@ -43,7 +43,7 @@ void Model::cleanUp() {
   }
 }
 
-void Model::PickPhysicalDevice(const Instance::Model& instance,
+void Model::PickPhysicalDevice(const Instance& instance,
                                 const VkSurfaceKHR& surface) {
   vkb::PhysicalDeviceSelector selector{instance.getVkbInstance()};
   auto phys_ret = selector.set_surface(surface).select();

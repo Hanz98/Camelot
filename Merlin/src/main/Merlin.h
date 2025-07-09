@@ -28,7 +28,11 @@ class Model : public IModel {
 
 }  // namespace Merlin
 
-// Legacy alias for backward compatibility
-using Merlin = Merlin::Model;
+// Legacy alias for backward compatibility - place outside namespace
+class Merlin : public Merlin::Model {
+public:
+  // Inherit all constructors and methods
+  using Merlin::Model::Model;
+};
 
 #endif  // MERLIN_SRC_MAIN_MERLIN_H_

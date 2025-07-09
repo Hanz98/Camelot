@@ -16,7 +16,7 @@
 #ifndef AVALON_SRC_MAIN_IMODEL_H_
 #define AVALON_SRC_MAIN_IMODEL_H_
 
-namespace Avalon {
+namespace AvalonNS {
 
 class IModel {
 public:
@@ -24,6 +24,6 @@ public:
   virtual void test() = 0;
 };
 
-}  // namespace Avalon
+}  // namespace AvalonNS
 
 #endif  // AVALON_SRC_MAIN_IMODEL_H_

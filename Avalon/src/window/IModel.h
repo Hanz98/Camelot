@@ -18,7 +18,7 @@
 
 #include <string>
 
-namespace Window {
+namespace WindowNS {
 
 class IModel {
 public:
@@ -27,6 +27,6 @@ public:
   virtual void cleanUp() = 0;
 };
 
-}  // namespace Window
+}  // namespace WindowNS
 
 #endif  // AVALON_SRC_WINDOW_IMODEL_H_
