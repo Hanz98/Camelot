@@ -17,10 +17,18 @@
 #define NIMUE_API_NIMUE_H_
 
 #include <iostream>
+#include "IModel.h"
 
-class MainModel {
+namespace Nimue {
+
+class Model : public IModel {
  public:
-  void test() { std::cout << "Hello World from Nimue!" << std::endl; }
+  void test() override { std::cout << "Hello World from Nimue!" << std::endl; }
 };
+
+}  // namespace Nimue
+
+// Legacy alias for backward compatibility
+using MainModel = Nimue::Model;
 
 #endif  // NIMUE_API_NIMUE_H_

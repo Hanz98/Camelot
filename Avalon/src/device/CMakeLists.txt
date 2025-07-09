@@ -1,8 +1,10 @@
 add_library(Avalon_device
 "Device.cpp"
 "Device.h"
+"IModel.h"
 "Instance.cpp"
 "Instance.h"
+"InstanceIModel.h"
 )
 
 

@@ -23,7 +23,11 @@
 #include <vma/vk_mem_alloc.h>
 
 #include "Instance.h"
-class Device {
+#include "IModel.h"
+
+namespace Device {
+
+class Model : public IModel {
  private:
   vkb::Device m_device;
   vkb::PhysicalDevice m_physicalDevice;
@@ -31,24 +35,29 @@ class Device {
   VmaAllocation m_allocation;
 
  public:
-  Device();
-  Device(Device&& other);
-  Device(const Device& other) = delete;
-  Device& operator=(Device&& other);
-  Device& operator=(const Device& other) = delete;
+  Model();
+  Model(Model&& other);
+  Model(const Model& other) = delete;
+  Model& operator=(Model&& other);
+  Model& operator=(const Model& other) = delete;
 
-  ~Device();
+  ~Model() override;
 
-  void cleanUp();
+  void cleanUp() override;
 
  public:
-  VkDevice& getDevice() { return m_device.device; }
-  VkPhysicalDevice& getPhysicalDevice() {
+  VkDevice& getDevice() override { return m_device.device; }
+  VkPhysicalDevice& getPhysicalDevice() override {
     return m_physicalDevice.physical_device;
   }
 
-  void PickPhysicalDevice(const Instance& instance,
-                          const VkSurfaceKHR& surface);
+  void PickPhysicalDevice(const Instance::Model& instance,
+                          const VkSurfaceKHR& surface) override;
 };
+
+}  // namespace Device
+
+// Legacy alias for backward compatibility
+using Device = Device::Model;
 
 #endif  // AVALON_SRC_DEVICE_DEVICE_H_

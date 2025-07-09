@@ -1,7 +1,8 @@
 add_library(Avalon_validation
 "CheckResult.h"
 "ValidationLayers.cpp"
-"ValidationLayers.h")
+"ValidationLayers.h"
+"ILayerWrapper.h")
 
 target_include_directories(Avalon_validation PUBLIC ${Avalon_include_dirs})
 

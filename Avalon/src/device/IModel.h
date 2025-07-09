@@ -13,27 +13,29 @@
  * limitations under the License.
  */
 
-#ifndef AVALON_SRC_MAIN_AVALON_H_
-#define AVALON_SRC_MAIN_AVALON_H_
+#ifndef AVALON_SRC_DEVICE_IMODEL_H_
+#define AVALON_SRC_DEVICE_IMODEL_H_
 
-#include <Avalon/src/window/Window.h>
+#include <VkBootstrap.h>
+#include <VkBootstrapDispatch.h>
 #include <pch.h>
-#include "IModel.h"
 
-#include <iostream>
+// Forward declaration for Instance namespace
+namespace Instance {
+class Model;
+}
 
-namespace Avalon {
+namespace Device {
 
-class Model : public IModel {
-  Window::Model m_Window;
-
- public:
-  void test() override;
+class IModel {
+public:
+  virtual ~IModel() = default;
+  virtual void cleanUp() = 0;
+  virtual VkDevice& getDevice() = 0;
+  virtual VkPhysicalDevice& getPhysicalDevice() = 0;
+  virtual void PickPhysicalDevice(const Instance::Model& instance, const VkSurfaceKHR& surface) = 0;
 };
 
-}  // namespace Avalon
+}  // namespace Device
 
-// Legacy alias for backward compatibility
-using Avalon = Avalon::Model;
-
-#endif  // AVALON_SRC_MAIN_AVALON_H_
+#endif  // AVALON_SRC_DEVICE_IMODEL_H_

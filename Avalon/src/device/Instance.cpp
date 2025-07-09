@@ -19,28 +19,30 @@
 
 #include <Avalon/src/utils/Initializers.hpp>
 
-Instance::Instance() : m_instance() {}
+namespace Instance {
 
-Instance::Instance(Instance&& other) : m_instance(other.m_instance) {
+Model::Model() : m_instance() {}
+
+Model::Model(Model&& other) : m_instance(other.m_instance) {
   other.m_instance = {};
 }
 
-Instance& Instance::operator=(Instance&& other) {
+Model& Model::operator=(Model&& other) {
   m_instance = other.m_instance;
   other.m_instance = {};
   return *this;
 }
 
-Instance::~Instance() { cleanUp(); }
+Model::~Model() { cleanUp(); }
 
-void Instance::cleanUp() {
+void Model::cleanUp() {
   if (m_instance) {
     vkb::destroy_instance(m_instance);
     m_instance = {};
   }
 }
 
-void Instance::init() {
+void Model::init() {
   vkb::InstanceBuilder builder;
 
   auto inst_ret = builder.set_app_name("Camelot")
@@ -55,3 +57,5 @@ void Instance::init() {
   vkb::Instance vkb_inst = inst_ret.value();
   volkLoadInstance(vkb_inst.instance);
 }
+
+}  // namespace Instance

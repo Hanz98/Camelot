@@ -1,6 +1,7 @@
 add_library(Avalon_window
 "Window.cpp"
 "Window.h"
+"IModel.h"
 "WindowManager.cpp"
 "WindowManager.h"
 )

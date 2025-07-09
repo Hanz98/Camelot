@@ -1,6 +1,7 @@
 add_Library(Avalon_main
 "Avalon.cpp"
 "Avalon.h"
+"IModel.h"
 )
 
 target_include_directories(Avalon_main PUBLIC ${Avalon_include_dirs})

@@ -13,19 +13,24 @@
  * limitations under the License.
  */
 
-#include "ValidationLayers.h"
+#ifndef AVALON_SRC_DEVICE_INSTANCE_IMODEL_H_
+#define AVALON_SRC_DEVICE_INSTANCE_IMODEL_H_
 
-#include <iostream>
+#include <VkBootstrap.h>
+#include <VkBootstrapDispatch.h>
+#include <pch.h>
 
-namespace Validation {
+namespace Instance {
 
-VKAPI_ATTR VkBool32 VKAPI_CALL LayerWrapper::debugCallback(
-    VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-    VkDebugUtilsMessageTypeFlagsEXT messageType,
-    const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
-    void *pUserData) {
-  std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
-  return VK_FALSE;
-}
+class IModel {
+public:
+  virtual ~IModel() = default;
+  virtual void cleanUp() = 0;
+  virtual void init() = 0;
+  virtual const vkb::Instance& getVkbInstance() const = 0;
+  virtual VkInstance& getInstance() = 0;
+};
 
-}  // namespace Validation
+}  // namespace Instance
+
+#endif  // AVALON_SRC_DEVICE_INSTANCE_IMODEL_H_

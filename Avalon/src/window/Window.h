@@ -22,22 +22,33 @@
 #include <GLFW/glfw3.h>
 
 #include <string>
+#include "IModel.h"
 
-class Window {
+namespace Window {
+
+class Model : public IModel {
  private:
   GLFWwindow* m_pWindow;
 
  public:
-  Window();
-  Window(Window&&);
-  Window(const Window&) = delete;
-  Window& operator=(Window&&);
-  Window& operator=(const Window&) = delete;
+  Model();
+  Model(Model&&);
+  Model(const Model&) = delete;
+  Model& operator=(Model&&);
+  Model& operator=(const Model&) = delete;
 
-  ~Window();
-  void cleanUp();
+  ~Model() override;
+  void cleanUp() override;
 
-  bool init(int width, int height, const std::string& title);
+  bool init(int width, int height, const std::string& title) override;
 };
+
+// Legacy alias for backward compatibility
+using Window = Model;
+
+}  // namespace Window
+
+// Legacy alias for backward compatibility
+using Window = Window::Model;
 
 #endif  // AVALON_SRC_WINDOW_WINDOW_H_

@@ -17,8 +17,11 @@
 #define AVALON_SRC_VALIDATION_VALIDATIONLAYERS_H_
 
 #include <pch.h>
+#include "ILayerWrapper.h"
 
-class ValidationLayerWrapper {
+namespace Validation {
+
+class LayerWrapper : public ILayerWrapper {
  private:
  public:
   static VKAPI_ATTR VkBool32 VKAPI_CALL
@@ -27,5 +30,10 @@ class ValidationLayerWrapper {
                 const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
                 void *pUserData);
 };
+
+}  // namespace Validation
+
+// Legacy alias for backward compatibility
+using ValidationLayerWrapper = Validation::LayerWrapper;
 
 #endif  // AVALON_SRC_VALIDATION_VALIDATIONLAYERS_H_

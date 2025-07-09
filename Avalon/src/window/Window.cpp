@@ -17,31 +17,33 @@
 
 #include <string>
 
-Window::Window() : m_pWindow(nullptr) {}
+namespace Window {
 
-Window::Window(Window&& other) : m_pWindow(other.m_pWindow) {
+Model::Model() : m_pWindow(nullptr) {}
+
+Model::Model(Model&& other) : m_pWindow(other.m_pWindow) {
   other.m_pWindow = nullptr;
 }
 
-Window& Window::operator=(Window&& other) {
+Model& Model::operator=(Model&& other) {
   m_pWindow = other.m_pWindow;
   other.m_pWindow = nullptr;
   return *this;
 }
 
-Window::~Window() {
+Model::~Model() {
   cleanUp();
   glfwTerminate();
 }
 
-void Window::cleanUp() {
+void Model::cleanUp() {
   if (m_pWindow) {
     glfwDestroyWindow(m_pWindow);
     m_pWindow = nullptr;
   }
 }
 
-bool Window::init(int width, int height, const std::string& title) {
+bool Model::init(int width, int height, const std::string& title) {
   glfwInit();
   glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
@@ -53,3 +55,5 @@ bool Window::init(int width, int height, const std::string& title) {
   glfwSetWindowUserPointer(m_pWindow, this);
   return true;
 }
+
+}  // namespace Window

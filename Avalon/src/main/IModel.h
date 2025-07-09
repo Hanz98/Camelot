@@ -13,19 +13,17 @@
  * limitations under the License.
  */
 
-#include "ValidationLayers.h"
+#ifndef AVALON_SRC_MAIN_IMODEL_H_
+#define AVALON_SRC_MAIN_IMODEL_H_
 
-#include <iostream>
+namespace Avalon {
 
-namespace Validation {
+class IModel {
+public:
+  virtual ~IModel() = default;
+  virtual void test() = 0;
+};
 
-VKAPI_ATTR VkBool32 VKAPI_CALL LayerWrapper::debugCallback(
-    VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-    VkDebugUtilsMessageTypeFlagsEXT messageType,
-    const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
-    void *pUserData) {
-  std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
-  return VK_FALSE;
-}
+}  // namespace Avalon
 
-}  // namespace Validation
+#endif  // AVALON_SRC_MAIN_IMODEL_H_

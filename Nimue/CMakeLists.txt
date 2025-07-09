@@ -1,5 +1,6 @@
 add_library(Nimue INTERFACE
 "API/Nimue.h"
+"API/IModel.h"
 "API/Nimue.cpp"
 )
 

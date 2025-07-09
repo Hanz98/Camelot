@@ -19,25 +19,33 @@
 #include <VkBootstrap.h>
 #include <VkBootstrapDispatch.h>
 #include <pch.h>
+#include "InstanceIModel.h"
 
-class Instance {
+namespace Instance {
+
+class Model : public IModel {
  private:
   vkb::Instance m_instance;
 
  public:
-  Instance();
-  Instance(Instance&& other);
-  Instance(const Instance& other) = delete;
-  Instance& operator=(Instance&& other);
-  Instance& operator=(const Instance& other) = delete;
+  Model();
+  Model(Model&& other);
+  Model(const Model& other) = delete;
+  Model& operator=(Model&& other);
+  Model& operator=(const Model& other) = delete;
 
-  ~Instance();
+  ~Model() override;
 
-  void cleanUp();
+  void cleanUp() override;
 
-  void init();
-  inline const vkb::Instance& getVkbInstance() const { return m_instance; }
-  inline VkInstance& getInstance() { return m_instance.instance; }
+  void init() override;
+  inline const vkb::Instance& getVkbInstance() const override { return m_instance; }
+  inline VkInstance& getInstance() override { return m_instance.instance; }
 };
+
+}  // namespace Instance
+
+// Legacy alias for backward compatibility
+using Instance = Instance::Model;
 
 #endif  // AVALON_SRC_DEVICE_INSTANCE_H_

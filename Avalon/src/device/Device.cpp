@@ -16,15 +16,17 @@
 
 #include <stdexcept>
 
-Device::Device() : m_device(), m_physicalDevice() {}
+namespace Device {
 
-Device::Device(Device&& other)
+Model::Model() : m_device(), m_physicalDevice() {}
+
+Model::Model(Model&& other)
     : m_device(other.m_device), m_physicalDevice(other.m_physicalDevice) {
   other.m_device = {};
   other.m_physicalDevice = {};
 }
 
-Device& Device::operator=(Device&& other) {
+Model& Model::operator=(Model&& other) {
   m_device = other.m_device;
   m_physicalDevice = other.m_physicalDevice;
   other.m_device = {};
@@ -32,16 +34,16 @@ Device& Device::operator=(Device&& other) {
   return *this;
 }
 
-Device::~Device() { cleanUp(); }
+Model::~Model() { cleanUp(); }
 
-void Device::cleanUp() {
+void Model::cleanUp() {
   if (m_device) {
     vkb::destroy_device(m_device);
     m_device = {};
   }
 }
 
-void Device::PickPhysicalDevice(const Instance& instance,
+void Model::PickPhysicalDevice(const Instance::Model& instance,
                                 const VkSurfaceKHR& surface) {
   vkb::PhysicalDeviceSelector selector{instance.getVkbInstance()};
   auto phys_ret = selector.set_surface(surface).select();
@@ -63,3 +65,5 @@ void Device::PickPhysicalDevice(const Instance& instance,
   m_device = dev_ret.value();
   volkLoadDevice(m_device.device);
 }
+
+}  // namespace Device

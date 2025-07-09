@@ -17,10 +17,18 @@
 #define MERLIN_SRC_MAIN_MERLIN_H_
 
 #include <iostream>
+#include "IModel.h"
 
-class Merlin {
+namespace Merlin {
+
+class Model : public IModel {
  public:
-  void test();
+  void test() override;
 };
+
+}  // namespace Merlin
+
+// Legacy alias for backward compatibility
+using Merlin = Merlin::Model;
 
 #endif  // MERLIN_SRC_MAIN_MERLIN_H_

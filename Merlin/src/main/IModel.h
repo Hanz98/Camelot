@@ -13,19 +13,17 @@
  * limitations under the License.
  */
 
-#include "ValidationLayers.h"
+#ifndef MERLIN_SRC_MAIN_IMODEL_H_
+#define MERLIN_SRC_MAIN_IMODEL_H_
 
-#include <iostream>
+namespace Merlin {
 
-namespace Validation {
+class IModel {
+public:
+  virtual ~IModel() = default;
+  virtual void test() = 0;
+};
 
-VKAPI_ATTR VkBool32 VKAPI_CALL LayerWrapper::debugCallback(
-    VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-    VkDebugUtilsMessageTypeFlagsEXT messageType,
-    const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
-    void *pUserData) {
-  std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
-  return VK_FALSE;
-}
+}  // namespace Merlin
 
-}  // namespace Validation
+#endif  // MERLIN_SRC_MAIN_IMODEL_H_
