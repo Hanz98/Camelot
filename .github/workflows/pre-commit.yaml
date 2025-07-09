@@ -19,7 +19,7 @@ jobs:
       - name: Install Basic Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang-tidy uncrustify cppcheck
+          sudo apt-get install -y clang-tidy clang-format cppcheck
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -29,23 +29,14 @@ jobs:
       - name: Install pre-commit
         run: |
           pip install pre-commit
+          
       - name: Install Pre-commit Hooks
         run: |
           pre-commit install-hooks
 
-      - name: Run Pre-commit
+      - name: Run Pre-commit (includes clang-tidy and clang-format)
         run: |
           pre-commit run --all-files
-        continue-on-error: true
-      
-      - name: Run Clang-Tidy
-        run: |
-          clang-tidy **/*.cpp -- -std=c++17
-        continue-on-error: true
-      
-      - name: Run Uncrustify
-        run: |
-          uncrustify -c uncrustify.cfg --replace **/*.cpp
         continue-on-error: true
 
       - name: Run Cppcheck
