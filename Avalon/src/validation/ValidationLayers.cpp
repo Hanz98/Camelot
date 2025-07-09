@@ -17,7 +17,7 @@
 
 #include <iostream>
 
-namespace Validation {
+namespace ValidationNS {
 
 VKAPI_ATTR VkBool32 VKAPI_CALL LayerWrapper::debugCallback(
     VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
@@ -28,4 +28,4 @@ VKAPI_ATTR VkBool32 VKAPI_CALL LayerWrapper::debugCallback(
   return VK_FALSE;
 }
 
-}  // namespace Validation
+}  // namespace ValidationNS

@@ -16,7 +16,7 @@
 #ifndef NIMUE_API_IMODEL_H_
 #define NIMUE_API_IMODEL_H_
 
-namespace Nimue {
+namespace NimueNS {
 
 class IModel {
 public:
@@ -24,6 +24,6 @@ public:
   virtual void test() = 0;
 };
 
-}  // namespace Nimue
+}  // namespace NimueNS
 
 #endif  // NIMUE_API_IMODEL_H_

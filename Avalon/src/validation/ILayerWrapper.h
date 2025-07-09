@@ -18,7 +18,7 @@
 
 #include <pch.h>
 
-namespace Validation {
+namespace ValidationNS {
 
 class ILayerWrapper {
 public:
@@ -30,6 +30,6 @@ public:
                 void *pUserData);
 };
 
-}  // namespace Validation
+}  // namespace ValidationNS
 
 #endif  // AVALON_SRC_VALIDATION_ILAYERWRAPPER_H_

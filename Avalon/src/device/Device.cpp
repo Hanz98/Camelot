@@ -16,7 +16,7 @@
 
 #include <stdexcept>
 
-namespace Device {
+namespace DeviceNS {
 
 Model::Model() : m_device(), m_physicalDevice() {}
 
@@ -66,4 +66,4 @@ void Model::PickPhysicalDevice(const Instance& instance,
   volkLoadDevice(m_device.device);
 }
 
-}  // namespace Device
+}  // namespace DeviceNS

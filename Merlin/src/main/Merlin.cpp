@@ -17,8 +17,8 @@
 
 #include <iostream>
 
-namespace Merlin {
+namespace MerlinNS {
 
 void Model::test() { std::cout << "Hello World from Merlin!" << std::endl; }
 
-}  // namespace Merlin
+}  // namespace MerlinNS
