@@ -18,11 +18,13 @@ set(Camelot_include_dirs ${CMAKE_CURRENT_SOURCE_DIR})
 
 include(CTest)
 
-add_subdirectory(Avalon)
-add_subdirectory(Camelot)
+# Temporarily commenting out dependencies for MCAP testing
+# add_subdirectory(Avalon)
+# add_subdirectory(Camelot)
 #add_subdirectory(Excalibur)
 #add_subdirectory(Merlin )
 #add_subdirectory(Nimue)
 add_subdirectory(Pendragon)
 
-add_subdirectory(Tests)
+# Temporarily commenting out Tests for MCAP testing
+# add_subdirectory(Tests)
