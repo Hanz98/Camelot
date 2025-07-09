@@ -16,7 +16,7 @@
 #ifndef MERLIN_SRC_MAIN_IMODEL_H_
 #define MERLIN_SRC_MAIN_IMODEL_H_
 
-namespace MerlinNS {
+namespace Rendering {
 
 class IModel {
 public:
@@ -24,6 +24,6 @@ public:
   virtual void test() = 0;
 };
 
-}  // namespace MerlinNS
+}  // namespace Rendering
 
 #endif  // MERLIN_SRC_MAIN_IMODEL_H_

@@ -20,7 +20,7 @@
 #include <VkBootstrapDispatch.h>
 #include <pch.h>
 
-namespace InstanceNS {
+namespace Core {
 
 class IModel {
 public:
@@ -31,6 +31,6 @@ public:
   virtual VkInstance& getInstance() = 0;
 };
 
-}  // namespace InstanceNS
+}  // namespace Core
 
 #endif  // AVALON_SRC_DEVICE_INSTANCE_IMODEL_H_

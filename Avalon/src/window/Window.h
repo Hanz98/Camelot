@@ -24,7 +24,7 @@
 #include <string>
 #include "IModel.h"
 
-namespace WindowNS {
+namespace Display {
 
 class Model : public IModel {
  private:
@@ -43,13 +43,13 @@ class Model : public IModel {
   bool init(int width, int height, const std::string& title) override;
 };
 
-}  // namespace WindowNS
+}  // namespace Display
 
 // Legacy alias for backward compatibility - place outside namespace
-class Window : public WindowNS::Model {
+class Window : public Display::Model {
 public:
   // Inherit all constructors and methods
-  using WindowNS::Model::Model;
+  using Display::Model::Model;
 };
 
 #endif  // AVALON_SRC_WINDOW_WINDOW_H_

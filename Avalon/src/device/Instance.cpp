@@ -19,7 +19,7 @@
 
 #include <Avalon/src/utils/Initializers.hpp>
 
-namespace InstanceNS {
+namespace Core {
 
 Model::Model() : m_instance() {}
 
@@ -58,4 +58,4 @@ void Model::init() {
   volkLoadInstance(vkb_inst.instance);
 }
 
-}  // namespace InstanceNS
+}  // namespace Core

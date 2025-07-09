@@ -19,20 +19,20 @@
 #include <iostream>
 #include "IModel.h"
 
-namespace MerlinNS {
+namespace Rendering {
 
 class Model : public IModel {
  public:
   void test() override;
 };
 
-}  // namespace MerlinNS
+}  // namespace Rendering
 
 // Legacy alias for backward compatibility - place outside namespace
-class Merlin : public MerlinNS::Model {
+class Merlin : public Rendering::Model {
 public:
   // Inherit all constructors and methods
-  using MerlinNS::Model::Model;
+  using Rendering::Model::Model;
 };
 
 #endif  // MERLIN_SRC_MAIN_MERLIN_H_
