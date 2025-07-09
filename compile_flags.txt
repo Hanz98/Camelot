@@ -1,0 +1,17 @@
+-std=c++20
+-I.
+-IAvalon/API
+-IAvalon/src
+-ICamelot/API
+-ICamelot/src
+-IMerlin/API
+-IMerlin/src
+-INimue/API
+-INimue/src
+-IPendragon/API
+-IPendragon/src
+-IExcalibur/API
+-IExcalibur/src
+-Wall
+-Wextra
+-Wpedantic

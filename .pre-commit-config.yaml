@@ -7,7 +7,7 @@ repos:
         entry: clang-format
         language: system
         files: \.(c|cc|cxx|cpp|h|hh|hpp|hxx)$
-        args: [--style=Google, -i]
+        args: [-i]
       - id: clang-tidy
         name: clang-tidy
         entry: clang-tidy
