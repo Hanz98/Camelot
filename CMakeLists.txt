@@ -18,13 +18,35 @@ set(Camelot_include_dirs ${CMAKE_CURRENT_SOURCE_DIR})
 
 include(CTest)
 
-# Temporarily commenting out dependencies for MCAP testing
-# add_subdirectory(Avalon)
-# add_subdirectory(Camelot)
+# Try to build Avalon if all dependencies are available
+if(DEFINED ENV{VULKAN_SDK})
+    # Check for vk-bootstrap and volk availability
+    find_package(vk-bootstrap QUIET)
+    find_package(volk QUIET)
+    find_package(glfw3 QUIET)
+    find_package(spdlog QUIET)
+    
+    if(vk-bootstrap_FOUND AND volk_FOUND AND glfw3_FOUND AND spdlog_FOUND)
+        add_subdirectory(Avalon)
+        add_subdirectory(Camelot)
+        message(STATUS "Building Avalon and Camelot with all dependencies")
+    else()
+        message(STATUS "Skipping Avalon - missing dependencies (vk-bootstrap: ${vk-bootstrap_FOUND}, volk: ${volk_FOUND}, glfw3: ${glfw3_FOUND}, spdlog: ${spdlog_FOUND})")
+        message(STATUS "Skipping Camelot - depends on Avalon")
+    endif()
+else()
+    message(STATUS "Skipping Avalon - VULKAN_SDK not found")
+    message(STATUS "Skipping Camelot - depends on Avalon")
+endif()
 #add_subdirectory(Excalibur)
 #add_subdirectory(Merlin )
 #add_subdirectory(Nimue)
 add_subdirectory(Pendragon)
 
-# Temporarily commenting out Tests for MCAP testing
-# add_subdirectory(Tests)
+# Try to build Tests if GTest is available
+find_package(GTest QUIET)
+if(GTest_FOUND)
+    add_subdirectory(Tests)
+else()
+    message(STATUS "Skipping Tests - GTest not found")
+endif()
