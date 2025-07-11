@@ -8,10 +8,8 @@
 -IMerlin/src
 -INimue/API
 -INimue/src
--IPendragon/API
 -IPendragon/src
--IExcalibur/API
--IExcalibur/src
+-IExcalibur/main
 -Wall
 -Wextra
 -Wpedantic
