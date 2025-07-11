@@ -21,7 +21,7 @@
 #include <pch.h>
 #include "InstanceIModel.h"
 
-namespace Core {
+namespace Instance {
 
 class Model : public IModel {
  private:
@@ -43,13 +43,13 @@ class Model : public IModel {
   inline VkInstance& getInstance() override { return m_instance.instance; }
 };
 
-}  // namespace Core
+}  // namespace Instance
 
 // Legacy alias for backward compatibility - place outside namespace
-class Instance : public Core::Model {
+class Instance : public ::Instance::Model {
 public:
   // Inherit all constructors and methods
-  using Core::Model::Model;
+  using ::Instance::Model::Model;
 };
 
 #endif  // AVALON_SRC_DEVICE_INSTANCE_H_

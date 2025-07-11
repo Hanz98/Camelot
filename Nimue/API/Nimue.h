@@ -19,20 +19,20 @@
 #include <iostream>
 #include "IModel.h"
 
-namespace MainEngine {
+namespace MainModel {
 
 class Model : public IModel {
  public:
   void test() override { std::cout << "Hello World from Nimue!" << std::endl; }
 };
 
-}  // namespace MainEngine
+}  // namespace MainModel
 
 // Legacy alias for backward compatibility - place outside namespace
-class MainModel : public MainEngine::Model {
+class MainModel : public ::MainModel::Model {
 public:
   // Inherit all constructors and methods
-  using MainEngine::Model::Model;
+  using ::MainModel::Model::Model;
 };
 
 #endif  // NIMUE_API_NIMUE_H_

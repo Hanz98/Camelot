@@ -19,7 +19,7 @@
 
 #include <Avalon/src/utils/Initializers.hpp>
 
-namespace Core {
+namespace Instance {
 
 Model::Model() : m_instance() {}
 
@@ -54,8 +54,8 @@ void Model::init() {
                   inst_ret.error().message());
     throw std::runtime_error("Failed to create Vulkan instance.");
   }
-  vkb::Instance vkb_inst = inst_ret.value();
-  volkLoadInstance(vkb_inst.instance);
+  m_instance = inst_ret.value();
+  volkLoadInstance(m_instance.instance);
 }
 
-}  // namespace Core
+}  // namespace Instance

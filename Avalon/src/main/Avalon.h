@@ -22,22 +22,22 @@
 
 #include <iostream>
 
-namespace Engine {
+namespace Avalon {
 
 class Model : public IModel {
-  Display::Model m_Window;
+  ::Window::Model m_Window;
 
  public:
   void test() override;
 };
 
-}  // namespace Engine
+}  // namespace Avalon
 
 // Legacy alias for backward compatibility - place outside namespace
-class Avalon : public Engine::Model {
+class Avalon : public ::Avalon::Model {
 public:
   // Inherit all constructors and methods
-  using Engine::Model::Model;
+  using ::Avalon::Model::Model;
 };
 
 #endif  // AVALON_SRC_MAIN_AVALON_H_

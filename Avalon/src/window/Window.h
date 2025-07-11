@@ -24,7 +24,7 @@
 #include <string>
 #include "IModel.h"
 
-namespace Display {
+namespace Window {
 
 class Model : public IModel {
  private:
@@ -43,13 +43,13 @@ class Model : public IModel {
   bool init(int width, int height, const std::string& title) override;
 };
 
-}  // namespace Display
+}  // namespace Window
 
 // Legacy alias for backward compatibility - place outside namespace
-class Window : public Display::Model {
+class Window : public ::Window::Model {
 public:
   // Inherit all constructors and methods
-  using Display::Model::Model;
+  using ::Window::Model::Model;
 };
 
 #endif  // AVALON_SRC_WINDOW_WINDOW_H_

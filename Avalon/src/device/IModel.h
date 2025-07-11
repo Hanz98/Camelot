@@ -23,7 +23,7 @@
 // Forward declaration for the legacy Instance class
 class Instance;
 
-namespace Graphics {
+namespace Device {
 
 class IModel {
 public:
@@ -34,6 +34,6 @@ public:
   virtual void PickPhysicalDevice(const Instance& instance, const VkSurfaceKHR& surface) = 0;
 };
 
-}  // namespace Graphics
+}  // namespace Device
 
 #endif  // AVALON_SRC_DEVICE_IMODEL_H_

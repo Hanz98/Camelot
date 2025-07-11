@@ -18,7 +18,7 @@
 
 #include <string>
 
-namespace Display {
+namespace Window {
 
 class IModel {
 public:
@@ -27,6 +27,6 @@ public:
   virtual void cleanUp() = 0;
 };
 
-}  // namespace Display
+}  // namespace Window
 
 #endif  // AVALON_SRC_WINDOW_IMODEL_H_

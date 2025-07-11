@@ -19,7 +19,7 @@
 #include <pch.h>
 #include "ILayerWrapper.h"
 
-namespace Debug {
+namespace ValidationLayerWrapper {
 
 class LayerWrapper : public ILayerWrapper {
  private:
@@ -31,13 +31,13 @@ class LayerWrapper : public ILayerWrapper {
                 void *pUserData);
 };
 
-}  // namespace Debug
+}  // namespace ValidationLayerWrapper
 
 // Legacy alias for backward compatibility - place outside namespace
-class ValidationLayerWrapper : public Debug::LayerWrapper {
+class ValidationLayerWrapper : public ::ValidationLayerWrapper::LayerWrapper {
 public:
   // Inherit all constructors and methods
-  using Debug::LayerWrapper::LayerWrapper;
+  using ::ValidationLayerWrapper::LayerWrapper::LayerWrapper;
 };
 
 #endif  // AVALON_SRC_VALIDATION_VALIDATIONLAYERS_H_

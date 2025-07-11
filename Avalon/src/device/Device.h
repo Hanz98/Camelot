@@ -25,7 +25,7 @@
 #include "Instance.h"
 #include "IModel.h"
 
-namespace Graphics {
+namespace Device {
 
 class Model : public IModel {
  private:
@@ -55,13 +55,13 @@ class Model : public IModel {
                           const VkSurfaceKHR& surface) override;
 };
 
-}  // namespace Graphics
+}  // namespace Device
 
 // Legacy alias for backward compatibility - place outside namespace
-class Device : public Graphics::Model {
+class Device : public ::Device::Model {
 public:
   // Inherit all constructors and methods
-  using Graphics::Model::Model;
+  using ::Device::Model::Model;
 };
 
 #endif  // AVALON_SRC_DEVICE_DEVICE_H_

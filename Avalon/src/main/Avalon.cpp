@@ -18,7 +18,7 @@
 
 #include <iostream>
 
-namespace Engine {
+namespace Avalon {
 
 void Model::test() {
   std::cout << "Hello World from Avalon!" << std::endl;
@@ -28,4 +28,4 @@ void Model::test() {
   }
 }
 
-}  // namespace Engine
+}  // namespace Avalon
