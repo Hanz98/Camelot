@@ -1,0 +1,14 @@
+# Core dependencies for cross-platform desktop app
+kivy>=2.3.0
+kivy[base,media]
+
+# Development dependencies
+pytest>=7.0.0
+pytest-cov>=4.0.0
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.0.0
+
+# Build and packaging
+buildozer>=1.5.0  # For Android builds
+pyinstaller>=5.0.0  # For desktop executables

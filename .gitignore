@@ -16,3 +16,25 @@ bin
 out
 build
 *.tcl
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+pip-log.txt
+pip-delete-this-directory.txt
+.coverage
+.pytest_cache/
+.mypy_cache/
+*.egg-info/
+dist/
+*.spec
+
+# Buildozer/Android
+.buildozer/
+bin/

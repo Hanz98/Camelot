@@ -4,7 +4,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  build-cpp:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -55,3 +55,33 @@ jobs:
         run: |
           cd build
           sudo ./bin/test_main
+
+  build-python:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9, '3.10', '3.11', '3.12']
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          
+      - name: Run Python Tests
+        run: |
+          python -m pytest tests/ -v
+          
+      - name: Run Python Linting
+        run: |
+          black --check python_app/
+          flake8 python_app/
+          mypy python_app/ || echo "MyPy warnings are non-blocking"
