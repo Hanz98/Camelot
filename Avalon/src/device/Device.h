@@ -22,6 +22,7 @@
 #include <vulkan/vulkan.h>
 
 #include <memory>
+#include <vector>
 
 #include "Instance.h"
 
@@ -61,6 +62,9 @@ class Device {
   VkFormat getDepthFormat();
 
  private:
+  VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates,
+                               VkImageTiling tiling,
+                               VkFormatFeatureFlags features);
   void initializeQueues();
 };
 
