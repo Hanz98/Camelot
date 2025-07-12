@@ -1,4 +1,4 @@
-add_Library(Avalon_main
+add_library(Avalon_main
 "Avalon.cpp"
 "Avalon.h"
 "IModel.h"
