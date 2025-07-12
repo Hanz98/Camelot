@@ -20,8 +20,10 @@
 #include <VkBootstrapDispatch.h>
 #include <pch.h>
 
-// Forward declaration for the legacy Instance class
-class Instance;
+// Forward declaration
+namespace Instance {
+class Model;
+}
 
 namespace Device {
 
@@ -31,7 +33,7 @@ public:
   virtual void cleanUp() = 0;
   virtual VkDevice& getDevice() = 0;
   virtual VkPhysicalDevice& getPhysicalDevice() = 0;
-  virtual void PickPhysicalDevice(const Instance& instance, const VkSurfaceKHR& surface) = 0;
+  virtual void PickPhysicalDevice(const Instance::Model& instance, const VkSurfaceKHR& surface) = 0;
 };
 
 }  // namespace Device

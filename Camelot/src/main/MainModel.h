@@ -23,7 +23,7 @@
 
 class MainModel : public ICamelot {
  private:
-  Window m_window;
+  Window::Model m_window;
 
  public:
   void test();

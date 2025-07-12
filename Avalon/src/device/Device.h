@@ -51,17 +51,10 @@ class Model : public IModel {
     return m_physicalDevice.physical_device;
   }
 
-  void PickPhysicalDevice(const Instance& instance,
+  void PickPhysicalDevice(const Instance::Model& instance,
                           const VkSurfaceKHR& surface) override;
 };
 
 }  // namespace Device
-
-// Legacy alias for backward compatibility - place outside namespace
-class Device : public ::Device::Model {
-public:
-  // Inherit all constructors and methods
-  using ::Device::Model::Model;
-};
 
 #endif  // AVALON_SRC_DEVICE_DEVICE_H_

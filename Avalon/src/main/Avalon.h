@@ -33,11 +33,4 @@ class Model : public IModel {
 
 }  // namespace Avalon
 
-// Legacy alias for backward compatibility - place outside namespace
-class Avalon : public ::Avalon::Model {
-public:
-  // Inherit all constructors and methods
-  using ::Avalon::Model::Model;
-};
-
 #endif  // AVALON_SRC_MAIN_AVALON_H_

@@ -28,11 +28,4 @@ class Model : public IModel {
 
 }  // namespace Nimue
 
-// Legacy alias for backward compatibility - place outside namespace
-class MainModel : public ::Nimue::Model {
-public:
-  // Inherit all constructors and methods
-  using ::Nimue::Model::Model;
-};
-
 #endif  // NIMUE_API_NIMUE_H_

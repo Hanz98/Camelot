@@ -45,11 +45,4 @@ class Model : public IModel {
 
 }  // namespace Window
 
-// Legacy alias for backward compatibility - place outside namespace
-class Window : public ::Window::Model {
-public:
-  // Inherit all constructors and methods
-  using ::Window::Model::Model;
-};
-
 #endif  // AVALON_SRC_WINDOW_WINDOW_H_
