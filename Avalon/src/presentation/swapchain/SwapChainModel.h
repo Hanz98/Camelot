@@ -18,7 +18,6 @@
 
 #include <Avalon/src/device/Device.h>
 #include <Avalon/src/presentation/image/Image.h>
-#include <Avalon/src/utils/ResourceDescriptor.h>
 #include <spdlog/spdlog.h>
 
 #include <memory>
@@ -27,7 +26,8 @@
 
 class SwapchainModel {
  private:
-  std::shared_ptr<Resource::Descriptor> m_resourceDescriptor;
+  std::shared_ptr<Device> m_device;
+  std::shared_ptr<Window> m_window;
 
   vkb::Swapchain m_swapchain;
 

@@ -28,32 +28,19 @@ class RenderPass;
 class SwapChainModel;
 
 namespace Resource {
-class Descriptor {
- private:
-  static std::shared_ptr<Descriptor> INSTANCE;
-  std::shared_ptr<Device> m_device;
-  std::shared_ptr<Instance> m_instance;
-  std::shared_ptr<Window> m_window;
-  std::shared_ptr<Surface> m_surface;
-  std::shared_ptr<SurfaceManager> m_surfaceManager;
-  std::shared_ptr<RenderPass> m_renderPass;
-  std::shared_ptr<SwapChainModel> m_swapchainModel;
-  std::shared_ptr<VmaAllocatorWrapper> m_allocator;
-  Descriptor() = default;
-
- public:
-  static std::shared_ptr<Descriptor> GetDescriptor();
-
-  std::shared_ptr<Device> getDevice() const;
-  std::shared_ptr<Instance> getInstance() const;
-  std::shared_ptr<Window> getWindow() const;
-  std::shared_ptr<Surface> getSurface() const;
-  std::shared_ptr<SurfaceManager> getSurfaceManager() const;
-  std::shared_ptr<RenderPass> getRenderPass() const;
-  std::shared_ptr<SwapChainModel> getSwapchainModel() const;
-  std::shared_ptr<VmaAllocatorWrapper> getAllocator() const;
+struct DescriptorInfo {
+  std::shared_ptr<Device> device;
+  std::shared_ptr<Instance> instance;
+  std::shared_ptr<Window> window;
+  std::shared_ptr<Surface> surface;
+  std::shared_ptr<SurfaceManager> surfaceManager;
+  std::shared_ptr<RenderPass> renderPass;
+  std::shared_ptr<SwapChainModel> swapchainModel;
+  std::shared_ptr<VmaAllocatorWrapper> allocator;
 };
 
+inline const std::shared_ptr<DescriptorInfo> Descriptor =
+    std::make_shared<DescriptorInfo>();
 }  // namespace Resource
 
 #endif  // AVALON_SRC_UTILS_RESOURCEDESCRIPTOR_H_
