@@ -16,30 +16,50 @@
 #ifndef AVALON_SRC_PRESENTATION_IMAGE_IMAGE_H_
 #define AVALON_SRC_PRESENTATION_IMAGE_IMAGE_H_
 
+#include <Avalon/src/allocator/VmaAllocator.h>
 #include <Avalon/src/device/Device.h>
+#include <Avalon/src/utils/ResourceDescriptor.h>
 #include <spdlog/spdlog.h>
 
 #include <memory>
 #include <vulkan/vulkan.hpp>
 
+namespace Camelot {
+struct ImageCreateInfo {
+  int width;
+  int height;
+  int mipLevels;
+  VkSampleCountFlagBits numSample;
+  VkFormat format;
+  VkImageTiling tiling;
+  VkImageUsageFlags usage;
+  VkMemoryPropertyFlags properties;
+  VkImageAspectFlags aspectFlags;
+};
+}  // namespace Camelot
+
 class Image {
  private:
   VkImage m_image;
-  VkDeviceMemory m_imageMemory;
   VkImageView m_imageView;
 
-  std::shared_ptr<Device> m_device;
-  //  std::shared_ptr<VmaAllocator> m_allocator;
+  VmaAllocation m_allocation;
+  std::shared_ptr<Resource::Descriptor> m_resourceDescriptor;
 
  public:
   Image();
+  Image(const Image&) = delete;
+  Image(Image&&) noexcept;
+  Image& operator=(const Image&) = delete;
+  Image& operator=(Image&&) noexcept;
+
   virtual ~Image();
 
   void cleanUp();
+  void createImage(const Camelot::ImageCreateInfo&);
 
  public:
   inline VkImage& getImage() { return m_image; }
-  inline VkDeviceMemory& getImageMemory() { return m_imageMemory; }
   inline VkImageView& getImageView() { return m_imageView; }
 };
 

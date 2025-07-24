@@ -22,6 +22,7 @@
 #include <vulkan/vulkan.h>
 
 #include <memory>
+#include <vector>
 
 #include "Instance.h"
 
@@ -31,6 +32,8 @@ class Device {
   vkb::PhysicalDevice m_physicalDevice;
   VkQueue m_graphicsQueue;
   VkQueue m_presentQueue;
+
+  VkPhysicalDeviceProperties m_physicalDeviceProperties;
 
  public:
   Device();
@@ -42,14 +45,27 @@ class Device {
   ~Device();
 
   void cleanUp();
+  void initialize(std::shared_ptr<Instance>, std::shared_ptr<Surface>);
 
  public:
-  VkDevice& getDevice() { return m_device.device; }
-  VkPhysicalDevice& getPhysicalDevice() {
+  inline VkDevice& getDevice() { return m_device.device; }
+  inline VkPhysicalDevice& getPhysicalDevice() {
     return m_physicalDevice.physical_device;
   }
+  inline vkb::Device& getVkbDevice() { return m_device; }
+  inline vkb::PhysicalDevice& getVkbPhysicalDevice() {
+    return m_physicalDevice;
+  }
 
-  void initialize(std::shared_ptr<Instance>, std::shared_ptr<Surface>);
+ public:
+  VkSampleCountFlagBits getMaxUsableSampleCount();
+  VkFormat getDepthFormat();
+
+ private:
+  VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates,
+                               VkImageTiling tiling,
+                               VkFormatFeatureFlags features);
+  void initializeQueues();
 };
 
 #endif  // AVALON_SRC_DEVICE_DEVICE_H_
