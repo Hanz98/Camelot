@@ -18,6 +18,7 @@
 
 #include <Avalon/src/device/Device.h>
 #include <Avalon/src/presentation/image/Image.h>
+#include <Avalon/src/utils/ResourceDescriptor.h>
 #include <spdlog/spdlog.h>
 
 #include <memory>
@@ -25,18 +26,33 @@
 #include <vulkan/vulkan.hpp>
 
 class SwapchainModel {
- public:
-  std::shared_ptr<Device> m_device;
-  std::shared_ptr<Window> m_window;
+ private:
+  std::shared_ptr<Resource::Descriptor> m_resourceDescriptor;
+
+  vkb::Swapchain m_swapchain;
 
   Image m_depth;
   Image m_color;
 
-  std::vector<Image> m_swapChainImage;
-  std::vector<VkFramebuffer> m_frameBuffers;
+  //  std::vector<VkFramebuffer> m_frameBuffers;
+
+ public:
+  SwapchainModel();
+  SwapchainModel(const SwapchainModel&) = delete;
+  SwapchainModel(SwapchainModel&&) noexcept;
+  SwapchainModel& operator=(const SwapchainModel&) = delete;
+  SwapchainModel& operator=(SwapchainModel&&) noexcept;
+
+  ~SwapchainModel();
+  void cleanUp();
+
+  void initialize();
+
+  void recreateSwapchain();
 
  private:
-  SwapchainModel();
+  void createDepthImage();
+  void createColorImage();
 };
 
 #endif  // AVALON_SRC_PRESENTATION_SWAPCHAIN_SWAPCHAINMODEL_H_
