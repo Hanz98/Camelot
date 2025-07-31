@@ -15,4 +15,10 @@ CMakeUserPresets.json
 bin
 out
 build
+build_*
 *.tcl
+
+# Test build artifacts
+test_build/
+validation_tests
+simple_tests
