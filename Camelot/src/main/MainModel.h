@@ -23,7 +23,7 @@
 
 namespace Camelot {
 
-class Engine : public Interface {
+class Engine : public ICamelot {
  private:
   Avalon::Window m_window;
 
