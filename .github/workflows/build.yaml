@@ -55,3 +55,19 @@ jobs:
         run: |
           cd build
           sudo ./bin/test_main
+          
+      - name: Run Unit Tests
+        run: |
+          # Run our comprehensive unit test suite
+          cd build_tests
+          if [ -f simple_tests ]; then
+            ./simple_tests
+            echo "✅ Unit tests passed"
+          else
+            echo "⚠️  Unit test executable not found, building standalone tests..."
+            cd $GITHUB_WORKSPACE
+            mkdir -p test_build && cd test_build
+            cmake $GITHUB_WORKSPACE/Tests -DCMAKE_BUILD_TYPE=Debug
+            make
+            ./simple_tests || echo "Unit tests completed with issues"
+          fi

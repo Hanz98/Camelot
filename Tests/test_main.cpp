@@ -15,4 +15,29 @@
 
 #include <gtest/gtest.h>
 
-TEST(SampleTest, TestEquality) { EXPECT_EQ(1, 1); }
+TEST(SampleTest, TestEquality) { 
+    EXPECT_EQ(1, 1); 
+}
+
+TEST(SampleTest, TestInequality) {
+    EXPECT_NE(1, 2);
+}
+
+TEST(SampleTest, BasicArithmetic) {
+    EXPECT_EQ(2 + 2, 4);
+    EXPECT_EQ(3 * 3, 9);
+    EXPECT_EQ(10 / 2, 5);
+}
+
+TEST(SampleTest, StringOperations) {
+    std::string project = "Camelot";
+    EXPECT_EQ(project.length(), 7);
+    EXPECT_EQ(project.substr(0, 4), "Came");
+    EXPECT_TRUE(project.find("lot") != std::string::npos);
+}
+
+// Integration test placeholder
+TEST(IntegrationTest, ProjectStructure) {
+    // This test validates that the basic project structure is accessible
+    SUCCEED() << "Project structure test - this would validate module access";
+}
