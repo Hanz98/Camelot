@@ -26,6 +26,8 @@
 
 #include "Window.h"
 
+namespace avalon {
+
 Surface::Surface(std::shared_ptr<Instance> instance,
                  std::shared_ptr<Window> window)
     : m_instance(instance), m_window(window), m_surface(VK_NULL_HANDLE) {}
@@ -52,3 +54,5 @@ void Surface::cleanUp() {
 }
 
 const VkSurfaceKHR& Surface::getSurface() const { return m_surface; }
+
+}  // namespace avalon

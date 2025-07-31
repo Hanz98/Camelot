@@ -23,6 +23,8 @@
 #include <stdexcept>
 #include <vector>
 
+namespace avalon {
+
 Device::Device(std::shared_ptr<Instance> instance,
                std::shared_ptr<Surface> surface)
     : m_device(),
@@ -163,3 +165,5 @@ VkFormat Device::findSupportedFormat(const std::vector<VkFormat>& candidates,
   spdlog::error("Failed to find supported format.");
   throw std::runtime_error("Failed to find supported format.");
 }
+
+}  // namespace avalon

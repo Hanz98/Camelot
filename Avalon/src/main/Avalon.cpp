@@ -19,6 +19,8 @@
 #include <iostream>
 #include <memory>
 
+namespace avalon {
+
 Avalon::Avalon()
     : m_surfaceManager(nullptr),
       m_device(nullptr),
@@ -89,3 +91,5 @@ void Avalon::initVma() {
 
   vmaCreateAllocator(&allocatorCreateInfo, &m_allocator->allocator);
 }
+
+}  // namespace avalon

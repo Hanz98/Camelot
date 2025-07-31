@@ -18,6 +18,8 @@
 #include <memory>
 #include <utility>
 
+namespace avalon {
+
 SwapchainModel::SwapchainModel(std::shared_ptr<Device> device,
                                std::shared_ptr<Window> window)
     : m_device(device), m_window(window) {
@@ -127,3 +129,5 @@ void SwapchainModel::createColorImage() {
 
   m_color.createImage(colorInfo);
 }
+
+}  // namespace avalon

@@ -25,6 +25,8 @@
 #include <string>
 #include <utility>
 
+namespace avalon {
+
 class Window {
  private:
   GLFWwindow* m_pWindow;
@@ -48,5 +50,7 @@ class Window {
  private:
   bool initialize(int width, int height, const std::string& title);
 };
+
+}  // namespace avalon
 
 #endif  // AVALON_SRC_WINDOW_WINDOW_H_

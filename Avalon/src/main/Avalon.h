@@ -26,6 +26,8 @@
 
 #include <memory>
 
+namespace avalon {
+
 class Avalon {
  private:
   std::shared_ptr<SurfaceManager> m_surfaceManager;
@@ -52,5 +54,7 @@ class Avalon {
  private:
   void initVma();
 };
+
+}  // namespace avalon
 
 #endif  // AVALON_SRC_MAIN_AVALON_H_

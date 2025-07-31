@@ -19,6 +19,8 @@
 
 #include <memory>
 
+namespace avalon {
+
 SurfaceManager::SurfaceManager(std::shared_ptr<Instance> instance,
                                std::shared_ptr<Window> window)
     : m_window(window), m_instance(instance) {
@@ -54,3 +56,5 @@ std::shared_ptr<Surface> SurfaceManager::getSurface(int id) {
 
   return m_surfaces.at(id);
 }
+
+}  // namespace avalon

@@ -25,6 +25,8 @@
 
 #include "Window.h"
 
+namespace avalon {
+
 class Surface {
  private:
   VkSurfaceKHR m_surface;
@@ -44,5 +46,7 @@ class Surface {
   void init();
   void cleanUp();
 };
+
+}  // namespace avalon
 
 #endif  //  AVALON_SRC_WINDOW_SURFACE_H_

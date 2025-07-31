@@ -26,6 +26,8 @@
 #include "Surface.h"
 #include "Window.h"
 
+namespace avalon {
+
 class SurfaceManager {
  private:
   std::shared_ptr<Instance> m_instance;
@@ -48,5 +50,7 @@ class SurfaceManager {
 
  private:
 };
+
+}  // namespace avalon
 
 #endif  // AVALON_SRC_WINDOW_SURFACEMANAGER_H_

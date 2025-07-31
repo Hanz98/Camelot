@@ -26,6 +26,8 @@
 
 #include "Instance.h"
 
+namespace avalon {
+
 class Device {
  private:
   vkb::Device m_device;
@@ -69,5 +71,7 @@ class Device {
                                VkFormatFeatureFlags features);
   void initializeQueues();
 };
+
+}  // namespace avalon
 
 #endif  // AVALON_SRC_DEVICE_DEVICE_H_

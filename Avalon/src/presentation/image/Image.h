@@ -23,7 +23,8 @@
 #include <memory>
 #include <vulkan/vulkan.hpp>
 
-namespace Camelot {
+namespace avalon {
+
 struct ImageCreateInfo {
   int width;
   int height;
@@ -35,7 +36,6 @@ struct ImageCreateInfo {
   VkMemoryPropertyFlags properties;
   VkImageAspectFlags aspectFlags;
 };
-}  // namespace Camelot
 
 class Image {
  private:
@@ -57,11 +57,13 @@ class Image {
   virtual ~Image();
 
   void cleanUp();
-  void createImage(const Camelot::ImageCreateInfo&);
+  void createImage(const ImageCreateInfo&);
 
  public:
   inline VkImage& getImage() { return m_image; }
   inline VkImageView& getImageView() { return m_imageView; }
 };
+
+}  // namespace avalon
 
 #endif  // AVALON_SRC_PRESENTATION_IMAGE_IMAGE_H_

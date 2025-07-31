@@ -20,6 +20,8 @@
 #include <VkBootstrapDispatch.h>
 #include <pch.h>
 
+namespace avalon {
+
 class Instance {
  private:
   vkb::Instance m_instance;
@@ -46,5 +48,7 @@ class Instance {
     return m_instance.instance;
   }
 };
+
+}  // namespace avalon
 
 #endif  // AVALON_SRC_DEVICE_INSTANCE_H_

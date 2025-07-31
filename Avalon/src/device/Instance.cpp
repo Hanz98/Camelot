@@ -20,6 +20,8 @@
 
 #include <Avalon/src/utils/Initializers.hpp>
 
+namespace avalon {
+
 Instance::Instance() : m_instance() { initialize(); }
 
 Instance::~Instance() { cleanUp(); }
@@ -45,3 +47,5 @@ void Instance::initialize() {
   }
   m_instance = inst_ret.value();
 }
+
+}  // namespace avalon

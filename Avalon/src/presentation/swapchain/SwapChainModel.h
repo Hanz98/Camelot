@@ -24,6 +24,8 @@
 #include <vector>
 #include <vulkan/vulkan.hpp>
 
+namespace avalon {
+
 class SwapchainModel {
  private:
   std::shared_ptr<Device> m_device;
@@ -55,5 +57,7 @@ class SwapchainModel {
   void createDepthImage();
   void createColorImage();
 };
+
+}  // namespace avalon
 
 #endif  // AVALON_SRC_PRESENTATION_SWAPCHAIN_SWAPCHAINMODEL_H_

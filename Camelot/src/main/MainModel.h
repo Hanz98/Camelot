@@ -21,13 +21,17 @@
 
 #include <iostream>
 
+namespace camelot {
+
 class MainModel : public ICamelot {
  private:
-  Avalon m_avalon;
+  avalon::Avalon m_avalon;
 
  public:
   MainModel() = default;
   void test();
 };
+
+}  // namespace camelot
 
 #endif  // CAMELOT_SRC_MAIN_MAINMODEL_H_

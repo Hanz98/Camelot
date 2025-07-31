@@ -18,6 +18,8 @@
 
 #include <iostream>
 
+namespace pendragon {
+
 void basicLogfileSetup() {
   try {
     auto logger = spdlog::basic_logger_mt("Logger", "logs/basic-log.txt");
@@ -28,10 +30,12 @@ void basicLogfileSetup() {
   }
 }
 
+}  // namespace pendragon
+
 int main(int argc, char *argv[]) {
   std::cout << "Hello world from Pendragon!" << std::endl;
-  basicLogfileSetup();
-  MainModel mainTest;
+  pendragon::basicLogfileSetup();
+  camelot::MainModel mainTest;
 
   mainTest.test();
   return 0;

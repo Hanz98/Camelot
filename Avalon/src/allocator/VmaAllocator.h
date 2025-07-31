@@ -20,8 +20,12 @@ constexpr int VMA_STATIC_VULKAN_FUNCTIONS = 0;
 constexpr int VMA_DYNAMIC_VULKAN_FUNCTIONS = 1;
 #include <vma/vk_mem_alloc.h>
 
+namespace avalon {
+
 struct VmaAllocatorWrapper {
   VmaAllocator allocator;
 };
+
+}  // namespace avalon
 
 #endif  // AVALON_SRC_ALLOCATOR_VMAALLOCATOR_H_

@@ -19,6 +19,8 @@
 
 #include <utility>
 
+namespace avalon {
+
 Image::Image()
     : m_image(VK_NULL_HANDLE),
       m_imageView(VK_NULL_HANDLE),
@@ -76,7 +78,7 @@ void Image::cleanUp() {
   }
 }
 
-void Image::createImage(const Camelot::ImageCreateInfo& createInfo) {
+void Image::createImage(const ImageCreateInfo& createInfo) {
   if (m_device == nullptr || m_allocator == nullptr) {
     spdlog::error("Image: Device or Allocator is not initialized.");
     throw std::runtime_error("Image: Device or Allocator is not initialized.");
@@ -117,3 +119,5 @@ void Image::createImage(const Camelot::ImageCreateInfo& createInfo) {
   VK_CHECK_RESULT(vkCreateImageView(m_device->getDevice(), &viewInfo, nullptr,
                                     &m_imageView));
 }
+
+}  // namespace avalon

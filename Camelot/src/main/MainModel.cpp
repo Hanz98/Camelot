@@ -17,8 +17,12 @@
 
 //  #include <unistd.h>
 
+namespace camelot {
+
 void MainModel::test() {
   m_avalon.init();
   m_avalon.test();
   m_avalon.cleanUp();
 }
+
+}  // namespace camelot

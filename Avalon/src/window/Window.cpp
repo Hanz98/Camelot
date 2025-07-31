@@ -24,6 +24,8 @@
 
 #include "interface/window/IGlfWrapper.h"
 
+namespace avalon {
+
 Window::Window() : m_pWindow(nullptr) { initialize(800, 600, "Avalon Window"); }
 
 Window::Window(Window&& other) noexcept : m_pWindow(other.m_pWindow) {
@@ -69,3 +71,5 @@ bool Window::initialize(int width, int height, const std::string& title) {
 uint16_t Window::getWidth() const { return m_dimensions.first; }
 
 uint16_t Window::getHeight() const { return m_dimensions.second; }
+
+}  // namespace avalon
