@@ -16,6 +16,8 @@
 
 #include <stdexcept>
 
+namespace Avalon {
+
 Device::Device() : m_device(), m_physicalDevice() {}
 
 Device::Device(Device&& other)
@@ -63,3 +65,5 @@ void Device::PickPhysicalDevice(const Instance& instance,
   m_device = dev_ret.value();
   volkLoadDevice(m_device.device);
 }
+
+}  // namespace Avalon

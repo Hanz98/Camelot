@@ -14,3 +14,9 @@
  */
 
 #include "WindowManager.h"
+
+namespace Avalon {
+
+// WindowManager implementation will go here
+
+}  // namespace Avalon

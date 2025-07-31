@@ -19,6 +19,8 @@
 
 #include <Avalon/src/utils/Initializers.hpp>
 
+namespace Avalon {
+
 Instance::Instance() : m_instance() {}
 
 Instance::Instance(Instance&& other) : m_instance(other.m_instance) {
@@ -55,3 +57,5 @@ void Instance::init() {
   vkb::Instance vkb_inst = inst_ret.value();
   volkLoadInstance(vkb_inst.instance);
 }
+
+}  // namespace Avalon

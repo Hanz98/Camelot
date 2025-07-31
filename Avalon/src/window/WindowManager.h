@@ -16,4 +16,12 @@
 #ifndef AVALON_SRC_WINDOW_WINDOWMANAGER_H_
 #define AVALON_SRC_WINDOW_WINDOWMANAGER_H_
 
+namespace Avalon {
+
+class WindowManager {
+  // TODO: Implement window management functionality
+};
+
+}  // namespace Avalon
+
 #endif  // AVALON_SRC_WINDOW_WINDOWMANAGER_H_

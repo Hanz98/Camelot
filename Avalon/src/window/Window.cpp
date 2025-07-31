@@ -17,6 +17,8 @@
 
 #include <string>
 
+namespace Avalon {
+
 Window::Window() : m_pWindow(nullptr) {}
 
 Window::Window(Window&& other) : m_pWindow(other.m_pWindow) {
@@ -53,3 +55,5 @@ bool Window::init(int width, int height, const std::string& title) {
   glfwSetWindowUserPointer(m_pWindow, this);
   return true;
 }
+
+}  // namespace Avalon

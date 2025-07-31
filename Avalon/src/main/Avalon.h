@@ -21,11 +21,15 @@
 
 #include <iostream>
 
-class Avalon {
+namespace Avalon {
+
+class Engine {
   Window m_Window;
 
  public:
   void test();
 };
+
+}  // namespace Avalon
 
 #endif  // AVALON_SRC_MAIN_AVALON_H_
