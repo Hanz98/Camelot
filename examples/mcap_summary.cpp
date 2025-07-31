@@ -27,14 +27,14 @@
  *   --all           Show all available information
  */
 
-#include <Camelot/src/data/McapReader.h>
-#include <Camelot/API/data/DataTypes.h>
+#include <Pendragon/src/data/McapReader.h>
+#include <Pendragon/API/data/DataTypes.h>
 #include <iostream>
 #include <iomanip>
 #include <string>
 #include <vector>
 
-using namespace camelot::data;
+using namespace pendragon::data;
 
 struct Options {
     bool show_topics = false;

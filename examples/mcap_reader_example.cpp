@@ -23,12 +23,12 @@
  * - Handle errors
  */
 
-#include <Camelot/src/data/McapReader.h>
-#include <Camelot/API/data/DataTypes.h>
+#include <Pendragon/src/data/McapReader.h>
+#include <Pendragon/API/data/DataTypes.h>
 #include <iostream>
 #include <iomanip>
 
-using namespace camelot::data;
+using namespace pendragon::data;
 
 void print_timestamp(const Timestamp& ts) {
     auto seconds = std::chrono::duration_cast<std::chrono::seconds>(ts);

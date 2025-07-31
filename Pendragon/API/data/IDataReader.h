@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef CAMELOT_API_DATA_IDATAREADER_H_
-#define CAMELOT_API_DATA_IDATAREADER_H_
+#ifndef PENDRAGON_API_DATA_IDATAREADER_H_
+#define PENDRAGON_API_DATA_IDATAREADER_H_
 
 #include "DataTypes.h"
 #include <memory>
@@ -22,7 +22,7 @@
 #include <string>
 #include <functional>
 
-namespace camelot {
+namespace pendragon {
 namespace data {
 
 // Filter function types
@@ -124,7 +124,9 @@ inline TimestampFilter time_before(const Timestamp& end) {
 
 } // namespace filters
 
-} // namespace data
-} // namespace camelot
+std::unique_ptr<IDataReader> create_mcap_reader();
 
-#endif // CAMELOT_API_DATA_IDATAREADER_H_
+} // namespace data
+} // namespace pendragon
+
+#endif // PENDRAGON_API_DATA_IDATAREADER_H_

@@ -14,12 +14,12 @@
  */
 
 #include <gtest/gtest.h>
-#include <Camelot/src/data/McapReader.h>
-#include <Camelot/API/data/DataTypes.h>
+#include <Pendragon/src/data/McapReader.h>
+#include <Pendragon/API/data/DataTypes.h>
 #include <fstream>
 #include <memory>
 
-using namespace camelot::data;
+using namespace pendragon::data;
 
 class McapReaderTest : public ::testing::Test {
 protected:

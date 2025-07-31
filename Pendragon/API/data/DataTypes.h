@@ -13,14 +13,14 @@
  * limitations under the License.
  */
 
-#ifndef CAMELOT_API_DATA_DATATYPES_H_
-#define CAMELOT_API_DATA_DATATYPES_H_
+#ifndef PENDRAGON_API_DATA_DATATYPES_H_
+#define PENDRAGON_API_DATA_DATATYPES_H_
 
 #include <string>
 #include <vector>
 #include <chrono>
 
-namespace camelot {
+namespace pendragon {
 namespace data {
 
 // Common timestamp type
@@ -128,6 +128,6 @@ struct TimestampedMessage {
 };
 
 } // namespace data
-} // namespace camelot
+} // namespace pendragon
 
-#endif // CAMELOT_API_DATA_DATATYPES_H_
+#endif // PENDRAGON_API_DATA_DATATYPES_H_

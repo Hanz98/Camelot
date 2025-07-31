@@ -8,8 +8,10 @@ target_link_libraries(test_main PRIVATE
     GTest::gtest 
     GTest::gtest_main 
     pthread
-    Camelot
+    Pendragon_data
 )
+
+target_include_directories(test_main PRIVATE ${PROJECT_SOURCE_DIR})
 
 include(GoogleTest)
 gtest_discover_tests(test_main)

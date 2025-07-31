@@ -13,16 +13,16 @@
  * limitations under the License.
  */
 
-#ifndef CAMELOT_SRC_DATA_MCAPREADER_H_
-#define CAMELOT_SRC_DATA_MCAPREADER_H_
+#ifndef PENDRAGON_SRC_DATA_MCAPREADER_H_
+#define PENDRAGON_SRC_DATA_MCAPREADER_H_
 
-#include <Camelot/API/data/IDataReader.h>
+#include <Pendragon/API/data/IDataReader.h>
 #include <mcap/reader.hpp>
 #include <fstream>
 #include <memory>
 #include <unordered_map>
 
-namespace camelot {
+namespace pendragon {
 namespace data {
 
 class McapReader : public IDataReader {
@@ -105,6 +105,6 @@ public:
 std::unique_ptr<IDataReader> create_mcap_reader();
 
 } // namespace data
-} // namespace camelot
+} // namespace pendragon
 
-#endif // CAMELOT_SRC_DATA_MCAPREADER_H_
+#endif // PENDRAGON_SRC_DATA_MCAPREADER_H_

@@ -6,8 +6,8 @@ add_executable(mcap_summary
     mcap_summary.cpp
 )
 
-target_link_libraries(mcap_reader_example PRIVATE Camelot)
-target_link_libraries(mcap_summary PRIVATE Camelot)
+target_link_libraries(mcap_reader_example PRIVATE Pendragon_data)
+target_link_libraries(mcap_summary PRIVATE Pendragon_data)
 
 set_target_properties(mcap_reader_example PROPERTIES
     CXX_STANDARD 20

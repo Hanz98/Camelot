@@ -18,7 +18,7 @@
 #include <sstream>
 #include <iostream>
 
-namespace camelot {
+namespace pendragon {
 namespace data {
 
 McapReader::McapReader()
@@ -414,4 +414,4 @@ std::unique_ptr<IDataReader> create_mcap_reader() {
 }
 
 } // namespace data
-} // namespace camelot
+} // namespace pendragon
