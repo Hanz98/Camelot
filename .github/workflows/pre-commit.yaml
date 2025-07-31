@@ -2,9 +2,7 @@ name: Pre-commit Checks
 
 on:
   push:
-    branches: [ develop-ai ]
   pull_request:
-    branches: [ develop-ai ]
     types:
       - opened
       - synchronize

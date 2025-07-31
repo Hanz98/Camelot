@@ -1,9 +1,7 @@
 name: Build
 on:
   push:
-    branches: [ develop-ai ]
   pull_request:
-    branches: [ develop-ai ]
 
 jobs:
   build-linux:
