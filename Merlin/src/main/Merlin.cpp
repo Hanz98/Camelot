@@ -17,4 +17,8 @@
 
 #include <iostream>
 
-void Merlin::test() { std::cout << "Hello World from Merlin!" << std::endl; }
+namespace Merlin {
+
+void Engine::test() { std::cout << "Hello World from Merlin!" << std::endl; }
+
+}  // namespace Merlin

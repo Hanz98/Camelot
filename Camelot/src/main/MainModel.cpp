@@ -15,4 +15,8 @@
 
 #include "MainModel.h"
 
-void MainModel::test() { m_window.init(800, 600, "Camelot"); }
+namespace Camelot {
+
+void Engine::test() { m_window.init(800, 600, "Camelot"); }
+
+}  // namespace Camelot

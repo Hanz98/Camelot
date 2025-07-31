@@ -18,7 +18,9 @@
 
 #include <pch.h>
 
-class ValidationLayerWrapper {
+namespace Avalon {
+
+class ValidationLayer {
  private:
  public:
   static VKAPI_ATTR VkBool32 VKAPI_CALL
@@ -27,5 +29,7 @@ class ValidationLayerWrapper {
                 const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
                 void *pUserData);
 };
+
+}  // namespace Avalon
 
 #endif  // AVALON_SRC_VALIDATION_VALIDATIONLAYERS_H_

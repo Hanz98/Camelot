@@ -17,7 +17,9 @@
 
 #include <iostream>
 
-VKAPI_ATTR VkBool32 VKAPI_CALL ValidationLayerWrapper::debugCallback(
+namespace Avalon {
+
+VKAPI_ATTR VkBool32 VKAPI_CALL ValidationLayer::debugCallback(
     VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
     VkDebugUtilsMessageTypeFlagsEXT messageType,
     const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
@@ -25,3 +27,5 @@ VKAPI_ATTR VkBool32 VKAPI_CALL ValidationLayerWrapper::debugCallback(
   std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
   return VK_FALSE;
 }
+
+}  // namespace Avalon

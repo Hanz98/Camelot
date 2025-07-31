@@ -23,6 +23,9 @@
 #include <vma/vk_mem_alloc.h>
 
 #include "Instance.h"
+
+namespace Avalon {
+
 class Device {
  private:
   vkb::Device m_device;
@@ -50,5 +53,7 @@ class Device {
   void PickPhysicalDevice(const Instance& instance,
                           const VkSurfaceKHR& surface);
 };
+
+}  // namespace Avalon
 
 #endif  // AVALON_SRC_DEVICE_DEVICE_H_

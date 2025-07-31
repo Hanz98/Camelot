@@ -21,12 +21,16 @@
 
 #include <iostream>
 
-class MainModel : public ICamelot {
+namespace Camelot {
+
+class Engine : public ICamelot {
  private:
-  Window m_window;
+  Avalon::Window m_window;
 
  public:
   void test();
 };
+
+}  // namespace Camelot
 
 #endif  // CAMELOT_SRC_MAIN_MAINMODEL_H_

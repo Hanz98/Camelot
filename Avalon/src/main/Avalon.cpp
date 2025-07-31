@@ -17,10 +17,15 @@
 #include <pch.h>
 
 #include <iostream>
-void Avalon::test() {
+
+namespace Avalon {
+
+void Engine::test() {
   std::cout << "Hello World from Avalon!" << std::endl;
   if (volkInitialize() != VK_SUCCESS) {
     spdlog::error("Failed to initialize volk.");
     throw std::runtime_error("Failed to initialize volk.");
   }
 }
+
+}  // namespace Avalon

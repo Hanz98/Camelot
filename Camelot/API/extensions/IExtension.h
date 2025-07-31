@@ -20,4 +20,11 @@
 #ifndef CAMELOT_API_EXTENSIONS_IEXTENSION_H_
 #define CAMELOT_API_EXTENSIONS_IEXTENSION_H_
 
+namespace Camelot {
+
+// TODO: Define extension interface
+// class Extension {};
+
+}  // namespace Camelot
+
 #endif  // CAMELOT_API_EXTENSIONS_IEXTENSION_H_
