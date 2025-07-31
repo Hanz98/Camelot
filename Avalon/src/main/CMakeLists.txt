@@ -13,6 +13,5 @@ target_link_libraries(
     Avalon_main Avalon
             Avalon_window
             Avalon_device
-            Avalon_utils
             spdlog::spdlog
 )

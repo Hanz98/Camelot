@@ -14,7 +14,6 @@
  */
 #include "Avalon.h"
 
-#include <Avalon/src/utils/ResourceDescriptor.h>
 #include <pch.h>
 
 #include <iostream>
@@ -27,39 +26,42 @@ Avalon::Avalon()
       m_window(nullptr),
       m_allocator(nullptr) {}
 
-Avalon::~Avalon() { cleanUp(); }
+Avalon::~Avalon() {
+  cleanUp();
+  if (m_allocator != nullptr && m_allocator->allocator != VK_NULL_HANDLE) {
+    vmaDestroyAllocator(m_allocator->allocator);
+    m_allocator = nullptr;
+  }
+}
 
 void Avalon::cleanUp() {
-  m_device->cleanUp();
-  m_surfaceManager->cleanUp();
-  m_window->cleanUp();
-  m_instance->cleanUp();
-
-  vmaDestroyAllocator(m_allocator->allocator);
+  if (m_device) {
+    m_device->cleanUp();
+  }
+  if (m_surfaceManager) {
+    m_surfaceManager->cleanUp();
+  }
+  if (m_window) {
+    m_window->cleanUp();
+  }
+  if (m_instance != nullptr) {
+    m_instance->cleanUp();
+  }
+  if (m_allocator != nullptr && m_allocator->allocator != VK_NULL_HANDLE) {
+    vmaDestroyAllocator(m_allocator->allocator);
+    m_allocator = nullptr;
+  }
 }
 
 void Avalon::init() {
-  std::shared_ptr<Resource::Descriptor> resourceDescriptor =
-      Resource::Descriptor::GetDescriptor();
-  resourceDescriptor->getDevice() = m_device;
-  resourceDescriptor->getInstance() = m_instance;
-  resourceDescriptor->getWindow() = m_window;
-  resourceDescriptor->getSurfaceManager() = m_surfaceManager;
-  resourceDescriptor->getAllocator() = m_allocator;
-
-  m_instance = std::make_shared<Instance>();
-  m_device = std::make_shared<Device>();
-  m_window = std::make_shared<Window>();
-  m_surfaceManager = std::make_shared<SurfaceManager>(m_instance, m_window);
-  m_allocator = std::make_shared<VmaAllocatorWrapper>();
-
   try {
-    m_window->init(
-        400, 400,
-        "Avalon");  // TO DO: Make window size and title read from settings
-    m_instance->init();
-    m_surfaceManager->init();
-    m_device->initialize(m_instance, m_surfaceManager->getSurface());
+    m_window = std::make_shared<Window>();  // TO DO: Make window size and title
+                                            // read from settings
+    m_instance = std::make_shared<Instance>();
+    m_surfaceManager = std::make_shared<SurfaceManager>(m_instance, m_window);
+    m_device =
+        std::make_shared<Device>(m_instance, m_surfaceManager->getSurface());
+    m_allocator = std::make_shared<VmaAllocatorWrapper>();
     initVma();
   } catch (const std::exception& e) {
     cleanUp();

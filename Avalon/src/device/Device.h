@@ -36,7 +36,7 @@ class Device {
   VkPhysicalDeviceProperties m_physicalDeviceProperties;
 
  public:
-  Device();
+  Device(std::shared_ptr<Instance>, std::shared_ptr<Surface>);
   Device(Device&& other);
   Device(const Device& other) = delete;
   Device& operator=(Device&& other) noexcept;
@@ -45,6 +45,8 @@ class Device {
   ~Device();
 
   void cleanUp();
+
+ private:
   void initialize(std::shared_ptr<Instance>, std::shared_ptr<Surface>);
 
  public:

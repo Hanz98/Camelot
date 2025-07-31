@@ -20,7 +20,6 @@
 #include <Avalon/src/device/Instance.h>
 #include <Avalon/src/presentation/renderpass/RenderPass.h>
 #include <Avalon/src/presentation/swapchain/SwapChainModel.h>
-#include <Avalon/src/utils/ResourceDescriptor.h>
 #include <Avalon/src/window/SurfaceManager.h>
 #include <Avalon/src/window/Window.h>
 #include <pch.h>
