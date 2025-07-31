@@ -21,6 +21,8 @@
 #include <memory>
 #include <vulkan/vulkan.hpp>
 
+namespace avalon {
+
 class Buffer {
  private:
   VkBuffer m_buffer;
@@ -33,5 +35,7 @@ class Buffer {
 
   void createBuffer(std::shared_ptr<VmaAllocatorWrapper> allocator);
 };
+
+}  // namespace avalon
 
 #endif  // AVALON_SRC_DATA_BUFFERS_BUFFER_H_

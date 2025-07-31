@@ -17,6 +17,9 @@
 #define AVALON_SRC_UTILS_INITIALIZERS_HPP_
 #include <pch.h>
 
-namespace Initializers {}  // namespace Initializers
+namespace avalon {
+namespace initializers {
+}  // namespace initializers
+}  // namespace avalon
 
 #endif  // AVALON_SRC_UTILS_INITIALIZERS_HPP_

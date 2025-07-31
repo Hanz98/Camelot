@@ -15,6 +15,8 @@
 
 #include "GlfWrapper.h"
 
+namespace avalon {
+
 int GlfWrapper::init() { return glfwInit(); }
 
 void GlfWrapper::terminate() { glfwTerminate(); }
@@ -35,3 +37,5 @@ void GlfWrapper::destroyWindow(GLFWwindow* window) {
 void GlfWrapper::setWindowUserPointer(GLFWwindow* window, void* pointer) {
   glfwSetWindowUserPointer(window, pointer);
 }
+
+}  // namespace avalon

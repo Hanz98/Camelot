@@ -16,6 +16,10 @@
 #ifndef AVALON_SRC_PRESENTATION_RENDERPASS_RENDERPASS_H_
 #define AVALON_SRC_PRESENTATION_RENDERPASS_RENDERPASS_H_
 
+namespace avalon {
+
 class RenderPass {};
+
+}  // namespace avalon
 
 #endif  // AVALON_SRC_PRESENTATION_RENDERPASS_RENDERPASS_H_

@@ -19,6 +19,8 @@
 struct GLFWwindow;
 struct GLFWmonitor;
 
+namespace avalon {
+
 class IGlfWrapper {
  public:
   IGlfWrapper() = default;
@@ -37,5 +39,7 @@ class IGlfWrapper {
   virtual void destroyWindow(GLFWwindow* window) = 0;
   virtual void setWindowUserPointer(GLFWwindow* window, void* pointer) = 0;
 };
+
+}  // namespace avalon
 
 #endif  // AVALON_INTERFACE_WINDOW_IGLFWRAPPER_H_
