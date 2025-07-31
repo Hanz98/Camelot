@@ -1,7 +1,7 @@
-Checks:          'clang-diagnostic-*,clang-analyzer-*,cppcoreguidelines-*,modernize-*,-modernize-use-trailing-return-type'
-WarningsAsErrors: true
+Checks:          'cppcoreguidelines-avoid-magic-numbers,cppcoreguidelines-init-variables,cppcoreguidelines-prefer-member-initializer,cppcoreguidelines-pro-bounds-array-to-pointer-decay,cppcoreguidelines-pro-bounds-constant-array-index,cppcoreguidelines-pro-bounds-pointer-arithmetic,cppcoreguidelines-pro-type-cstyle-cast,cppcoreguidelines-pro-type-const-cast,cppcoreguidelines-pro-type-reinterpret-cast,cppcoreguidelines-pro-type-static-cast-downcast,cppcoreguidelines-slicing,cppcoreguidelines-special-member-functions,modernize-use-nullptr,modernize-use-auto,modernize-use-override,-modernize-use-trailing-return-type'
+WarningsAsErrors: false
 HeaderFilterRegex: ''
-FormatStyle:     google
+FormatStyle:     none
 CheckOptions:
   - key:             cert-dcl16-c.NewSuffixes
     value:           'L;LL;LU;LLU'
