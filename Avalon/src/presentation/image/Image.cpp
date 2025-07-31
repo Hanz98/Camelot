@@ -14,29 +14,33 @@
  */
 #include "Image.h"
 
-#include <Avalon/src/utils/ResourceDescriptor.h>
 #include <Avalon/src/validation/CheckResult.h>
 #include <vma/vk_mem_alloc.h>
 
 #include <utility>
 
 Image::Image()
-    : m_device(Resource::Descriptor->device),
-      m_image(VK_NULL_HANDLE),
+    : m_image(VK_NULL_HANDLE),
       m_imageView(VK_NULL_HANDLE),
-      m_allocation(VK_NULL_HANDLE),
-      m_allocator(Resource::Descriptor->allocator) {}
+      m_allocation(VK_NULL_HANDLE) {
+  if (m_device == nullptr && m_allocator == nullptr) {
+    spdlog::error("Image: Device and Allocator are not initialized.");
+    throw std::runtime_error(
+        "Image: Device and Allocator are not initialized.");
+  }
+}
 
 Image::Image(Image&& other) noexcept
     : m_device(std::move(other.m_device)),
+      m_allocator(std::move(other.m_allocator)),
       m_image(std::exchange(other.m_image, VK_NULL_HANDLE)),
       m_imageView(std::exchange(other.m_imageView, VK_NULL_HANDLE)),
-      m_allocation(std::exchange(other.m_allocation, VK_NULL_HANDLE)),
-      m_allocator(std::move(other.m_allocator)) {}
+      m_allocation(std::exchange(other.m_allocation, VK_NULL_HANDLE)) {}
 
 Image& Image::operator=(Image&& other) noexcept {
   if (this != &other) {
     m_device = std::move(other.m_device);
+    m_allocator = std::move(other.m_allocator);
     m_image = std::exchange(other.m_image, VK_NULL_HANDLE);
     m_imageView = std::exchange(other.m_imageView, VK_NULL_HANDLE);
     m_allocation = std::exchange(other.m_allocation, VK_NULL_HANDLE);
@@ -49,11 +53,23 @@ Image::~Image() { cleanUp(); }
 
 void Image::cleanUp() {
   if (m_imageView != VK_NULL_HANDLE) {
+    if (m_device == nullptr) {
+      spdlog::error(
+          "Image: Device is not initialized. Cannot destroy image view.");
+      throw std::runtime_error(
+          "Image: Device is not initialized. Cannot destroy image view.");
+    }
     vkDestroyImageView(m_device->getDevice(), m_imageView, nullptr);
     m_imageView = VK_NULL_HANDLE;
   }
 
   if (m_image != VK_NULL_HANDLE) {
+    if (m_allocator == nullptr) {
+      spdlog::error(
+          "Image: Allocator is not initialized. Cannot destroy image.");
+      throw std::runtime_error(
+          "Image: Allocator is not initialized. Cannot destroy image.");
+    }
     vmaDestroyImage(m_allocator->allocator, m_image, m_allocation);
     m_image = VK_NULL_HANDLE;
     m_allocation = VK_NULL_HANDLE;
@@ -61,6 +77,11 @@ void Image::cleanUp() {
 }
 
 void Image::createImage(const Camelot::ImageCreateInfo& createInfo) {
+  if (m_device == nullptr || m_allocator == nullptr) {
+    spdlog::error("Image: Device or Allocator is not initialized.");
+    throw std::runtime_error("Image: Device or Allocator is not initialized.");
+  }
+
   VkImageCreateInfo imageInfo = {};
   imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
   imageInfo.imageType = VK_IMAGE_TYPE_2D;

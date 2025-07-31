@@ -16,7 +16,6 @@
 #ifndef AVALON_SRC_DATA_BUFFERS_BUFFER_H_
 #define AVALON_SRC_DATA_BUFFERS_BUFFER_H_
 
-#include <Avalon/src/utils/ResourceDescriptor.h>
 #include <vma/vk_mem_alloc.h>
 
 #include <memory>
@@ -32,7 +31,7 @@ class Buffer {
   Buffer();
   ~Buffer();
 
-  void createBuffer();
+  void createBuffer(std::shared_ptr<VmaAllocatorWrapper> allocator);
 };
 
 #endif  // AVALON_SRC_DATA_BUFFERS_BUFFER_H_

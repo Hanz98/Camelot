@@ -23,12 +23,15 @@
 #include <stdexcept>
 #include <vector>
 
-Device::Device()
+Device::Device(std::shared_ptr<Instance> instance,
+               std::shared_ptr<Surface> surface)
     : m_device(),
       m_physicalDevice(),
       m_graphicsQueue(VK_NULL_HANDLE),
       m_presentQueue(VK_NULL_HANDLE),
-      m_physicalDeviceProperties() {}
+      m_physicalDeviceProperties() {
+  initialize(instance, surface);
+}
 
 Device::Device(Device&& other)
     : m_device(other.m_device),
