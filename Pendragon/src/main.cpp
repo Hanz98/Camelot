@@ -20,7 +20,7 @@
 
 int main(int argc, char *argv[]) {
   std::cout << "Hello world from Pendragon!" << std::endl;
-  MainModel mainTest;
+  Camelot::Engine mainTest;
   mainTest.test();
   usleep(10000000);
 

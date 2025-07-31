@@ -18,9 +18,13 @@
 
 #include <iostream>
 
-class MainModel {
+namespace Nimue {
+
+class Engine {
  public:
   void test() { std::cout << "Hello World from Nimue!" << std::endl; }
 };
+
+}  // namespace Nimue
 
 #endif  // NIMUE_API_NIMUE_H_

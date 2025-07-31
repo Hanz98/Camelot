@@ -18,9 +18,13 @@
 
 #include <iostream>
 
-class Merlin {
+namespace Merlin {
+
+class Engine {
  public:
   void test();
 };
+
+}  // namespace Merlin
 
 #endif  // MERLIN_SRC_MAIN_MERLIN_H_

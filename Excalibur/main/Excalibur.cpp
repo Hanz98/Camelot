@@ -17,4 +17,4 @@
 
 #include <Camelot/src/main/MainModel.h>
 
-void buildCamelot(ICamelot **camelot) { *camelot = new MainModel(); }
+void buildCamelot(Camelot::Interface **camelot) { *camelot = new Camelot::Engine(); }

@@ -16,6 +16,10 @@
 #ifndef CAMELOT_API_MAIN_ICAMELOT_H_
 #define CAMELOT_API_MAIN_ICAMELOT_H_
 
-class ICamelot {};
+namespace Camelot {
+
+class Interface {};
+
+}  // namespace Camelot
 
 #endif  // CAMELOT_API_MAIN_ICAMELOT_H_

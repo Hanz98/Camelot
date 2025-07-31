@@ -14,3 +14,9 @@
  */
 
 #include "Nimue.h"
+
+namespace Nimue {
+
+// Implementation files would go here if needed
+
+}  // namespace Nimue
