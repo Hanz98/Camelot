@@ -37,7 +37,8 @@ class SwapchainModel {
   //  std::vector<VkFramebuffer> m_frameBuffers;
 
  public:
-  SwapchainModel();
+  SwapchainModel(std::shared_ptr<Device> device,
+                 std::shared_ptr<Window> window);
   SwapchainModel(const SwapchainModel&) = delete;
   SwapchainModel(SwapchainModel&&) noexcept;
   SwapchainModel& operator=(const SwapchainModel&) = delete;

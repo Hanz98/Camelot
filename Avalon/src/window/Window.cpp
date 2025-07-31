@@ -24,7 +24,7 @@
 
 #include "interface/window/IGlfWrapper.h"
 
-Window::Window() : m_pWindow(nullptr) {}
+Window::Window() : m_pWindow(nullptr) { initialize(800, 600, "Avalon Window"); }
 
 Window::Window(Window&& other) noexcept : m_pWindow(other.m_pWindow) {
   other.m_pWindow = nullptr;
@@ -49,7 +49,7 @@ void Window::cleanUp() {
   }
 }
 
-bool Window::init(int width, int height, const std::string& title) {
+bool Window::initialize(int width, int height, const std::string& title) {
   glfwInit();
   m_dimensions = std::make_pair(static_cast<uint16_t>(width),
                                 static_cast<uint16_t>(height));

@@ -15,13 +15,21 @@
 
 #include "SwapChainModel.h"
 
-#include <Avalon/src/utils/ResourceDescriptor.h>
-
+#include <memory>
 #include <utility>
 
-SwapchainModel::SwapchainModel() {
-  m_device = Resource::Descriptor->device;
-  m_window = Resource::Descriptor->window;
+SwapchainModel::SwapchainModel(std::shared_ptr<Device> device,
+                               std::shared_ptr<Window> window)
+    : m_device(device), m_window(window) {
+  if (m_device == nullptr || m_window == nullptr) {
+    spdlog::error("SwapchainModel: Device or Window is not initialized.");
+    throw std::runtime_error(
+        "SwapchainModel: Device or Window is not initialized.");
+  }
+
+  initialize();
+  createDepthImage();
+  createColorImage();
 }
 
 SwapchainModel::SwapchainModel(SwapchainModel&& other) noexcept

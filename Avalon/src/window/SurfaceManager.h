@@ -41,7 +41,7 @@ class SurfaceManager {
   SurfaceManager& operator=(SurfaceManager&&) = delete;
   ~SurfaceManager();
 
-  void init();
+  void initialize();
   void cleanUp();
 
   std::shared_ptr<Surface> getSurface(int id = 0);

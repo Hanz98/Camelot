@@ -43,6 +43,7 @@ class Image {
   VkImageView m_imageView;
 
   VmaAllocation m_allocation;
+
   std::shared_ptr<Device> m_device;
   std::shared_ptr<VmaAllocatorWrapper> m_allocator;
 

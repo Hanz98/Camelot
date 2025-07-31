@@ -21,11 +21,18 @@
 
 SurfaceManager::SurfaceManager(std::shared_ptr<Instance> instance,
                                std::shared_ptr<Window> window)
-    : m_window(window), m_instance(instance) {}
+    : m_window(window), m_instance(instance) {
+  if (m_instance == nullptr || m_window == nullptr) {
+    spdlog::error("SurfaceManager: Instance or Window is not initialized.");
+    throw std::runtime_error(
+        "SurfaceManager: Instance or Window is not initialized.");
+  }
+  initialize();
+}
 
 SurfaceManager::~SurfaceManager() { cleanUp(); }
 
-void SurfaceManager::init() {
+void SurfaceManager::initialize() {
   m_surfaces.push_back(std::make_shared<Surface>(m_instance, m_window));
 
   for (auto surface : m_surfaces) {
