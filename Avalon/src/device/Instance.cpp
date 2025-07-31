@@ -20,7 +20,7 @@
 
 #include <Avalon/src/utils/Initializers.hpp>
 
-Instance::Instance() : m_instance() {}
+Instance::Instance() : m_instance() { initialize(); }
 
 Instance::~Instance() { cleanUp(); }
 
@@ -31,7 +31,7 @@ void Instance::cleanUp() {
   }
 }
 
-void Instance::init() {
+void Instance::initialize() {
   vkb::InstanceBuilder builder;
 
   auto inst_ret = builder.set_app_name("Camelot")

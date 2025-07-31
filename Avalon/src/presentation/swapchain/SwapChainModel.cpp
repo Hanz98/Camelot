@@ -15,29 +15,45 @@
 
 #include "SwapChainModel.h"
 
-#include <Avalon/src/utils/ResourceDescriptor.h>
-
+#include <memory>
 #include <utility>
 
-SwapchainModel::SwapchainModel()
-    : m_resourceDescriptor(Resource::Descriptor::GetDescriptor()) {}
+SwapchainModel::SwapchainModel(std::shared_ptr<Device> device,
+                               std::shared_ptr<Window> window)
+    : m_device(device), m_window(window) {
+  if (m_device == nullptr || m_window == nullptr) {
+    spdlog::error("SwapchainModel: Device or Window is not initialized.");
+    throw std::runtime_error(
+        "SwapchainModel: Device or Window is not initialized.");
+  }
+
+  initialize();
+  createDepthImage();
+  createColorImage();
+}
 
 SwapchainModel::SwapchainModel(SwapchainModel&& other) noexcept
-    : m_depth(std::move(other.m_depth)),
-      m_color(std::move(other.m_color)),
-      m_resourceDescriptor(std::move(other.m_resourceDescriptor)) {  //,
+    : m_device(std::move(other.m_device)),
+      m_window(std::move(other.m_window)),
+      m_depth(std::move(other.m_depth)),
+      m_color(std::move(other.m_color)) {  //,
   //       m_swapChainImage(std::move(other.m_swapChainImage)),
   //       m_frameBuffers(std::move(other.m_frameBuffers))
   //{
+  other.m_device = nullptr;
+  other.m_window = nullptr;
 }
 
 SwapchainModel& SwapchainModel::operator=(SwapchainModel&& other) noexcept {
   if (this != &other) {
+    m_device = std::move(other.m_device);
+    m_window = std::move(other.m_window);
     m_depth = std::move(other.m_depth);
     m_color = std::move(other.m_color);
-    m_resourceDescriptor = std::move(other.m_resourceDescriptor);
     //    m_swapChainImage = std::move(other.m_swapChainImage);
     //    m_frameBuffers = std::move(other.m_frameBuffers);
+    other.m_device = nullptr;
+    other.m_window = nullptr;
   }
   return *this;
 }
@@ -47,15 +63,13 @@ SwapchainModel::~SwapchainModel() { cleanUp(); }
 void SwapchainModel::cleanUp() { vkb::destroy_swapchain(m_swapchain); }
 
 void SwapchainModel::initialize() {
-  if (m_resourceDescriptor->getDevice() == nullptr ||
-      m_resourceDescriptor->getWindow() == nullptr) {
+  if (m_device == nullptr || m_window == nullptr) {
     spdlog::error("SwapchainModel: Device or Window is not initialized.");
     throw std::runtime_error(
         "SwapchainModel: Device or Window is not initialized.");
   }
 
-  vkb::SwapchainBuilder swapchainBuilder{
-      m_resourceDescriptor->getDevice()->getVkbDevice()};
+  vkb::SwapchainBuilder swapchainBuilder{m_device->getVkbDevice()};
   auto swapRet = swapchainBuilder.build();
   if (!swapRet) {
     spdlog::error("Failed to create Vulkan swapchain. Error: " +
@@ -67,8 +81,7 @@ void SwapchainModel::initialize() {
 }
 
 void SwapchainModel::recreateSwapchain() {
-  vkb::SwapchainBuilder swapchain_builder{
-      m_resourceDescriptor->getDevice()->getVkbDevice()};
+  vkb::SwapchainBuilder swapchain_builder{m_device->getVkbDevice()};
   auto swapRet = swapchain_builder.set_old_swapchain(m_swapchain).build();
   if (!swapRet) {
     m_swapchain.swapchain = VK_NULL_HANDLE;
@@ -86,11 +99,11 @@ void SwapchainModel::recreateSwapchain() {
 
 void SwapchainModel::createDepthImage() {
   Camelot::ImageCreateInfo depthInfo = {
-      .width = m_resourceDescriptor->getWindow()->getWidth(),
-      .height = m_resourceDescriptor->getWindow()->getHeight(),
+      .width = m_window->getWidth(),
+      .height = m_window->getHeight(),
       .mipLevels = 1,
-      .numSample = m_resourceDescriptor->getDevice()->getMaxUsableSampleCount(),
-      .format = m_resourceDescriptor->getDevice()->getDepthFormat(),
+      .numSample = m_device->getMaxUsableSampleCount(),
+      .format = m_device->getDepthFormat(),
       .tiling = VK_IMAGE_TILING_OPTIMAL,
       .usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
       .properties = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -101,10 +114,10 @@ void SwapchainModel::createDepthImage() {
 
 void SwapchainModel::createColorImage() {
   Camelot::ImageCreateInfo colorInfo = {
-      .width = m_resourceDescriptor->getWindow()->getWidth(),
-      .height = m_resourceDescriptor->getWindow()->getHeight(),
+      .width = m_window->getWidth(),
+      .height = m_window->getHeight(),
       .mipLevels = 1,
-      .numSample = m_resourceDescriptor->getDevice()->getMaxUsableSampleCount(),
+      .numSample = m_device->getMaxUsableSampleCount(),
       .format = m_swapchain.image_format,
       .tiling = VK_IMAGE_TILING_OPTIMAL,
       .usage = VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT |

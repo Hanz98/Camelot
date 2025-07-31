@@ -40,12 +40,13 @@ class Window {
   virtual ~Window();
   void cleanUp();
 
-  bool init(int width, int height, const std::string& title);
-
   [[nodiscard]] GLFWwindow* getWindow() const;
 
   [[nodiscard]] uint16_t getWidth() const;
   [[nodiscard]] uint16_t getHeight() const;
+
+ private:
+  bool initialize(int width, int height, const std::string& title);
 };
 
 #endif  // AVALON_SRC_WINDOW_WINDOW_H_

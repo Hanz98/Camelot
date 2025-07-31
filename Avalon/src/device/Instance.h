@@ -35,7 +35,8 @@ class Instance {
 
   void cleanUp();
 
-  void init();
+ private:
+  void initialize();
 
  public:
   [[nodiscard]] inline const vkb::Instance& getVkbInstance() const {
