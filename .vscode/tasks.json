@@ -18,7 +18,7 @@
         // these are the *default* values—Linux users will hit these,
         // Windows blocks will override them.
         "--output-folder=build/conan",
-        "--profile=profiles/Camelot-Linux"
+        "--profile:all=profiles/Camelot-Linux"
       ],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -31,7 +31,7 @@
           "-s", "build_type=Debug",
           "--build=missing",
           "--output-folder=build\\conan",
-          "--profile=profiles/Camelot-Win"
+          "--profile:all=profiles/Camelot-Win"
         ]
       },
       // On Linux, the “default” block above is already correct,
@@ -44,7 +44,7 @@
           "-s", "build_type=Debug",
           "--build=missing",
           "--output-folder=build/conan",
-          "--profile=profiles/Camelot-Linux"
+          "--profile:all=profiles/Camelot-Linux"
         ]
       },
       "group": {
@@ -68,7 +68,7 @@
         "-s", "build_type=Release",
         "--build=missing",
         "--output-folder=build/conan",
-        "--profile=profiles/Camelot-Linux"
+        "--profile:all=profiles/Camelot-Linux"
       ],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -80,7 +80,7 @@
           "-s", "build_type=Release",
           "--build=missing",
           "--output-folder=build\\conan",
-          "--profile=profiles/Camelot-Win"
+          "--profile:all=profiles/Camelot-Win"
         ]
       },
       "linux": {
@@ -89,7 +89,7 @@
           "-s", "build_type=Release",
           "--build=missing",
           "--output-folder=build/conan",
-          "--profile=profiles/Camelot-Linux"
+          "--profile:all=profiles/Camelot-Linux"
         ]
       },
       "group": {
