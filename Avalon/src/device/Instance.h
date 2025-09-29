@@ -26,18 +26,25 @@ class Instance {
 
  public:
   Instance();
-  Instance(Instance&& other);
+  Instance(Instance&& other) = delete;
   Instance(const Instance& other) = delete;
-  Instance& operator=(Instance&& other);
+  Instance& operator=(Instance&& other) = delete;
   Instance& operator=(const Instance& other) = delete;
 
   ~Instance();
 
   void cleanUp();
 
-  void init();
-  inline const vkb::Instance& getVkbInstance() const { return m_instance; }
-  inline VkInstance& getInstance() { return m_instance.instance; }
+ private:
+  void initialize();
+
+ public:
+  [[nodiscard]] inline const vkb::Instance& getVkbInstance() const {
+    return m_instance;
+  }
+  [[nodiscard]] inline const VkInstance& getInstance() const {
+    return m_instance.instance;
+  }
 };
 
 #endif  // AVALON_SRC_DEVICE_INSTANCE_H_

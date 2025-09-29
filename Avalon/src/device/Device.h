@@ -16,39 +16,58 @@
 #ifndef AVALON_SRC_DEVICE_DEVICE_H_
 #define AVALON_SRC_DEVICE_DEVICE_H_
 
+#include <Avalon/src/window/Surface.h>
 #include <VkBootstrap.h>
 #include <VkBootstrapDispatch.h>
-#include <pch.h>
-#define VMA_IMPLEMENTATION
-#include <vma/vk_mem_alloc.h>
+#include <vulkan/vulkan.h>
+
+#include <memory>
+#include <vector>
 
 #include "Instance.h"
+
 class Device {
  private:
   vkb::Device m_device;
   vkb::PhysicalDevice m_physicalDevice;
+  VkQueue m_graphicsQueue;
+  VkQueue m_presentQueue;
 
-  VmaAllocation m_allocation;
+  VkPhysicalDeviceProperties m_physicalDeviceProperties;
 
  public:
-  Device();
+  Device(std::shared_ptr<Instance>, std::shared_ptr<Surface>);
   Device(Device&& other);
   Device(const Device& other) = delete;
-  Device& operator=(Device&& other);
+  Device& operator=(Device&& other) noexcept;
   Device& operator=(const Device& other) = delete;
 
   ~Device();
 
   void cleanUp();
 
+ private:
+  void initialize(std::shared_ptr<Instance>, std::shared_ptr<Surface>);
+
  public:
-  VkDevice& getDevice() { return m_device.device; }
-  VkPhysicalDevice& getPhysicalDevice() {
+  inline VkDevice& getDevice() { return m_device.device; }
+  inline VkPhysicalDevice& getPhysicalDevice() {
     return m_physicalDevice.physical_device;
   }
+  inline vkb::Device& getVkbDevice() { return m_device; }
+  inline vkb::PhysicalDevice& getVkbPhysicalDevice() {
+    return m_physicalDevice;
+  }
 
-  void PickPhysicalDevice(const Instance& instance,
-                          const VkSurfaceKHR& surface);
+ public:
+  VkSampleCountFlagBits getMaxUsableSampleCount();
+  VkFormat getDepthFormat();
+
+ private:
+  VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates,
+                               VkImageTiling tiling,
+                               VkFormatFeatureFlags features);
+  void initializeQueues();
 };
 
 #endif  // AVALON_SRC_DEVICE_DEVICE_H_
