@@ -16,12 +16,11 @@
 #ifndef AVALON_SRC_ALLOCATOR_VMAALLOCATOR_H_
 #define AVALON_SRC_ALLOCATOR_VMAALLOCATOR_H_
 
-constexpr int VMA_STATIC_VULKAN_FUNCTIONS = 0;
-constexpr int VMA_DYNAMIC_VULKAN_FUNCTIONS = 1;
-#include <vma/vk_mem_alloc.h>
+#include <vk_mem_alloc.h>
+#include <vulkan/vulkan.h>
 
 struct VmaAllocatorWrapper {
-  VmaAllocator allocator;
+  VmaAllocator allocator = VK_NULL_HANDLE;
 };
 
 #endif  // AVALON_SRC_ALLOCATOR_VMAALLOCATOR_H_

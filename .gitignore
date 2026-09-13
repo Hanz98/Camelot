@@ -15,3 +15,4 @@ bin
 out
 build
 *.tcl
+logs

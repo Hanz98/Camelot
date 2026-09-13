@@ -15,12 +15,13 @@
 #include "Device.h"
 
 #define VMA_IMPLEMENTATION
-#include <vma/vk_mem_alloc.h>
+#include <vk_mem_alloc.h>
 
 #include <iostream>
 #include <memory>
 #include <sstream>
 #include <stdexcept>
+#include <string>
 #include <vector>
 
 Device::Device(std::shared_ptr<Instance> instance,
@@ -33,7 +34,7 @@ Device::Device(std::shared_ptr<Instance> instance,
   initialize(instance, surface);
 }
 
-Device::Device(Device&& other)
+Device::Device(Device&& other) noexcept
     : m_device(other.m_device),
       m_physicalDevice(other.m_physicalDevice),
       m_graphicsQueue(other.m_graphicsQueue),
@@ -47,10 +48,19 @@ Device::Device(Device&& other)
 }
 
 Device& Device::operator=(Device&& other) noexcept {
-  m_device = other.m_device;
-  m_physicalDevice = other.m_physicalDevice;
-  other.m_device = {};
-  other.m_physicalDevice = {};
+  if (this != &other) {
+    cleanUp();
+    m_device = other.m_device;
+    m_physicalDevice = other.m_physicalDevice;
+    m_graphicsQueue = other.m_graphicsQueue;
+    m_presentQueue = other.m_presentQueue;
+    m_physicalDeviceProperties = other.m_physicalDeviceProperties;
+    other.m_device = {};
+    other.m_physicalDevice = {};
+    other.m_graphicsQueue = VK_NULL_HANDLE;
+    other.m_presentQueue = VK_NULL_HANDLE;
+    other.m_physicalDeviceProperties = {};
+  }
   return *this;
 }
 
@@ -66,12 +76,16 @@ void Device::cleanUp() {
 void Device::initialize(std::shared_ptr<Instance> instance,
                         std::shared_ptr<Surface> surface) {
   if (surface == nullptr || instance == nullptr) {
-    spdlog::error("Device::pickPhysicalDevice invaliad arguments!");
-    throw std::runtime_error("Device::pickPhysicalDevice invaliad arguments!");
+    spdlog::error("Device::pickPhysicalDevice invalid arguments!");
+    throw std::runtime_error("Device::pickPhysicalDevice invalid arguments!");
   }
 
   vkb::PhysicalDeviceSelector selector{instance->getVkbInstance()};
-  auto vkbPhysicalDevice = selector.set_surface(surface->getSurface()).select();
+  auto vkbPhysicalDevice =
+      selector.set_surface(surface->getSurface())
+          .set_minimum_version(1, 1)
+          .add_desired_extension(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME)
+          .select();
   if (!vkbPhysicalDevice) {
     spdlog::error("Failed to select Vulkan Physical Device. Error: " +
                   vkbPhysicalDevice.error().message());
@@ -109,6 +123,15 @@ void Device::initializeQueues() {
     throw std::runtime_error("Failed to create Vulkan queue.");
   }
   m_presentQueue = presentQueueRet.value();
+}
+
+bool Device::isExtensionEnabled(const char* name) const {
+  for (const auto& extension : m_physicalDevice.get_extensions()) {
+    if (extension == name) {
+      return true;
+    }
+  }
+  return false;
 }
 
 VkSampleCountFlagBits Device::getMaxUsableSampleCount() {

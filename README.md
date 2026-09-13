@@ -1,15 +1,74 @@
 # Camelot
-![Build and Test status](https://github.com/Hanz98/Camelot/actions/workflows/build.yaml/badge.svg)
 
-## Setup project 
+![Build and Test status](https://github.com/Hanz98/Camelot/actions/workflows/build.yaml/badge.svg?branch=develop)
 
-### Linux 
+A C++20 Vulkan rendering application. Development happens on the `develop`
+branch; `master` only receives merges from it.
 
-On Linux, run `setup.sh` file to install dependencies with Conan, and build the CMake project. 
+## Modules
 
-### Windows 
+| Module      | Role                                                                 |
+|-------------|----------------------------------------------------------------------|
+| `Avalon`    | Vulkan engine layer: window (GLFW), instance/device (vk-bootstrap), surface, swapchain, images, VMA allocator |
+| `Camelot`   | Application model that wraps Avalon behind the `ICamelot` interface   |
+| `Pendragon` | Executable entry point                                               |
+| `Tests`     | GoogleTest suite, with a vendored mock Vulkan ICD for GPU-less runs  |
+| `Excalibur`, `Merlin`, `Nimue` | Placeholders, not built                            |
 
-On Windows, run `setup.ps1` file to generate a Visual Studio solution file. You should then be able to open the project folder in Visual Studio.
+## Dependencies
 
-Also, make sure to install the CMake and Conan extensions to Visual Studio.
+All third-party libraries (GLFW, spdlog, vk-bootstrap, Vulkan headers/loader,
+VulkanMemoryAllocator, GoogleTest) come from Conan 2 (`conanfile.py`).
+You need CMake ≥ 3.19, Ninja, a C++20 compiler and `pip install conan`.
 
+Conan uses `cmake_layout`, so everything lands under `build/<BuildType>/`:
+the toolchain file is `build/<BuildType>/generators/conan_toolchain.cmake`
+and binaries end up in `build/<BuildType>/bin`.
+
+## Build
+
+### Linux
+
+```sh
+scripts/linux/setup.sh                  # Release build
+BUILD_TYPE=Debug scripts/linux/setup.sh # Debug build
+RUN_TESTS=1 USE_MOCK_ICD=1 scripts/linux/setup.sh   # build + run tests without a GPU
+```
+
+The script uses `profiles/Camelot-Linux` (gcc 14). If your gcc differs, pass
+`CONAN_ARGS="-s compiler.version=<major>"`. GLFW needs the X11 development
+packages; Conan installs them when run with
+`CONAN_ARGS="-c tools.system.package_manager:mode=install"`.
+
+Equivalent manual steps:
+
+```sh
+conan install . --profile:host=profiles/Camelot-Linux --profile:build=profiles/Camelot-Linux \
+    -s build_type=Release --build=missing
+cmake --preset release
+cmake --build --preset release
+ctest --preset release
+```
+
+### Windows
+
+Open a *Developer PowerShell for VS 2022* and run:
+
+```powershell
+scripts\windows\setup.ps1              # Debug build (BUILD_TYPE=Release for Release)
+```
+
+It uses `profiles/Camelot-Win` (MSVC 19.4, Ninja) and the same `build/<BuildType>` layout.
+
+## Tests
+
+Tests are built when `BUILD_TESTING` is ON (the default). Run them with
+`ctest --test-dir build/Release --output-on-failure`. Configure with
+`-DCAMELOT_TESTS_USE_MOCK_ICD=ON` to run against the vendored mock Vulkan ICD
+(this is what CI does, under `xvfb-run`, so no GPU or display is required).
+
+## Static analysis and formatting
+
+`pre-commit` runs the license-header, clang-format (Google style) and cpplint
+hooks; CI enforces them. `scripts/linux/runStaticAnalysis.sh` runs clang-tidy
+and cppcheck against `build/<BuildType>/compile_commands.json`.

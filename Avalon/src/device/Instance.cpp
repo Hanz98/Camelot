@@ -35,6 +35,7 @@ void Instance::initialize() {
   vkb::InstanceBuilder builder;
 
   auto inst_ret = builder.set_app_name("Camelot")
+                      .require_api_version(kVulkanApiVersion)
                       .request_validation_layers()
                       .use_default_debug_messenger()
                       .build();

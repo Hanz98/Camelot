@@ -19,9 +19,15 @@
 #include <utility>
 
 SwapchainModel::SwapchainModel(std::shared_ptr<Device> device,
-                               std::shared_ptr<Window> window)
-    : m_device(device), m_window(window) {
-  if (m_device == nullptr || m_window == nullptr) {
+                               std::shared_ptr<Window> window,
+                               std::shared_ptr<VmaAllocatorWrapper> allocator)
+    : m_device(device),
+      m_window(std::move(window)),
+      m_allocator(allocator),
+      m_swapchain(),
+      m_depth(device, allocator),
+      m_color(std::move(device), std::move(allocator)) {
+  if (m_device == nullptr || m_window == nullptr || m_allocator == nullptr) {
     spdlog::error("SwapchainModel: Device or Window is not initialized.");
     throw std::runtime_error(
         "SwapchainModel: Device or Window is not initialized.");
@@ -35,32 +41,34 @@ SwapchainModel::SwapchainModel(std::shared_ptr<Device> device,
 SwapchainModel::SwapchainModel(SwapchainModel&& other) noexcept
     : m_device(std::move(other.m_device)),
       m_window(std::move(other.m_window)),
+      m_allocator(std::move(other.m_allocator)),
+      m_swapchain(std::exchange(other.m_swapchain, vkb::Swapchain{})),
       m_depth(std::move(other.m_depth)),
-      m_color(std::move(other.m_color)) {  //,
-  //       m_swapChainImage(std::move(other.m_swapChainImage)),
-  //       m_frameBuffers(std::move(other.m_frameBuffers))
-  //{
-  other.m_device = nullptr;
-  other.m_window = nullptr;
-}
+      m_color(std::move(other.m_color)) {}
 
 SwapchainModel& SwapchainModel::operator=(SwapchainModel&& other) noexcept {
   if (this != &other) {
+    cleanUp();
     m_device = std::move(other.m_device);
     m_window = std::move(other.m_window);
+    m_allocator = std::move(other.m_allocator);
+    m_swapchain = std::exchange(other.m_swapchain, vkb::Swapchain{});
     m_depth = std::move(other.m_depth);
     m_color = std::move(other.m_color);
-    //    m_swapChainImage = std::move(other.m_swapChainImage);
-    //    m_frameBuffers = std::move(other.m_frameBuffers);
-    other.m_device = nullptr;
-    other.m_window = nullptr;
   }
   return *this;
 }
 
 SwapchainModel::~SwapchainModel() { cleanUp(); }
 
-void SwapchainModel::cleanUp() { vkb::destroy_swapchain(m_swapchain); }
+void SwapchainModel::cleanUp() {
+  m_depth.cleanUp();
+  m_color.cleanUp();
+  if (m_swapchain.swapchain != VK_NULL_HANDLE) {
+    vkb::destroy_swapchain(m_swapchain);
+    m_swapchain = {};
+  }
+}
 
 void SwapchainModel::initialize() {
   if (m_device == nullptr || m_window == nullptr) {

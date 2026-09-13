@@ -48,7 +48,8 @@ class Image {
   std::shared_ptr<VmaAllocatorWrapper> m_allocator;
 
  public:
-  Image();
+  Image(std::shared_ptr<Device> device,
+        std::shared_ptr<VmaAllocatorWrapper> allocator);
   Image(const Image&) = delete;
   Image(Image&&) noexcept;
   Image& operator=(const Image&) = delete;

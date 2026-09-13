@@ -71,7 +71,7 @@ clang_tidy_failed=0
 
 for file in "${files[@]}"; do
   clang-tidy \
-    -p build/release/compile_commands.json \
+    -p "build/${BUILD_TYPE:-Release}" \
     --warnings-as-errors='*' \
     "$file" \
   || clang_tidy_failed=1

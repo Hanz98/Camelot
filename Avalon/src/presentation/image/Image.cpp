@@ -15,15 +15,19 @@
 #include "Image.h"
 
 #include <Avalon/src/validation/CheckResult.h>
-#include <vma/vk_mem_alloc.h>
+#include <vk_mem_alloc.h>
 
+#include <memory>
 #include <utility>
 
-Image::Image()
+Image::Image(std::shared_ptr<Device> device,
+             std::shared_ptr<VmaAllocatorWrapper> allocator)
     : m_image(VK_NULL_HANDLE),
       m_imageView(VK_NULL_HANDLE),
-      m_allocation(VK_NULL_HANDLE) {
-  if (m_device == nullptr && m_allocator == nullptr) {
+      m_allocation(VK_NULL_HANDLE),
+      m_device(std::move(device)),
+      m_allocator(std::move(allocator)) {
+  if (m_device == nullptr || m_allocator == nullptr) {
     spdlog::error("Image: Device and Allocator are not initialized.");
     throw std::runtime_error(
         "Image: Device and Allocator are not initialized.");
@@ -31,19 +35,19 @@ Image::Image()
 }
 
 Image::Image(Image&& other) noexcept
-    : m_device(std::move(other.m_device)),
-      m_allocator(std::move(other.m_allocator)),
-      m_image(std::exchange(other.m_image, VK_NULL_HANDLE)),
+    : m_image(std::exchange(other.m_image, VK_NULL_HANDLE)),
       m_imageView(std::exchange(other.m_imageView, VK_NULL_HANDLE)),
-      m_allocation(std::exchange(other.m_allocation, VK_NULL_HANDLE)) {}
+      m_allocation(std::exchange(other.m_allocation, VK_NULL_HANDLE)),
+      m_device(std::move(other.m_device)),
+      m_allocator(std::move(other.m_allocator)) {}
 
 Image& Image::operator=(Image&& other) noexcept {
   if (this != &other) {
-    m_device = std::move(other.m_device);
-    m_allocator = std::move(other.m_allocator);
+    cleanUp();
     m_image = std::exchange(other.m_image, VK_NULL_HANDLE);
     m_imageView = std::exchange(other.m_imageView, VK_NULL_HANDLE);
     m_allocation = std::exchange(other.m_allocation, VK_NULL_HANDLE);
+    m_device = std::move(other.m_device);
     m_allocator = std::move(other.m_allocator);
   }
   return *this;
@@ -81,6 +85,7 @@ void Image::createImage(const Camelot::ImageCreateInfo& createInfo) {
     spdlog::error("Image: Device or Allocator is not initialized.");
     throw std::runtime_error("Image: Device or Allocator is not initialized.");
   }
+  cleanUp();
 
   VkImageCreateInfo imageInfo = {};
   imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;

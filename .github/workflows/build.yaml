@@ -1,59 +1,89 @@
 name: Build
+
 on:
   push:
+    branches: [master, develop]
   pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      BUILD_TYPE: Release
+      BUILD_DIR: build/Release
+
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Install Basic Dependencies
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install system dependencies
+        # X11 dev packages are needed to build GLFW (Conan xorg/system);
+        # xvfb provides a display so window/Vulkan tests can run headless.
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake g++ build-essential python3 python3-pip
-          sudo python3 -m pip install conan pre-commit --ignore-installed urllib3
+          sudo apt-get install -y ninja-build cmake pkg-config xvfb \
+            libx11-dev libx11-xcb-dev libfontenc-dev libice-dev libsm-dev \
+            libxau-dev libxaw7-dev libxcomposite-dev libxcursor-dev \
+            libxdamage-dev libxdmcp-dev libxext-dev libxfixes-dev \
+            libxi-dev libxinerama-dev libxkbfile-dev libxmu-dev libxmuu-dev \
+            libxpm-dev libxrandr-dev libxrender-dev libxres-dev \
+            libxss-dev libxt-dev libxtst-dev libxv-dev libxxf86vm-dev \
+            libxcb-glx0-dev libxcb-render0-dev libxcb-render-util0-dev \
+            libxcb-xkb-dev libxcb-icccm4-dev libxcb-image0-dev \
+            libxcb-keysyms1-dev libxcb-randr0-dev libxcb-shape0-dev \
+            libxcb-sync-dev libxcb-xfixes0-dev libxcb-xinerama0-dev \
+            libxcb-dri3-dev uuid-dev libxcb-cursor-dev libxcb-dri2-0-dev \
+            libxcb-present-dev libxcb-composite0-dev libxcb-ewmh-dev \
+            libxcb-res0-dev libxcb-util-dev
+          pip install "conan>=2.0"
 
-      - name: Install Conan Dependencies
-        run: |
-          sudo -E conan profile detect
-          sudo -E conan install . -c tools.system.package_manager:mode=install --build=missing -s build_type=Release
+      - name: Cache Conan packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.conan2/p
+          key: conan-${{ runner.os }}-${{ hashFiles('conanfile.py', 'profiles/Camelot-Linux') }}
+          restore-keys: conan-${{ runner.os }}-
 
-      - name: Install Vulkan Libraries
+      - name: Install Conan dependencies
+        # The repo profile pins gcc 14; override with whatever gcc the runner has.
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libvulkan-dev libxcb1-dev
+          GCC_MAJOR="$(gcc -dumpversion | cut -d. -f1)"
+          conan profile detect --force >/dev/null
+          conan install . \
+            --profile:host=profiles/Camelot-Linux \
+            --profile:build=profiles/Camelot-Linux \
+            -s compiler.version="$GCC_MAJOR" \
+            -s build_type="$BUILD_TYPE" \
+            -c tools.system.package_manager:mode=install \
+            -c tools.system.package_manager:sudo=True \
+            --build=missing
 
-      - name: Set VULKAN_SDK automatically
+      - name: Configure
         run: |
-          if [ -f /usr/include/vulkan/vulkan.h ]; then
-            echo "VULKAN_SDK=/usr" >> $GITHUB_ENV
-          else
-            echo "Vulkan header not found!" && exit 1
-          fi
+          cmake -S . -B "$BUILD_DIR" -G Ninja \
+            -DCMAKE_TOOLCHAIN_FILE="$BUILD_DIR/generators/conan_toolchain.cmake" \
+            -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+            -DBUILD_TESTING=ON \
+            -DCAMELOT_TESTS_USE_MOCK_ICD=ON
 
-      - name: Install Vulkan Memory Allocator
-        run: |
-          git clone https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git /tmp/VulkanMemoryAllocator
-          sudo mkdir -p /usr/local/include/vma
-          sudo cp /tmp/VulkanMemoryAllocator/include/vk_mem_alloc.h /usr/local/include/vma/
-      - name: Build Project
-        run: |
-          sudo cmake \
-            -S .  \
-            -B build  \
-            -G "Unix Makefiles" \
-            -D CMAKE_TOOLCHAIN_FILE=Release/generators/conan_toolchain.cmake \
-            -D CMAKE_POLICY_DEFAULT_CMP0091=NEW \
-            -D CMAKE_BUILD_TYPE=Release \
-            -D VULKAN_SDK=/usr
-          sudo cmake --build build
+      - name: Build
+        run: cmake --build "$BUILD_DIR" --config "$BUILD_TYPE" 2>&1 | tee build.log
 
-      - name: Run Tests
-        run: |
-          cd build
-          export VK_ICD_FILENAMES=lib/VkICD_mock_icd.json
-#          sudo ./bin/Test_Main testing not currently present
-# TODO: Uncomment and configure this line when the test suite is implemented.
+      - name: Test (mock Vulkan ICD, headless)
+        run: xvfb-run -a ctest --test-dir "$BUILD_DIR" --output-on-failure
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: |
+            build.log
+            ${{ env.BUILD_DIR }}/Testing/Temporary/LastTest.log
+          if-no-files-found: ignore

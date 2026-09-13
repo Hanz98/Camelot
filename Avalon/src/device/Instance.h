@@ -20,6 +20,10 @@
 #include <VkBootstrapDispatch.h>
 #include <pch.h>
 
+// Vulkan version the whole engine targets. The instance is created with it,
+// and every consumer (VMA, swapchain, etc.) must use the same value.
+constexpr uint32_t kVulkanApiVersion = VK_API_VERSION_1_1;
+
 class Instance {
  private:
   vkb::Instance m_instance;
