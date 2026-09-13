@@ -16,8 +16,10 @@
 #ifndef AVALON_SRC_PRESENTATION_SWAPCHAIN_SWAPCHAINMODEL_H_
 #define AVALON_SRC_PRESENTATION_SWAPCHAIN_SWAPCHAINMODEL_H_
 
+#include <Avalon/src/allocator/VmaAllocator.h>
 #include <Avalon/src/device/Device.h>
 #include <Avalon/src/presentation/image/Image.h>
+#include <Avalon/src/window/Window.h>
 #include <spdlog/spdlog.h>
 
 #include <memory>
@@ -28,6 +30,7 @@ class SwapchainModel {
  private:
   std::shared_ptr<Device> m_device;
   std::shared_ptr<Window> m_window;
+  std::shared_ptr<VmaAllocatorWrapper> m_allocator;
 
   vkb::Swapchain m_swapchain;
 
@@ -37,8 +40,8 @@ class SwapchainModel {
   //  std::vector<VkFramebuffer> m_frameBuffers;
 
  public:
-  SwapchainModel(std::shared_ptr<Device> device,
-                 std::shared_ptr<Window> window);
+  SwapchainModel(std::shared_ptr<Device> device, std::shared_ptr<Window> window,
+                 std::shared_ptr<VmaAllocatorWrapper> allocator);
   SwapchainModel(const SwapchainModel&) = delete;
   SwapchainModel(SwapchainModel&&) noexcept;
   SwapchainModel& operator=(const SwapchainModel&) = delete;
@@ -50,6 +53,10 @@ class SwapchainModel {
   void initialize();
 
   void recreateSwapchain();
+
+  [[nodiscard]] inline const vkb::Swapchain& getVkbSwapchain() const {
+    return m_swapchain;
+  }
 
  private:
   void createDepthImage();

@@ -34,9 +34,9 @@ class Surface {
  public:
   Surface(std::shared_ptr<Instance>, std::shared_ptr<Window>);
   Surface(const Surface&) = delete;
-  Surface& operator==(const Surface&) = delete;
+  Surface& operator=(const Surface&) = delete;
   Surface(Surface&&) = delete;
-  Surface& operator==(Surface&&) = delete;
+  Surface& operator=(Surface&&) = delete;
 
   virtual ~Surface();
 

@@ -28,10 +28,13 @@
 
 class Avalon {
  private:
-  std::shared_ptr<SurfaceManager> m_surfaceManager;
+  // Declaration order matters: members are destroyed in reverse order, so
+  // the window (GLFW) outlives the instance, which outlives the surfaces,
+  // which outlive the device, which outlives the allocator and swapchain.
   std::shared_ptr<Window> m_window;
-  std::shared_ptr<Device> m_device;
   std::shared_ptr<Instance> m_instance;
+  std::shared_ptr<SurfaceManager> m_surfaceManager;
+  std::shared_ptr<Device> m_device;
   std::shared_ptr<VmaAllocatorWrapper> m_allocator;
   std::shared_ptr<SwapchainModel> m_swapchainModel;
 
@@ -46,8 +49,12 @@ class Avalon {
   void cleanUp();
 
   void init();
+  [[nodiscard]] bool isInitialized() const;
 
   void test();
+
+  [[nodiscard]] std::shared_ptr<Window> getWindow() const { return m_window; }
+  [[nodiscard]] std::shared_ptr<Device> getDevice() const { return m_device; }
 
  private:
   void initVma();

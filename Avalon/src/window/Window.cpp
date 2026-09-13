@@ -24,22 +24,56 @@
 
 #include "interface/window/IGlfWrapper.h"
 
-Window::Window() : m_pWindow(nullptr) { initialize(800, 600, "Avalon Window"); }
+namespace {
+// Number of live Window objects that successfully called glfwInit().
+int g_glfwRefCount = 0;
 
-Window::Window(Window&& other) noexcept : m_pWindow(other.m_pWindow) {
+constexpr int kDefaultWindowWidth = 800;
+constexpr int kDefaultWindowHeight = 600;
+constexpr const char* kDefaultWindowTitle = "Avalon Window";
+}  // namespace
+
+Window::Window()
+    : m_pWindow(nullptr), m_dimensions(0, 0), m_ownsGlfwRef(false) {
+  initialize(kDefaultWindowWidth, kDefaultWindowHeight, kDefaultWindowTitle);
+}
+
+Window::Window(Window&& other) noexcept
+    : m_pWindow(other.m_pWindow),
+      m_dimensions(other.m_dimensions),
+      m_ownsGlfwRef(other.m_ownsGlfwRef) {
   other.m_pWindow = nullptr;
+  other.m_dimensions = {0, 0};
+  other.m_ownsGlfwRef = false;
 }
 
 Window& Window::operator=(Window&& other) noexcept {
-  m_pWindow = other.m_pWindow;
-
-  other.m_pWindow = nullptr;
+  if (this != &other) {
+    cleanUp();
+    releaseGlfw();
+    m_pWindow = other.m_pWindow;
+    m_dimensions = other.m_dimensions;
+    m_ownsGlfwRef = other.m_ownsGlfwRef;
+    other.m_pWindow = nullptr;
+    other.m_dimensions = {0, 0};
+    other.m_ownsGlfwRef = false;
+  }
   return *this;
 }
 
 Window::~Window() {
   cleanUp();
-  glfwTerminate();
+  releaseGlfw();
+}
+
+void Window::releaseGlfw() {
+  if (!m_ownsGlfwRef) {
+    return;
+  }
+  m_ownsGlfwRef = false;
+  if (--g_glfwRefCount == 0) {
+    glfwTerminate();
+  }
 }
 
 void Window::cleanUp() {
@@ -50,7 +84,11 @@ void Window::cleanUp() {
 }
 
 bool Window::initialize(int width, int height, const std::string& title) {
-  glfwInit();
+  if (glfwInit() != GLFW_TRUE) {
+    return false;
+  }
+  ++g_glfwRefCount;
+  m_ownsGlfwRef = true;
   m_dimensions = std::make_pair(static_cast<uint16_t>(width),
                                 static_cast<uint16_t>(height));
   glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);

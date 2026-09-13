@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #include "Avalon.h"
 
 #include <pch.h>
@@ -20,36 +21,41 @@
 #include <memory>
 
 Avalon::Avalon()
-    : m_surfaceManager(nullptr),
-      m_device(nullptr),
+    : m_window(nullptr),
       m_instance(nullptr),
-      m_window(nullptr),
-      m_allocator(nullptr) {}
+      m_surfaceManager(nullptr),
+      m_device(nullptr),
+      m_allocator(nullptr),
+      m_swapchainModel(nullptr) {}
 
-Avalon::~Avalon() {
-  cleanUp();
-  if (m_allocator != nullptr && m_allocator->allocator != VK_NULL_HANDLE) {
-    vmaDestroyAllocator(m_allocator->allocator);
-    m_allocator = nullptr;
-  }
-}
+Avalon::~Avalon() { cleanUp(); }
 
 void Avalon::cleanUp() {
+  // Reverse creation order: everything that lives on the device goes first.
+  if (m_swapchainModel) {
+    m_swapchainModel->cleanUp();
+    m_swapchainModel = nullptr;
+  }
+  if (m_allocator != nullptr && m_allocator->allocator != VK_NULL_HANDLE) {
+    vmaDestroyAllocator(m_allocator->allocator);
+    m_allocator->allocator = VK_NULL_HANDLE;
+  }
+  m_allocator = nullptr;
   if (m_device) {
     m_device->cleanUp();
+    m_device = nullptr;
   }
   if (m_surfaceManager) {
     m_surfaceManager->cleanUp();
+    m_surfaceManager = nullptr;
+  }
+  if (m_instance) {
+    m_instance->cleanUp();
+    m_instance = nullptr;
   }
   if (m_window) {
     m_window->cleanUp();
-  }
-  if (m_instance != nullptr) {
-    m_instance->cleanUp();
-  }
-  if (m_allocator != nullptr && m_allocator->allocator != VK_NULL_HANDLE) {
-    vmaDestroyAllocator(m_allocator->allocator);
-    m_allocator = nullptr;
+    m_window = nullptr;
   }
 }
 
@@ -61,15 +67,18 @@ void Avalon::init() {
     m_surfaceManager = std::make_shared<SurfaceManager>(m_instance, m_window);
     m_device =
         std::make_shared<Device>(m_instance, m_surfaceManager->getSurface());
-    m_allocator = std::make_shared<VmaAllocatorWrapper>();
     initVma();
+    m_swapchainModel =
+        std::make_shared<SwapchainModel>(m_device, m_window, m_allocator);
   } catch (const std::exception& e) {
     cleanUp();
     spdlog::error("Failed to initialize Avalon. Error: {}", e.what());
     throw std::runtime_error("Failed to initialize Avalon.");
   }
+}
 
-  cleanUp();
+bool Avalon::isInitialized() const {
+  return m_device != nullptr && m_swapchainModel != nullptr;
 }
 
 void Avalon::test() { std::cout << "Hello World from Avalon!" << std::endl; }
@@ -80,12 +89,23 @@ void Avalon::initVma() {
   vulkanFunctions.vkGetDeviceProcAddr = &vkGetDeviceProcAddr;
 
   VmaAllocatorCreateInfo allocatorCreateInfo = {};
-  allocatorCreateInfo.flags = VMA_ALLOCATOR_CREATE_EXT_MEMORY_BUDGET_BIT;
-  allocatorCreateInfo.vulkanApiVersion = VK_API_VERSION_1_2;
+  allocatorCreateInfo.flags = 0;
+  if (m_device->isExtensionEnabled(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME)) {
+    allocatorCreateInfo.flags |= VMA_ALLOCATOR_CREATE_EXT_MEMORY_BUDGET_BIT;
+  }
+  allocatorCreateInfo.vulkanApiVersion = kVulkanApiVersion;
   allocatorCreateInfo.physicalDevice = m_device->getPhysicalDevice();
   allocatorCreateInfo.device = m_device->getDevice();
   allocatorCreateInfo.instance = m_instance->getInstance();
   allocatorCreateInfo.pVulkanFunctions = &vulkanFunctions;
 
-  vmaCreateAllocator(&allocatorCreateInfo, &m_allocator->allocator);
+  m_allocator = std::make_shared<VmaAllocatorWrapper>();
+  m_allocator->allocator = VK_NULL_HANDLE;
+  VkResult res =
+      vmaCreateAllocator(&allocatorCreateInfo, &m_allocator->allocator);
+  if (res != VK_SUCCESS) {
+    spdlog::error("Failed to create VMA allocator. VkResult: {}",
+                  static_cast<int>(res));
+    throw std::runtime_error("Failed to create VMA allocator.");
+  }
 }

@@ -37,7 +37,7 @@ class Device {
 
  public:
   Device(std::shared_ptr<Instance>, std::shared_ptr<Surface>);
-  Device(Device&& other);
+  Device(Device&& other) noexcept;
   Device(const Device& other) = delete;
   Device& operator=(Device&& other) noexcept;
   Device& operator=(const Device& other) = delete;
@@ -60,6 +60,8 @@ class Device {
   }
 
  public:
+  [[nodiscard]] bool isExtensionEnabled(const char* name) const;
+
   VkSampleCountFlagBits getMaxUsableSampleCount();
   VkFormat getDepthFormat();
 

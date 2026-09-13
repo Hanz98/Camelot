@@ -15,32 +15,50 @@
 
 #include "Buffer.h"
 
+#include <Avalon/src/validation/CheckResult.h>
 #include <spdlog/spdlog.h>
 
-Buffer::Buffer() : m_buffer(VK_NULL_HANDLE) {}
+#include <memory>
+#include <utility>
 
-Buffer::~Buffer() {
-  if (m_allocator && m_buffer != VK_NULL_HANDLE) {
-    vmaDestroyBuffer(m_allocator->allocator, m_buffer, m_allocation);
+Buffer::Buffer()
+    : m_buffer(VK_NULL_HANDLE), m_allocation(VK_NULL_HANDLE), m_allocator() {}
+
+Buffer::~Buffer() { cleanUp(); }
+
+void Buffer::cleanUp() {
+  if (m_buffer == VK_NULL_HANDLE) {
+    return;
   }
-  if (m_allocator == nullpt && m_buffer == VK_NULL_HANDLE) {
-    spdlog::error(
-        "Attempting to destroy valid buffer withou valida allocator!");
-    throw std::runtime_error(
-        "Attempting to destroy valid buffer withou valida allocator!");
+  if (m_allocator == nullptr) {
+    // Destructors must not throw; log and leak rather than terminate.
+    spdlog::error("Buffer: cannot destroy buffer without a valid allocator!");
+    return;
   }
+  vmaDestroyBuffer(m_allocator->allocator, m_buffer, m_allocation);
+  m_buffer = VK_NULL_HANDLE;
+  m_allocation = VK_NULL_HANDLE;
 }
 
 void Buffer::createBuffer(std::shared_ptr<VmaAllocatorWrapper> allocator) {
-  VkBufferCreateInfo bufferInfo = {VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO};
-  bufferInfo.size = 65536;
+  if (allocator == nullptr) {
+    spdlog::error("Buffer: allocator is not initialized.");
+    throw std::runtime_error("Buffer: allocator is not initialized.");
+  }
+  cleanUp();
+  m_allocator = std::move(allocator);
+
+  constexpr VkDeviceSize kDefaultBufferSize = 64 * 1024;
+  VkBufferCreateInfo bufferInfo = {};
+  bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+  bufferInfo.size = kDefaultBufferSize;
   bufferInfo.usage =
       VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 
   VmaAllocationCreateInfo allocInfo = {};
   allocInfo.usage = VMA_MEMORY_USAGE_AUTO;
 
-  VkBuffer buffer;
-  vmaCreateBuffer(m_allocator->allocator, &bufferInfo, &allocInfo, &m_buffer,
-                  &m_allocation, nullptr);
+  VK_CHECK_RESULT(vmaCreateBuffer(m_allocator->allocator, &bufferInfo,
+                                  &allocInfo, &m_buffer, &m_allocation,
+                                  nullptr));
 }

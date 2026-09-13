@@ -1,4 +1,4 @@
-add_Library(Avalon_main
+add_library(Avalon_main
 "Avalon.cpp"
 "Avalon.h"
 )
@@ -10,8 +10,13 @@ target_include_directories(
 )
 
 target_link_libraries(
-    Avalon_main Avalon
+    Avalon_main
+        PUBLIC
+            Avalon
             Avalon_window
             Avalon_device
+            Avalon_allocator
+            Avalon_presentation_image
+            Avalon_presentation_swapchain
             spdlog::spdlog
 )

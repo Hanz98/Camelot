@@ -16,10 +16,10 @@
 #ifndef AVALON_SRC_DATA_BUFFERS_BUFFER_H_
 #define AVALON_SRC_DATA_BUFFERS_BUFFER_H_
 
-#include <vma/vk_mem_alloc.h>
+#include <Avalon/src/allocator/VmaAllocator.h>
+#include <vulkan/vulkan.h>
 
 #include <memory>
-#include <vulkan/vulkan.hpp>
 
 class Buffer {
  private:
@@ -29,7 +29,10 @@ class Buffer {
 
  public:
   Buffer();
+  Buffer(const Buffer&) = delete;
+  Buffer& operator=(const Buffer&) = delete;
   ~Buffer();
+  void cleanUp();
 
   void createBuffer(std::shared_ptr<VmaAllocatorWrapper> allocator);
 };

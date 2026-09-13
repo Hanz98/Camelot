@@ -14,6 +14,7 @@ class CamelotConan(ConanFile):
         "vk-bootstrap/0.7",
         "vulkan-headers/1.3.239.0",
         "vulkan-loader/1.3.239.0",
+        "vulkan-memory-allocator/3.0.1",
     )
 
     generators = "CMakeDeps", "CMakeToolchain"

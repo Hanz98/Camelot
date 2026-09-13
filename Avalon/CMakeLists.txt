@@ -1,10 +1,9 @@
 
-IF(DEFINED ENV{VULKAN_SDK})
+# The Vulkan headers, loader and VMA come from Conan. VULKAN_SDK is only used
+# as an additional include hint when it is set in the environment.
+if(DEFINED ENV{VULKAN_SDK})
     set(VULKAN_SDK_PATH $ENV{VULKAN_SDK})
-    ELSEIF(NOT DEFINED VULKAN_SDK OR VULKAN_SDK STREQUAL "NOT-SET")
-SET(VULKAN_SDK "NOT-SET" CACHE PATH "VULKAN_SDK directory")
-    MESSAGE( FATAL_ERROR "** Please add the variable 'VULKAN_SDK'")
-ENDIF()
+endif()
 
 set(Avalon_include_dirs ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -13,6 +12,7 @@ find_package(glfw3 REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(vk-bootstrap REQUIRED)
 find_package(Vulkan REQUIRED)
+find_package(VulkanMemoryAllocator REQUIRED)
 
 add_subdirectory("interface")
 add_subdirectory("src")
@@ -22,11 +22,13 @@ add_library(Avalon "main.cpp")
 
 target_include_directories(Avalon
     PUBLIC
-        ${VULKAN_SDK_PATH}/include/
         ${glfw3_INCLUDE_DIRS}/include/
         ${spdlog_INCLUDE_DIRS}
         ${vk-bootstrap_INCLUDE_DIRS}
 )
+if(DEFINED VULKAN_SDK_PATH)
+    target_include_directories(Avalon PUBLIC ${VULKAN_SDK_PATH}/include/)
+endif()
 
 target_link_libraries(Avalon
     PUBLIC
@@ -34,6 +36,8 @@ target_link_libraries(Avalon
         Avalon_window
         Avalon_main
         spdlog::spdlog
+        Vulkan::Vulkan
+        GPUOpen::VulkanMemoryAllocator
 )
 
 

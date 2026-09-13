@@ -29,6 +29,9 @@ class Window {
  private:
   GLFWwindow* m_pWindow;
   std::pair<uint16_t, uint16_t> m_dimensions;
+  // True while this object holds one reference on the GLFW library. GLFW is
+  // terminated only when the last Window releases its reference.
+  bool m_ownsGlfwRef;
 
  public:
   explicit Window();
@@ -47,6 +50,7 @@ class Window {
 
  private:
   bool initialize(int width, int height, const std::string& title);
+  void releaseGlfw();
 };
 
 #endif  // AVALON_SRC_WINDOW_WINDOW_H_

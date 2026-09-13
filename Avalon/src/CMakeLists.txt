@@ -1,4 +1,5 @@
 add_subdirectory("allocator")
+add_subdirectory("data")
 add_subdirectory("device")
 add_subdirectory("main")
 add_subdirectory("presentation")

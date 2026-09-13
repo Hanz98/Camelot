@@ -12,55 +12,62 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <Avalon/interface/window/IGlfWrapper.h>
+
 #include <Avalon/src/window/Window.h>
+#include <GLFW/glfw3.h>
 #include <gtest/gtest.h>
 
 #include <memory>
 #include <utility>
 
-class WindowTest : public testing::Test {
- public:
-  Window window = Window();
-};
-/*
-TEST_F(WindowTest, Initialization) {
-  bool initSuccess = window.init(800, 600, "Test Window");
-  EXPECT_TRUE(initSuccess);
-  EXPECT_NE(window.getWindow(), nullptr)
-      << "get() should return a valid pointer after initialization.";
+TEST(WindowTest, DefaultConstructorCreatesWindow) {
+  Window window;
+  ASSERT_NE(window.getWindow(), nullptr)
+      << "getWindow() should return a valid pointer after construction.";
+  EXPECT_EQ(window.getWidth(), 800);
+  EXPECT_EQ(window.getHeight(), 600);
+  EXPECT_EQ(glfwGetWindowUserPointer(window.getWindow()), &window);
 }
 
-TEST_F(WindowTest, Cleanup) {
-  ASSERT_TRUE(window.init(800, 600, "Test Window"));
+TEST(WindowTest, CleanupIsIdempotent) {
+  Window window;
+  ASSERT_NE(window.getWindow(), nullptr);
+
   window.cleanUp();
   EXPECT_EQ(window.getWindow(), nullptr)
-      << "After cleanup, get() should return nullptr.";
+      << "After cleanup, getWindow() should return nullptr.";
 
   window.cleanUp();
   EXPECT_EQ(window.getWindow(), nullptr);
 }
 
-TEST_F(WindowTest, MoveConstructor) {
-  ASSERT_TRUE(window.init(800, 600, "Test Window"));
-  std::shared_ptr<GLFWwindow> originalPtr = window.getWindow();
+TEST(WindowTest, MoveConstructorTransfersOwnership) {
+  Window window;
+  GLFWwindow* originalPtr = window.getWindow();
+  ASSERT_NE(originalPtr, nullptr);
 
   Window moved(std::move(window));
   EXPECT_EQ(window.getWindow(), nullptr)
       << "The moved-from window should have a null pointer.";
+  EXPECT_EQ(window.getWidth(), 0);
+  EXPECT_EQ(window.getHeight(), 0);
   EXPECT_EQ(moved.getWindow(), originalPtr)
       << "The moved-to window should hold the original pointer.";
+  EXPECT_EQ(moved.getWidth(), 800);
+  EXPECT_EQ(moved.getHeight(), 600);
 }
 
-TEST_F(WindowTest, MoveAssignment) {
-  ASSERT_TRUE(window.init(800, 600, "Test Window 1"));
-  std::shared_ptr<GLFWwindow> window1Ptr = window.getWindow();
+TEST(WindowTest, MoveAssignmentTransfersOwnership) {
+  Window window;
+  GLFWwindow* originalPtr = window.getWindow();
+  ASSERT_NE(originalPtr, nullptr);
 
-  Window window2;
-  window2 = std::move(window);
+  Window target;
+  target = std::move(window);
   EXPECT_EQ(window.getWindow(), nullptr)
       << "After move assignment, the original window should be empty.";
-  EXPECT_EQ(window2.getWindow(), window1Ptr)
+  EXPECT_EQ(target.getWindow(), originalPtr)
       << "The new window should hold the pointer from the moved window.";
+  EXPECT_EQ(target.getWidth(), 800);
+  EXPECT_EQ(target.getHeight(), 600);
 }
-*/
