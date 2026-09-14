@@ -28,6 +28,9 @@ class MainModel : public ICamelot {
  public:
   MainModel() = default;
   void test();
+
+  // Initialises the engine and runs the frame loop until the window closes.
+  void run();
 };
 
 #endif  // CAMELOT_SRC_MAIN_MAINMODEL_H_

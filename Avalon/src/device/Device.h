@@ -32,6 +32,7 @@ class Device {
   vkb::PhysicalDevice m_physicalDevice;
   VkQueue m_graphicsQueue;
   VkQueue m_presentQueue;
+  uint32_t m_graphicsQueueFamily;
 
   VkPhysicalDeviceProperties m_physicalDeviceProperties;
 
@@ -61,6 +62,17 @@ class Device {
 
  public:
   [[nodiscard]] bool isExtensionEnabled(const char* name) const;
+  [[nodiscard]] inline VkQueue getGraphicsQueue() const {
+    return m_graphicsQueue;
+  }
+  [[nodiscard]] inline VkQueue getPresentQueue() const {
+    return m_presentQueue;
+  }
+  [[nodiscard]] inline uint32_t getGraphicsQueueFamily() const {
+    return m_graphicsQueueFamily;
+  }
+  // Blocks until the device is idle. Safe to call on a cleaned-up device.
+  void waitIdle() const;
 
   VkSampleCountFlagBits getMaxUsableSampleCount();
   VkFormat getDepthFormat();

@@ -1997,7 +1997,7 @@ static VKAPI_ATTR void VKAPI_CALL
 DestroySwapchainKHR(VkDevice device, VkSwapchainKHR swapchain,
                     const VkAllocationCallbacks* pAllocator) {
   unique_lock_t lock(global_lock);
-  swapchain_image_map.clear();
+  swapchain_image_map.erase(swapchain);  // Camelot: was clear(), which dropped other live swapchains
 }
 
 static VKAPI_ATTR VkResult VKAPI_CALL GetSwapchainImagesKHR(

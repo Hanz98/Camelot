@@ -20,6 +20,7 @@
 #include <Avalon/src/device/Instance.h>
 #include <Avalon/src/presentation/renderpass/RenderPass.h>
 #include <Avalon/src/presentation/swapchain/SwapChainModel.h>
+#include <Avalon/src/renderer/Renderer.h>
 #include <Avalon/src/window/SurfaceManager.h>
 #include <Avalon/src/window/Window.h>
 #include <pch.h>
@@ -37,6 +38,7 @@ class Avalon {
   std::shared_ptr<Device> m_device;
   std::shared_ptr<VmaAllocatorWrapper> m_allocator;
   std::shared_ptr<SwapchainModel> m_swapchainModel;
+  std::unique_ptr<Renderer> m_renderer;
 
  public:
   Avalon();
@@ -52,6 +54,12 @@ class Avalon {
   [[nodiscard]] bool isInitialized() const;
 
   void test();
+
+  // One iteration of the frame loop: process window events and draw.
+  // Returns false once the window has been asked to close.
+  bool frame();
+  [[nodiscard]] bool shouldClose() const;
+  [[nodiscard]] Renderer* getRenderer() const { return m_renderer.get(); }
 
   [[nodiscard]] std::shared_ptr<Window> getWindow() const { return m_window; }
   [[nodiscard]] std::shared_ptr<Device> getDevice() const { return m_device; }

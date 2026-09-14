@@ -11,5 +11,6 @@ target_include_directories(Avalon_presentation_renderpass
 target_link_libraries(Avalon_presentation_renderpass
     PUBLIC
         Avalon
+        Avalon_device
         spdlog::spdlog
 )

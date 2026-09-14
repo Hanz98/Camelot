@@ -26,12 +26,17 @@ Avalon::Avalon()
       m_surfaceManager(nullptr),
       m_device(nullptr),
       m_allocator(nullptr),
-      m_swapchainModel(nullptr) {}
+      m_swapchainModel(nullptr),
+      m_renderer(nullptr) {}
 
 Avalon::~Avalon() { cleanUp(); }
 
 void Avalon::cleanUp() {
   // Reverse creation order: everything that lives on the device goes first.
+  if (m_device) {
+    m_device->waitIdle();
+  }
+  m_renderer.reset();
   if (m_swapchainModel) {
     m_swapchainModel->cleanUp();
     m_swapchainModel = nullptr;
@@ -70,6 +75,8 @@ void Avalon::init() {
     initVma();
     m_swapchainModel =
         std::make_shared<SwapchainModel>(m_device, m_window, m_allocator);
+    m_renderer =
+        std::make_unique<Renderer>(m_device, m_window, m_swapchainModel);
   } catch (const std::exception& e) {
     cleanUp();
     spdlog::error("Failed to initialize Avalon. Error: {}", e.what());
@@ -78,7 +85,28 @@ void Avalon::init() {
 }
 
 bool Avalon::isInitialized() const {
-  return m_device != nullptr && m_swapchainModel != nullptr;
+  return m_device != nullptr && m_swapchainModel != nullptr &&
+         m_renderer != nullptr;
+}
+
+bool Avalon::shouldClose() const {
+  return m_window == nullptr || m_window->shouldClose();
+}
+
+bool Avalon::frame() {
+  if (!isInitialized()) {
+    spdlog::error("Avalon::frame() called before init().");
+    throw std::runtime_error("Avalon::frame() called before init().");
+  }
+  m_window->pollEvents();
+  if (m_window->shouldClose()) {
+    return false;
+  }
+  if (!m_renderer->drawFrame()) {
+    // Minimised or mid-recreate: avoid a busy loop.
+    m_window->waitEvents();
+  }
+  return true;
 }
 
 void Avalon::test() { std::cout << "Hello World from Avalon!" << std::endl; }

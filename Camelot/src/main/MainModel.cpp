@@ -22,3 +22,10 @@ void MainModel::test() {
   m_avalon.test();
   m_avalon.cleanUp();
 }
+
+void MainModel::run() {
+  m_avalon.init();
+  while (m_avalon.frame()) {
+  }
+  m_avalon.cleanUp();
+}
