@@ -71,3 +71,23 @@ TEST(WindowTest, MoveAssignmentTransfersOwnership) {
   EXPECT_EQ(target.getWidth(), 800);
   EXPECT_EQ(target.getHeight(), 600);
 }
+
+TEST(WindowTest, FramebufferSizeIsNonZeroAndNotResizedInitially) {
+  Window window;
+  const auto [width, height] = window.getFramebufferSize();
+  EXPECT_GT(width, 0U);
+  EXPECT_GT(height, 0U);
+  EXPECT_FALSE(window.shouldClose());
+  window.pollEvents();
+  EXPECT_FALSE(window.wasResized());
+  EXPECT_FALSE(window.consumeResized());
+}
+
+TEST(WindowTest, FramebufferSizeIsZeroAfterCleanup) {
+  Window window;
+  window.cleanUp();
+  const auto [width, height] = window.getFramebufferSize();
+  EXPECT_EQ(width, 0U);
+  EXPECT_EQ(height, 0U);
+  EXPECT_TRUE(window.shouldClose());
+}

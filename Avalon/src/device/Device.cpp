@@ -30,6 +30,7 @@ Device::Device(std::shared_ptr<Instance> instance,
       m_physicalDevice(),
       m_graphicsQueue(VK_NULL_HANDLE),
       m_presentQueue(VK_NULL_HANDLE),
+      m_graphicsQueueFamily(0),
       m_physicalDeviceProperties() {
   initialize(instance, surface);
 }
@@ -39,6 +40,7 @@ Device::Device(Device&& other) noexcept
       m_physicalDevice(other.m_physicalDevice),
       m_graphicsQueue(other.m_graphicsQueue),
       m_presentQueue(other.m_presentQueue),
+      m_graphicsQueueFamily(other.m_graphicsQueueFamily),
       m_physicalDeviceProperties(other.m_physicalDeviceProperties) {
   other.m_device = {};
   other.m_physicalDevice = {};
@@ -54,6 +56,7 @@ Device& Device::operator=(Device&& other) noexcept {
     m_physicalDevice = other.m_physicalDevice;
     m_graphicsQueue = other.m_graphicsQueue;
     m_presentQueue = other.m_presentQueue;
+    m_graphicsQueueFamily = other.m_graphicsQueueFamily;
     m_physicalDeviceProperties = other.m_physicalDeviceProperties;
     other.m_device = {};
     other.m_physicalDevice = {};
@@ -123,6 +126,20 @@ void Device::initializeQueues() {
     throw std::runtime_error("Failed to create Vulkan queue.");
   }
   m_presentQueue = presentQueueRet.value();
+
+  auto familyRet = m_device.get_queue_index(vkb::QueueType::graphics);
+  if (!familyRet) {
+    spdlog::error("Failed to query graphics queue family. Error: " +
+                  familyRet.error().message());
+    throw std::runtime_error("Failed to query graphics queue family.");
+  }
+  m_graphicsQueueFamily = familyRet.value();
+}
+
+void Device::waitIdle() const {
+  if (m_device.device != VK_NULL_HANDLE) {
+    vkDeviceWaitIdle(m_device.device);
+  }
 }
 
 bool Device::isExtensionEnabled(const char* name) const {

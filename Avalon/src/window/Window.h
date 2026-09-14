@@ -48,9 +48,25 @@ class Window {
   [[nodiscard]] uint16_t getWidth() const;
   [[nodiscard]] uint16_t getHeight() const;
 
+  // Size of the framebuffer in pixels (may differ from the window size on
+  // HiDPI displays). Both are 0 while the window is minimised.
+  [[nodiscard]] std::pair<uint32_t, uint32_t> getFramebufferSize() const;
+
+  [[nodiscard]] bool shouldClose() const;
+  void pollEvents() const;
+  void waitEvents() const;
+
+  // Set by the GLFW framebuffer-size callback; cleared by consumeResized().
+  [[nodiscard]] bool wasResized() const;
+  bool consumeResized();
+
  private:
   bool initialize(int width, int height, const std::string& title);
   void releaseGlfw();
+  static void framebufferSizeCallback(GLFWwindow* window, int width,
+                                      int height);
+
+  bool m_resized = false;
 };
 
 #endif  // AVALON_SRC_WINDOW_WINDOW_H_

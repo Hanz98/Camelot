@@ -45,6 +45,9 @@ Window::Window(Window&& other) noexcept
   other.m_pWindow = nullptr;
   other.m_dimensions = {0, 0};
   other.m_ownsGlfwRef = false;
+  if (m_pWindow != nullptr) {
+    glfwSetWindowUserPointer(m_pWindow, this);
+  }
 }
 
 Window& Window::operator=(Window&& other) noexcept {
@@ -57,6 +60,9 @@ Window& Window::operator=(Window&& other) noexcept {
     other.m_pWindow = nullptr;
     other.m_dimensions = {0, 0};
     other.m_ownsGlfwRef = false;
+    if (m_pWindow != nullptr) {
+      glfwSetWindowUserPointer(m_pWindow, this);
+    }
   }
   return *this;
 }
@@ -99,7 +105,45 @@ bool Window::initialize(int width, int height, const std::string& title) {
   }
 
   glfwSetWindowUserPointer(m_pWindow, this);
+  glfwSetFramebufferSizeCallback(m_pWindow, &Window::framebufferSizeCallback);
   return true;
+}
+
+void Window::framebufferSizeCallback(GLFWwindow* window, int width,
+                                     int height) {
+  auto* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
+  if (self == nullptr) {
+    return;
+  }
+  self->m_resized = true;
+  self->m_dimensions = std::make_pair(static_cast<uint16_t>(width),
+                                      static_cast<uint16_t>(height));
+}
+
+std::pair<uint32_t, uint32_t> Window::getFramebufferSize() const {
+  if (m_pWindow == nullptr) {
+    return {0, 0};
+  }
+  int width = 0;
+  int height = 0;
+  glfwGetFramebufferSize(m_pWindow, &width, &height);
+  return {static_cast<uint32_t>(width), static_cast<uint32_t>(height)};
+}
+
+bool Window::shouldClose() const {
+  return m_pWindow == nullptr || glfwWindowShouldClose(m_pWindow) != 0;
+}
+
+void Window::pollEvents() const { glfwPollEvents(); }
+
+void Window::waitEvents() const { glfwWaitEvents(); }
+
+bool Window::wasResized() const { return m_resized; }
+
+bool Window::consumeResized() {
+  const bool resized = m_resized;
+  m_resized = false;
+  return resized;
 }
 
 [[nodiscard]] GLFWwindow* Window::getWindow() const { return m_pWindow; }
