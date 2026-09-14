@@ -1,4 +1,5 @@
-cmake_minimum_required(VERSION 3.15)
+# 3.20: DEPFILE in add_custom_command (used by cmake/CamelotShaders.cmake).
+cmake_minimum_required(VERSION 3.20)
 
 project(Camelot)
 
@@ -23,6 +24,7 @@ endif()
 set(Camelot_include_dirs ${CMAKE_CURRENT_SOURCE_DIR})
 
 include(CTest)
+include(cmake/CamelotShaders.cmake)
 
 add_subdirectory(Avalon)
 add_subdirectory(Camelot)

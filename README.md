@@ -9,7 +9,7 @@ branch; `master` only receives merges from it.
 
 | Module      | Role                                                                 |
 |-------------|----------------------------------------------------------------------|
-| `Avalon`    | Vulkan engine layer: window (GLFW), instance/device (vk-bootstrap), surface, swapchain, images, VMA allocator |
+| `Avalon`    | Vulkan engine layer: window (GLFW), instance/device (vk-bootstrap), surface, swapchain, images, VMA allocator, render loop, shaders |
 | `Camelot`   | Application model that wraps Avalon behind the `ICamelot` interface   |
 | `Pendragon` | Executable entry point                                               |
 | `Tests`     | GoogleTest suite, with a vendored mock Vulkan ICD for GPU-less runs  |
@@ -18,8 +18,9 @@ branch; `master` only receives merges from it.
 ## Dependencies
 
 All third-party libraries (GLFW, spdlog, vk-bootstrap, Vulkan headers/loader,
-VulkanMemoryAllocator, GoogleTest) come from Conan 2 (`conanfile.py`).
-You need CMake ≥ 3.19, Ninja, a C++20 compiler and `pip install conan`.
+VulkanMemoryAllocator, GoogleTest) and the GLSL compiler (glslang, a Conan
+`tool_requires`) come from Conan 2 (`conanfile.py`).
+You need CMake ≥ 3.20, Ninja, a C++20 compiler and `pip install conan`.
 
 Conan uses `cmake_layout`, so everything lands under `build/<BuildType>/`:
 the toolchain file is `build/<BuildType>/generators/conan_toolchain.cmake`
@@ -59,6 +60,25 @@ scripts\windows\setup.ps1              # Debug build (BUILD_TYPE=Release for Rel
 ```
 
 It uses `profiles/Camelot-Win` (MSVC 19.4, Ninja) and the same `build/<BuildType>` layout.
+
+## Shaders
+
+GLSL sources live in `Avalon/shaders/` and are listed in
+`Avalon/CMakeLists.txt` under `camelot_add_shaders()` (defined in
+`cmake/CamelotShaders.cmake`). At build time each file is compiled with
+`glslangValidator` to `build/<BuildType>/shaders/<name>.spv` and embedded into
+the `Avalon_shaders` library; code looks a module up by its source file name:
+
+```cpp
+#include <Avalon/shaders/Registry.h>
+#include <Avalon/src/shader/ShaderModule.h>
+
+ShaderModule vert(device, avalon::shaders::get("triangle.vert"));
+```
+
+Editing one GLSL file rebuilds only that module. Adding a shader means adding
+the file to the `SOURCES` list; a listed file that does not exist fails at
+configure time.
 
 ## Tests
 
