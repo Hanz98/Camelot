@@ -17,6 +17,11 @@ class CamelotConan(ConanFile):
         "vulkan-memory-allocator/3.0.1",
     )
 
+    # Build-time tools. glslang provides glslangValidator, which
+    # cmake/CamelotShaders.cmake uses to compile GLSL to SPIR-V; its bindir is
+    # exported to CMake through CMAKE_PROGRAM_PATH by the toolchain.
+    tool_requires = ("glslang/1.4.350.0",)
+
     generators = "CMakeDeps", "CMakeToolchain"
 
     def layout(self):

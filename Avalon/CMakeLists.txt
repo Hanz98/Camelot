@@ -14,6 +14,17 @@ find_package(vk-bootstrap REQUIRED)
 find_package(Vulkan REQUIRED)
 find_package(VulkanMemoryAllocator REQUIRED)
 
+# GLSL sources under shaders/ are compiled to SPIR-V and embedded into the
+# Avalon_shaders library; look them up through <Avalon/shaders/Registry.h>.
+camelot_add_shaders(Avalon_shaders
+    NAMESPACE avalon::shaders
+    HEADER Avalon/shaders/Registry.h
+    TARGET_ENV vulkan1.1
+    SOURCES
+        shaders/triangle.vert
+        shaders/triangle.frag
+)
+
 add_subdirectory("interface")
 add_subdirectory("src")
 

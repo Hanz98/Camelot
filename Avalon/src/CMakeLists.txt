@@ -5,6 +5,7 @@ add_subdirectory("device")
 add_subdirectory("main")
 add_subdirectory("presentation")
 add_subdirectory("renderer")
+add_subdirectory("shader")
 add_subdirectory("sync")
 add_subdirectory("utils")
 add_subdirectory("validation")
@@ -12,4 +13,4 @@ add_subdirectory("window")
 
 add_library(Avalon_src INTERFACE)
 
-target_link_libraries(Avalon_src INTERFACE Avalon_window)
+target_link_libraries(Avalon_src INTERFACE Avalon_window Avalon_shader)
