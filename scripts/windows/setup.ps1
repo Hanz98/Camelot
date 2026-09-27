@@ -3,7 +3,7 @@
 #
 # Knobs (environment variables):
 #   BUILD_TYPE   Debug (default) or Release
-#   RUN_TESTS    1 to run ctest after the build
+#   RUN_TESTS    1 to run the test suite after the build
 #
 # Layout (from conanfile.py cmake_layout):
 #   build\<BUILD_TYPE>\generators\conan_toolchain.cmake
@@ -39,7 +39,11 @@ cmake --build $buildDir --config $buildType
 if ($LASTEXITCODE -ne 0) { throw "cmake build failed" }
 
 if ($env:RUN_TESTS -eq "1") {
-    ctest --test-dir $buildDir --output-on-failure -C $buildType
+    # Single-config generators (Ninja) put it in bin/, multi-config ones
+    # (Visual Studio) in bin/<config>/.
+    $testExe = Join-Path $buildDir "bin/Test_Main.exe"
+    if (-not (Test-Path $testExe)) { $testExe = Join-Path $buildDir "bin/$buildType/Test_Main.exe" }
+    & $testExe
     if ($LASTEXITCODE -ne 0) { throw "tests failed" }
 }
 

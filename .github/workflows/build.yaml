@@ -13,6 +13,7 @@ jobs:
   build:
     name: Build and test
     runs-on: ubuntu-latest
+    timeout-minutes: 30  # GoogleTest has no per-test timeout; this is the backstop
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -30,7 +31,9 @@ jobs:
           cmake --build "$BUILD_DIR" --config "$BUILD_TYPE" 2>&1 | tee build.log
 
       - name: Test (mock Vulkan ICD, headless)
-        run: xvfb-run -a ctest --test-dir "$BUILD_DIR" --output-on-failure
+        # The GoogleTest binary selects the mock driver itself (see
+        # Tests/test_main.cpp); xvfb provides the display GLFW needs.
+        run: xvfb-run -a "$BUILD_DIR/bin/Test_Main" --gtest_output=xml:test-report.xml
 
       - name: Upload logs on failure
         if: failure()
@@ -39,12 +42,13 @@ jobs:
           name: build-logs
           path: |
             build.log
-            ${{ env.BUILD_DIR }}/Testing/Temporary/LastTest.log
+            test-report.xml
           if-no-files-found: ignore
 
   static-analysis:
     name: clang-tidy and cppcheck
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
