@@ -39,7 +39,7 @@ repos:
       - id: clang-format
         # --version pins the clang-format wheel so results do not depend on
         # what is installed locally.
-        args: [--style=Google, --version=22]
+        args: [--style=file, --version=22]
   - repo: https://github.com/cpplint/cpplint
     rev: 2.0.2
     hooks:

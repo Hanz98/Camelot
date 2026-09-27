@@ -1,6 +1,6 @@
 add_library(Avalon_presentation_swapchain
-"SwapChainModel.cpp"
-"SwapChainModel.h"
+"SwapchainModel.cpp"
+"SwapchainModel.h"
 )
 
 target_include_directories(Avalon_presentation_swapchain

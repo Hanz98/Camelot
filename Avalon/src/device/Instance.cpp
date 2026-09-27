@@ -13,12 +13,14 @@
  * limitations under the License.
  */
 
-#include "Instance.h"
+#include "Avalon/src/device/Instance.h"
 
-#include <Avalon/src/validation/CheckResult.h>
 #include <vulkan/vulkan.h>
 
-#include <Avalon/src/utils/Initializers.hpp>
+#include "Avalon/src/utils/Initializers.h"
+#include "Avalon/src/validation/CheckResult.h"
+
+namespace avalon {
 
 Instance::Instance() : m_instance() { initialize(); }
 
@@ -46,3 +48,5 @@ void Instance::initialize() {
   }
   m_instance = inst_ret.value();
 }
+
+}  // namespace avalon

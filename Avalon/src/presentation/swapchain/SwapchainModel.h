@@ -16,16 +16,19 @@
 #ifndef AVALON_SRC_PRESENTATION_SWAPCHAIN_SWAPCHAINMODEL_H_
 #define AVALON_SRC_PRESENTATION_SWAPCHAIN_SWAPCHAINMODEL_H_
 
-#include <Avalon/src/allocator/VmaAllocator.h>
-#include <Avalon/src/device/Device.h>
-#include <Avalon/src/presentation/image/Image.h>
-#include <Avalon/src/presentation/renderpass/RenderPass.h>
-#include <Avalon/src/window/Window.h>
 #include <spdlog/spdlog.h>
 #include <vulkan/vulkan.h>
 
 #include <memory>
 #include <vector>
+
+#include "Avalon/src/allocator/VmaAllocator.h"
+#include "Avalon/src/device/Device.h"
+#include "Avalon/src/presentation/image/Image.h"
+#include "Avalon/src/presentation/renderpass/RenderPass.h"
+#include "Avalon/src/window/Window.h"
+
+namespace avalon {
 
 // Owns the swapchain, its image views, the MSAA colour and depth targets and
 // one framebuffer per swapchain image. Sized from the window's framebuffer.
@@ -92,5 +95,7 @@ class SwapchainModel {
   void destroyFramebuffers();
   void destroyImageViews();
 };
+
+}  // namespace avalon
 
 #endif  // AVALON_SRC_PRESENTATION_SWAPCHAIN_SWAPCHAINMODEL_H_

@@ -22,6 +22,9 @@ endif()
 
 #set(Camelot_external_dirs ${PROJECT_SOURCE_DIR}/external/)
 set(Camelot_include_dirs ${CMAKE_CURRENT_SOURCE_DIR})
+# Project headers are included with their path from the repository root
+# (see docs/CODING_STYLE.md), so every target sees the root.
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 include(CTest)
 include(cmake/CamelotShaders.cmake)

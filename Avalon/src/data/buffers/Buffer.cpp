@@ -13,13 +13,16 @@
  * limitations under the License.
  */
 
-#include "Buffer.h"
+#include "Avalon/src/data/buffers/Buffer.h"
 
-#include <Avalon/src/validation/CheckResult.h>
 #include <spdlog/spdlog.h>
 
 #include <memory>
 #include <utility>
+
+#include "Avalon/src/validation/CheckResult.h"
+
+namespace avalon {
 
 Buffer::Buffer() : m_allocator() {}
 
@@ -62,3 +65,5 @@ void Buffer::createBuffer(std::shared_ptr<VmaAllocatorWrapper> allocator) {
                                   &allocInfo, &m_buffer, &m_allocation,
                                   nullptr));
 }
+
+}  // namespace avalon

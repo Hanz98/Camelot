@@ -87,13 +87,19 @@ Tests are built when `BUILD_TESTING` is ON (the default). Run them with
 `-DCAMELOT_TESTS_USE_MOCK_ICD=ON` to run against the vendored mock Vulkan ICD
 (this is what CI does, under `xvfb-run`, so no GPU or display is required).
 
+## Coding style
+
+See [docs/CODING_STYLE.md](docs/CODING_STYLE.md): Google C++ style via the
+committed `.clang-format`, `avalon` / `camelot` namespaces, project headers
+included by their path from the repository root.
+
 ## Linting, formatting and static analysis
 
 Two layers, both enforced on every pull request:
 
 1. **pre-commit** (`.pre-commit-config.yaml`) – fast checks that need no
-   build: whitespace and line endings, license headers, clang-format (Google
-   style, pinned clang-format version), cpplint, cmake-lint
+   build: whitespace and line endings, license headers, clang-format (`.clang-format`,
+   pinned clang-format version), cpplint, cmake-lint
    (`.cmake-format.yaml`), shellcheck, codespell, yamllint (`.yamllint.yaml`)
    and actionlint for the workflows. Install once with
    `pip install pre-commit && pre-commit install`; run everything with

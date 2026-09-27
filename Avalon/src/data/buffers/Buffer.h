@@ -16,10 +16,13 @@
 #ifndef AVALON_SRC_DATA_BUFFERS_BUFFER_H_
 #define AVALON_SRC_DATA_BUFFERS_BUFFER_H_
 
-#include <Avalon/src/allocator/VmaAllocator.h>
 #include <vulkan/vulkan.h>
 
 #include <memory>
+
+#include "Avalon/src/allocator/VmaAllocator.h"
+
+namespace avalon {
 
 class Buffer {
  private:
@@ -38,5 +41,7 @@ class Buffer {
 
   void createBuffer(std::shared_ptr<VmaAllocatorWrapper> allocator);
 };
+
+}  // namespace avalon
 
 #endif  // AVALON_SRC_DATA_BUFFERS_BUFFER_H_

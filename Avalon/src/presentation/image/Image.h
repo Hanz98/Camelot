@@ -16,14 +16,16 @@
 #ifndef AVALON_SRC_PRESENTATION_IMAGE_IMAGE_H_
 #define AVALON_SRC_PRESENTATION_IMAGE_IMAGE_H_
 
-#include <Avalon/src/allocator/VmaAllocator.h>
-#include <Avalon/src/device/Device.h>
 #include <spdlog/spdlog.h>
+#include <vulkan/vulkan.h>
 
 #include <memory>
-#include <vulkan/vulkan.hpp>
 
-namespace Camelot {
+#include "Avalon/src/allocator/VmaAllocator.h"
+#include "Avalon/src/device/Device.h"
+
+namespace avalon {
+
 struct ImageCreateInfo {
   int width{0};
   int height{0};
@@ -35,7 +37,6 @@ struct ImageCreateInfo {
   VkMemoryPropertyFlags properties{0};
   VkImageAspectFlags aspectFlags{0};
 };
-}  // namespace Camelot
 
 class Image {
  private:
@@ -58,11 +59,13 @@ class Image {
   virtual ~Image();
 
   void cleanUp();
-  void createImage(const Camelot::ImageCreateInfo&);
+  void createImage(const ImageCreateInfo&);
 
  public:
   inline VkImage& getImage() { return m_image; }
   inline VkImageView& getImageView() { return m_imageView; }
 };
+
+}  // namespace avalon
 
 #endif  // AVALON_SRC_PRESENTATION_IMAGE_IMAGE_H_

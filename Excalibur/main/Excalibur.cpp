@@ -13,11 +13,13 @@
  * limitations under the License.
  */
 
-#include "Excalibur.h"
+#include "Excalibur/main/Excalibur.h"
 
-#include <Camelot/src/main/MainModel.h>
+#include "Camelot/src/main/MainModel.h"
 
 // C ABI factory: ownership of the instance passes to the caller.
-void buildCamelot(ICamelot** camelot) {
-  *camelot = new MainModel();  // NOLINT(cppcoreguidelines-owning-memory)
+void buildCamelot(camelot::ICamelot** camelot) {
+  // Ownership passes to the caller through the C ABI.
+  // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
+  *camelot = new camelot::MainModel();
 }

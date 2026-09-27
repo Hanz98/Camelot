@@ -1,0 +1,33 @@
+# Google C++ style with the project's few explicit choices spelled out so the
+# result does not drift between clang-format releases. Run through pre-commit
+# (clang-format hook) or `clang-format -i <file>`.
+---
+Language: Cpp
+BasedOnStyle: Google
+Standard: c++20
+ColumnLimit: 80
+IndentWidth: 2
+AccessModifierOffset: -1
+DerivePointerAlignment: false
+PointerAlignment: Left
+IncludeBlocks: Regroup
+IncludeCategories:
+  # Third-party headers (Vulkan, GLFW, spdlog, gtest, VMA, vk-bootstrap).
+  - Regex: '^<(vulkan|GLFW|spdlog|gtest|gmock)/'
+    Priority: 2
+  - Regex: '^<(vk_mem_alloc|VkBootstrap|VkBootstrapDispatch)\.h>'
+    Priority: 2
+  # C++ standard library.
+  - Regex: '^<[a-z_]+>$'
+    Priority: 3
+  # Remaining angle-bracket includes (C system headers).
+  - Regex: '^<.*\.h>'
+    Priority: 1
+  - Regex: '^<.*'
+    Priority: 3
+  # Project headers, always quoted with the path from the repository root.
+  - Regex: '^"'
+    Priority: 4
+IncludeIsMainRegex: '$'
+SortIncludes: CaseSensitive
+...

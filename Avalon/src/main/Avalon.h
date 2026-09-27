@@ -15,17 +15,19 @@
 
 #ifndef AVALON_SRC_MAIN_AVALON_H_
 #define AVALON_SRC_MAIN_AVALON_H_
-#include <Avalon/src/allocator/VmaAllocator.h>
-#include <Avalon/src/device/Device.h>
-#include <Avalon/src/device/Instance.h>
-#include <Avalon/src/presentation/renderpass/RenderPass.h>
-#include <Avalon/src/presentation/swapchain/SwapChainModel.h>
-#include <Avalon/src/renderer/Renderer.h>
-#include <Avalon/src/window/SurfaceManager.h>
-#include <Avalon/src/window/Window.h>
-#include <pch.h>
-
 #include <memory>
+
+#include "Avalon/pch.h"
+#include "Avalon/src/allocator/VmaAllocator.h"
+#include "Avalon/src/device/Device.h"
+#include "Avalon/src/device/Instance.h"
+#include "Avalon/src/presentation/renderpass/RenderPass.h"
+#include "Avalon/src/presentation/swapchain/SwapchainModel.h"
+#include "Avalon/src/renderer/Renderer.h"
+#include "Avalon/src/window/SurfaceManager.h"
+#include "Avalon/src/window/Window.h"
+
+namespace avalon {
 
 class Avalon {
  private:
@@ -67,5 +69,7 @@ class Avalon {
  private:
   void initVma();
 };
+
+}  // namespace avalon
 
 #endif  // AVALON_SRC_MAIN_AVALON_H_

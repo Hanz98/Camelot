@@ -13,9 +13,6 @@
  * limitations under the License.
  */
 
-#include <Avalon/shaders/Registry.h>
-#include <Avalon/src/main/Avalon.h>
-#include <Avalon/src/shader/ShaderModule.h>
 #include <gtest/gtest.h>
 
 #include <cstdint>
@@ -24,6 +21,12 @@
 #include <stdexcept>
 #include <utility>
 #include <vector>
+
+#include "Avalon/shaders/Registry.h"
+#include "Avalon/src/main/Avalon.h"
+#include "Avalon/src/shader/ShaderModule.h"
+
+namespace avalon {
 
 namespace {
 
@@ -151,3 +154,5 @@ TEST_F(ShaderModuleDeviceTest, MoveTransfersOwnership) {
   EXPECT_EQ(third.get(), handle);
   EXPECT_EQ(third.stage(), VK_SHADER_STAGE_FRAGMENT_BIT);
 }
+
+}  // namespace avalon

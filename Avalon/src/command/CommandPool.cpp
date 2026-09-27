@@ -13,15 +13,18 @@
  * limitations under the License.
  */
 
-#include "CommandPool.h"
+#include "Avalon/src/command/CommandPool.h"
 
-#include <Avalon/src/validation/CheckResult.h>
 #include <spdlog/spdlog.h>
 
 #include <memory>
 #include <stdexcept>
 #include <utility>
 #include <vector>
+
+#include "Avalon/src/validation/CheckResult.h"
+
+namespace avalon {
 
 CommandPool::CommandPool(std::shared_ptr<Device> device)
     : m_device(std::move(device)) {
@@ -68,3 +71,5 @@ void CommandPool::free(const std::vector<VkCommandBuffer>& buffers) const {
   vkFreeCommandBuffers(m_device->getDevice(), m_pool,
                        static_cast<uint32_t>(buffers.size()), buffers.data());
 }
+
+}  // namespace avalon

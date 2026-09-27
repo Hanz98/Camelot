@@ -13,12 +13,14 @@
  * limitations under the License.
  */
 
-#include "SurfaceManager.h"
-
-#include <Avalon/src/validation/CheckResult.h>
+#include "Avalon/src/window/SurfaceManager.h"
 
 #include <memory>
 #include <utility>
+
+#include "Avalon/src/validation/CheckResult.h"
+
+namespace avalon {
 
 SurfaceManager::SurfaceManager(std::shared_ptr<Instance> instance,
                                std::shared_ptr<Window> window)
@@ -55,3 +57,5 @@ std::shared_ptr<Surface> SurfaceManager::getSurface(int id) {
 
   return m_surfaces.at(static_cast<size_t>(id));
 }
+
+}  // namespace avalon

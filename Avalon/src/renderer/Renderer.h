@@ -16,18 +16,21 @@
 #ifndef AVALON_SRC_RENDERER_RENDERER_H_
 #define AVALON_SRC_RENDERER_RENDERER_H_
 
-#include <Avalon/src/command/CommandPool.h>
-#include <Avalon/src/device/Device.h>
-#include <Avalon/src/presentation/renderpass/RenderPass.h>
-#include <Avalon/src/presentation/swapchain/SwapChainModel.h>
-#include <Avalon/src/sync/FrameSync.h>
-#include <Avalon/src/window/Window.h>
 #include <vulkan/vulkan.h>
 
 #include <array>
 #include <cstdint>
 #include <memory>
 #include <vector>
+
+#include "Avalon/src/command/CommandPool.h"
+#include "Avalon/src/device/Device.h"
+#include "Avalon/src/presentation/renderpass/RenderPass.h"
+#include "Avalon/src/presentation/swapchain/SwapchainModel.h"
+#include "Avalon/src/sync/FrameSync.h"
+#include "Avalon/src/window/Window.h"
+
+namespace avalon {
 
 // Frame loop: acquire a swapchain image, record one command buffer that runs
 // the render pass (currently: clear only), submit it and present. Handles
@@ -81,5 +84,7 @@ class Renderer {
  private:
   void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 };
+
+}  // namespace avalon
 
 #endif  // AVALON_SRC_RENDERER_RENDERER_H_

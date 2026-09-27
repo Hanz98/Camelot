@@ -13,10 +13,11 @@
  * limitations under the License.
  */
 
-#include <Camelot/src/main/MainModel.h>
 #include <spdlog/sinks/basic_file_sink.h>
 
 #include <iostream>
+
+#include "Camelot/src/main/MainModel.h"
 
 void basicLogfileSetup() {
   try {
@@ -31,7 +32,7 @@ void basicLogfileSetup() {
 int main(int argc, char* argv[]) {
   std::cout << "Hello world from Pendragon!" << '\n';
   basicLogfileSetup();
-  MainModel model;
+  camelot::MainModel model;
   model.run();
   return 0;
 }
