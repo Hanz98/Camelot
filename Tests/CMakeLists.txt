@@ -37,5 +37,9 @@ if(CAMELOT_TESTS_USE_MOCK_ICD)
   add_dependencies(Test_Main VkICD_mock_icd)
 endif()
 
-include(GoogleTest)
-gtest_discover_tests(Test_Main)
+# The suite is run as one GoogleTest process: `bin/Test_Main` (filters, XML
+# output and the rest come from gtest flags). No gtest_discover_tests(): it
+# launches the binary at build time and was the layer that dropped the test
+# environment on CI. The single add_test() keeps `ctest` and IDE test
+# explorers working.
+add_test(NAME Test_Main COMMAND Test_Main)

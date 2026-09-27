@@ -48,7 +48,7 @@ conan install . --profile:host=profiles/Camelot-Linux --profile:build=profiles/C
     -s build_type=Release --build=missing
 cmake --preset release
 cmake --build --preset release
-ctest --preset release
+build/Release/bin/Test_Main
 ```
 
 ### Windows
@@ -82,10 +82,20 @@ configure time.
 
 ## Tests
 
-Tests are built when `BUILD_TESTING` is ON (the default). Run them with
-`ctest --test-dir build/Release --output-on-failure`. Configure with
-`-DCAMELOT_TESTS_USE_MOCK_ICD=ON` to run against the vendored mock Vulkan ICD
-(this is what CI does, under `xvfb-run`, so no GPU or display is required).
+Tests are built when `BUILD_TESTING` is ON (the default) into one GoogleTest
+binary. Run it directly:
+
+```sh
+build/Release/bin/Test_Main                      # whole suite
+build/Release/bin/Test_Main --gtest_filter='Camera*'
+build/Release/bin/Test_Main --gtest_output=xml:report.xml
+```
+
+Configure with `-DCAMELOT_TESTS_USE_MOCK_ICD=ON` to run against the vendored
+mock Vulkan ICD; the binary then points the Vulkan loader at it by itself
+(this is what CI does, under `xvfb-run`, so no GPU is required). `ctest`
+still works and runs the same binary as a single test, which keeps IDE test
+explorers happy.
 
 ## Coding style
 
