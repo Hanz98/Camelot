@@ -27,7 +27,7 @@
 
 class Surface {
  private:
-  VkSurfaceKHR m_surface;
+  VkSurfaceKHR m_surface{VK_NULL_HANDLE};
   std::shared_ptr<Instance> m_instance;
   std::shared_ptr<Window> m_window;
 
@@ -40,7 +40,7 @@ class Surface {
 
   virtual ~Surface();
 
-  const VkSurfaceKHR& getSurface() const;
+  [[nodiscard]] const VkSurfaceKHR& getSurface() const;
   void init();
   void cleanUp();
 };

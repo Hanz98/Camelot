@@ -24,12 +24,12 @@ void basicLogfileSetup() {
     spdlog::flush_every(std::chrono::seconds(1));
     spdlog::set_pattern("[%H:%M:%S %z] [%n] [%^---%L---%$] [thread %t] %v");
   } catch (const spdlog::spdlog_ex& ex) {
-    std::cout << "Log init failed: " << ex.what() << std::endl;
+    std::cout << "Log init failed: " << ex.what() << '\n';
   }
 }
 
 int main(int argc, char* argv[]) {
-  std::cout << "Hello world from Pendragon!" << std::endl;
+  std::cout << "Hello world from Pendragon!" << '\n';
   basicLogfileSetup();
   MainModel model;
   model.run();

@@ -1,117 +1,89 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Runs clang-tidy and cppcheck over the project sources.
+#
+# Both tools read the compile database of an existing build, so run
+# scripts/linux/setup.sh (or any configure with CMAKE_EXPORT_COMPILE_COMMANDS)
+# first. clang-tidy is configured by .clang-tidy (and Tests/.clang-tidy),
+# cppcheck by .cppcheck-suppressions. CI runs this script on every pull
+# request; see the static-analysis job in .github/workflows/build.yaml.
+#
+# Usage: runStaticAnalysis.sh [--clang-tidy | --cppcheck] [file...]
+#   With no file arguments every tracked .cpp file outside Tests/ext is
+#   analysed; headers are covered through clang-tidy's HeaderFilterRegex.
+#
+# Knobs (environment variables):
+#   BUILD_TYPE   Release (default) or Debug; selects build/<BUILD_TYPE>
+#   CLANG_TIDY   clang-tidy executable (default: clang-tidy)
+#   CPPCHECK     cppcheck executable  (default: cppcheck)
+#   JOBS         parallel clang-tidy processes (default: nproc)
+set -euo pipefail
 
 scriptDir="$(cd -- "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-tmp="$(dirname "$scriptDir")"
-rootDir="$(dirname "$tmp")"
+rootDir="$(cd "$scriptDir/../.." && pwd)"
+cd "$rootDir"
 
-cd $rootDir
+BUILD_TYPE="${BUILD_TYPE:-Release}"
+BUILD_DIR="build/${BUILD_TYPE}"
+CLANG_TIDY="${CLANG_TIDY:-clang-tidy}"
+CPPCHECK="${CPPCHECK:-cppcheck}"
+JOBS="${JOBS:-$(nproc)}"
 
-RED='\033[0;31m'
-CYAN='\033[0;36m'
-NC='\033[0m' # No Color
-
-FAILED_ANALYZERS=()
-
-noconfirm=false
+run_tidy=1
+run_cppcheck=1
+files=()
 for arg in "$@"; do
-    if [[ "$arg" == "--noconfirm" ]]; then
-        noconfirm=true
-        break
-    fi
+  case "$arg" in
+    --clang-tidy) run_cppcheck=0 ;;
+    --cppcheck) run_tidy=0 ;;
+    -h|--help) sed -n '2,20p' "$0"; exit 0 ;;
+    *) files+=("$arg") ;;
+  esac
 done
 
-GS=$(git status --porcelain=v1 2>/dev/null)
-if [ $? -ne 128 ]; then
-  function _count_git_pattern() {
-    echo "$(grep "^$1" <<< $GS | wc -l)"
-  }
-
-  EXIT_CODE=0
-
-  if [ $(_count_git_pattern "??") -ne 0 ]; then
-    printf "${RED}There are $(_count_git_pattern "??") untracked files.\n"
-    EXIT_CODE=1
-  fi
-  if [ $(_count_git_pattern " M") -ne 0 ]; then
-    printf "${RED}There are $(_count_git_pattern " M") unstaged, modified files.\n"
-    EXIT_CODE=1
-  fi
-  if [ $(_count_git_pattern "M ") -ne 0 ]; then
-    printf "${RED}There are $(_count_git_pattern "M ") staged, modified files.\n"
-    EXIT_CODE=1
-  fi
-
-
-  printf   "${NC}"
-  if [ $EXIT_CODE -eq 1 ]; then
-    if ! $noconfirm; then
-      read -p "Are you sure you want to proceed? (yes/no): " response
-      if [[ "$response" != "yes" && "$response" != "y" ]]; then
-          echo "Operation canceled."
-          exit 1
-      fi
-    fi
-
-    echo "Proceeding..."
-  fi
-
-
+if [[ ! -f "$BUILD_DIR/compile_commands.json" ]]; then
+  echo "No compile database at $BUILD_DIR/compile_commands.json." >&2
+  echo "Configure the project first, e.g. scripts/linux/setup.sh" >&2
+  exit 1
 fi
 
-
-mapfile -t files < <(
-  git -C "$(git rev-parse --show-toplevel)" ls-files \
-    | grep -E '\.(c|cpp|h|hpp)$' \
-    | grep -v '/ext/'
-)
-
-# Run clang-tidy
-printf "${CYAN}clang-tidy\n${NC}"
-clang_tidy_failed=0
-
-for file in "${files[@]}"; do
-  clang-tidy \
-    -p "build/${BUILD_TYPE:-Release}" \
-    --warnings-as-errors='*' \
-    "$file" \
-  || clang_tidy_failed=1
-done
-
-if (( clang_tidy_failed )); then
-  FAILED_ANALYZERS+=( "clang-tidy" )
+if [[ ${#files[@]} -eq 0 ]]; then
+  mapfile -t files < <(git ls-files -- '*.cpp' ':!Tests/ext/**')
 fi
 
-# Run cppcheck
-printf "${CYAN}cppcheck\n${NC}"
-for file in "${files[@]}"; do
-  cppcheck \
-    --enable=all \
-    --inconclusive \
-    --language=c++ \
-    --std=c++20 \
-    --suppress=missingIncludeSystem \
-    --error-exitcode=1 \
-    "$file" \
-  || cppcheck_failed=1
-done
+failed=()
 
-if (( cppcheck_failed )); then
-  FAILED_ANALYZERS+=( "cppcheck" )
+if (( run_tidy )); then
+  echo "== clang-tidy ($("$CLANG_TIDY" --version | grep -oE 'version [0-9.]+'))"
+  # compile_commands.json comes from the GCC build; clang cannot use GCC's
+  # precompiled headers and would otherwise error on every translation unit.
+  if ! printf '%s\0' "${files[@]}" \
+      | xargs -0 -P "$JOBS" -n 4 "$CLANG_TIDY" -p "$BUILD_DIR" --quiet \
+          --extra-arg=-Wno-ignored-gch; then
+    failed+=(clang-tidy)
+  fi
 fi
 
-# Run include-what-you-use
-# printf "${CYAN}include-what-you-use\n${NC}"
-#include-what-you-use $files
-
-# Summary
-if [ ${#FAILED_ANALYZERS[@]} -ne 0 ]; then
-  printf "${RED}The following analyzers failed:\n"
-  for analyzer in "${FAILED_ANALYZERS[@]}"; do
-    printf "  - $analyzer\n"
-  done
-  printf "${NC}"
-else
-  printf "${CYAN}All analyzers passed successfully.\n${NC}"
+if (( run_cppcheck )); then
+  echo "== cppcheck ($("$CPPCHECK" --version))"
+  if ! "$CPPCHECK" \
+      --project="$BUILD_DIR/compile_commands.json" \
+      --enable=warning,performance,portability \
+      --inconclusive \
+      --std=c++20 \
+      --suppressions-list=.cppcheck-suppressions \
+      --inline-suppr \
+      -i "$rootDir/Tests/ext" \
+      -i "$rootDir/build" \
+      --error-exitcode=1 \
+      --quiet \
+      -j "$JOBS" \
+      --template='{file}:{line}:{column}: {severity}: {message} [{id}]'; then
+    failed+=(cppcheck)
+  fi
 fi
 
-echo Done
+if [[ ${#failed[@]} -ne 0 ]]; then
+  echo "Failed: ${failed[*]}" >&2
+  exit 1
+fi
+echo "All analyzers passed."

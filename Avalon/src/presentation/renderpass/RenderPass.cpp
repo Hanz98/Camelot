@@ -27,7 +27,7 @@
 RenderPass::RenderPass(std::shared_ptr<Device> device, VkFormat colorFormat,
                        VkFormat depthFormat, VkSampleCountFlagBits samples)
     : m_device(std::move(device)),
-      m_renderPass(VK_NULL_HANDLE),
+
       m_colorFormat(colorFormat),
       m_depthFormat(depthFormat),
       m_samples(samples) {
@@ -87,12 +87,13 @@ void RenderPass::initialize() {
     attachments.push_back(resolve);
   }
 
-  VkAttachmentReference colorRef = {0,
-                                    VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
+  VkAttachmentReference colorRef = {
+      .attachment = 0, .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
   VkAttachmentReference depthRef = {
-      1, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL};
-  VkAttachmentReference resolveRef = {2,
-                                      VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
+      .attachment = 1,
+      .layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL};
+  VkAttachmentReference resolveRef = {
+      .attachment = 2, .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
 
   VkSubpassDescription subpass = {};
   subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;

@@ -1,0 +1,9 @@
+# Relaxations for test code only; everything else inherits from the root file.
+#   non-private-member-variables  GoogleTest fixtures expose members to TEST_F.
+#   clang-analyzer-cplusplus.Move, bugprone-use-after-move
+#                                 Tests deliberately inspect moved-from objects.
+InheritParentConfig: true
+Checks: >
+  -cppcoreguidelines-non-private-member-variables-in-classes,
+  -clang-analyzer-cplusplus.Move,
+  -bugprone-use-after-move

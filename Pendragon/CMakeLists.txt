@@ -10,12 +10,10 @@ target_include_directories(Pendragon
         ${spdlog_INCLUDE_DIRS}
 )
 
-
 target_link_libraries(Pendragon
     PRIVATE
         Camelot
         spdlog::spdlog
 )
-
 
 #add_subdirectory("src")

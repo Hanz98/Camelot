@@ -1,0 +1,11 @@
+# cppcheck suppressions, used by scripts/linux/runStaticAnalysis.sh.
+# Format: <id>[:<file glob>[:<line>]]
+
+# Third-party and dependency headers are not on the include path for cppcheck.
+missingIncludeSystem
+
+# Tests deliberately inspect objects after moving from them.
+accessMoved:*Tests/Avalon/*
+
+# Dependency headers pulled in through the compile database.
+*:*/.conan2/*

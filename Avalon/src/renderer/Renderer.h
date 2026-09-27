@@ -46,8 +46,8 @@ class Renderer {
   std::vector<VkCommandBuffer> m_commandBuffers;
   std::unique_ptr<FrameSync> m_sync;
 
-  uint32_t m_currentFrame;
-  uint64_t m_frameCount;
+  uint32_t m_currentFrame{0};
+  uint64_t m_frameCount{0};
   std::array<float, 4> m_clearColor;
 
  public:

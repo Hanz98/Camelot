@@ -25,24 +25,24 @@
 
 namespace Camelot {
 struct ImageCreateInfo {
-  int width;
-  int height;
-  int mipLevels;
-  VkSampleCountFlagBits numSample;
-  VkFormat format;
-  VkImageTiling tiling;
-  VkImageUsageFlags usage;
-  VkMemoryPropertyFlags properties;
-  VkImageAspectFlags aspectFlags;
+  int width{0};
+  int height{0};
+  int mipLevels{1};
+  VkSampleCountFlagBits numSample{VK_SAMPLE_COUNT_1_BIT};
+  VkFormat format{VK_FORMAT_UNDEFINED};
+  VkImageTiling tiling{VK_IMAGE_TILING_OPTIMAL};
+  VkImageUsageFlags usage{0};
+  VkMemoryPropertyFlags properties{0};
+  VkImageAspectFlags aspectFlags{0};
 };
 }  // namespace Camelot
 
 class Image {
  private:
-  VkImage m_image;
-  VkImageView m_imageView;
+  VkImage m_image{VK_NULL_HANDLE};
+  VkImageView m_imageView{VK_NULL_HANDLE};
 
-  VmaAllocation m_allocation;
+  VmaAllocation m_allocation{VK_NULL_HANDLE};
 
   std::shared_ptr<Device> m_device;
   std::shared_ptr<VmaAllocatorWrapper> m_allocator;

@@ -27,7 +27,7 @@
 class CommandPool {
  private:
   std::shared_ptr<Device> m_device;
-  VkCommandPool m_pool;
+  VkCommandPool m_pool{VK_NULL_HANDLE};
 
  public:
   explicit CommandPool(std::shared_ptr<Device> device);

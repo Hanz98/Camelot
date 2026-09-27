@@ -29,7 +29,7 @@
 class RenderPass {
  private:
   std::shared_ptr<Device> m_device;
-  VkRenderPass m_renderPass;
+  VkRenderPass m_renderPass{VK_NULL_HANDLE};
   VkFormat m_colorFormat;
   VkFormat m_depthFormat;
   VkSampleCountFlagBits m_samples;

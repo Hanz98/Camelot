@@ -22,22 +22,18 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
 
-Device::Device(std::shared_ptr<Instance> instance,
-               std::shared_ptr<Surface> surface)
-    : m_device(),
-      m_physicalDevice(),
-      m_graphicsQueue(VK_NULL_HANDLE),
-      m_presentQueue(VK_NULL_HANDLE),
-      m_graphicsQueueFamily(0),
-      m_physicalDeviceProperties() {
+Device::Device(const std::shared_ptr<Instance>& instance,
+               const std::shared_ptr<Surface>& surface)
+    : m_device(), m_physicalDevice(), m_physicalDeviceProperties() {
   initialize(instance, surface);
 }
 
 Device::Device(Device&& other) noexcept
-    : m_device(other.m_device),
-      m_physicalDevice(other.m_physicalDevice),
+    : m_device(std::move(other.m_device)),
+      m_physicalDevice(std::move(other.m_physicalDevice)),
       m_graphicsQueue(other.m_graphicsQueue),
       m_presentQueue(other.m_presentQueue),
       m_graphicsQueueFamily(other.m_graphicsQueueFamily),
@@ -76,8 +72,8 @@ void Device::cleanUp() {
   }
 }
 
-void Device::initialize(std::shared_ptr<Instance> instance,
-                        std::shared_ptr<Surface> surface) {
+void Device::initialize(const std::shared_ptr<Instance>& instance,
+                        const std::shared_ptr<Surface>& surface) {
   if (surface == nullptr || instance == nullptr) {
     spdlog::error("Device::pickPhysicalDevice invalid arguments!");
     throw std::runtime_error("Device::pickPhysicalDevice invalid arguments!");
@@ -191,11 +187,10 @@ VkFormat Device::findSupportedFormat(const std::vector<VkFormat>& candidates,
     VkFormatProperties props;
     vkGetPhysicalDeviceFormatProperties(m_physicalDevice, format, &props);
 
-    if (tiling == VK_IMAGE_TILING_LINEAR &&
-        (props.linearTilingFeatures & features) == features) {
-      return format;
-    } else if (tiling == VK_IMAGE_TILING_OPTIMAL &&
-               (props.optimalTilingFeatures & features) == features) {
+    const VkFormatFeatureFlags supported = tiling == VK_IMAGE_TILING_LINEAR
+                                               ? props.linearTilingFeatures
+                                               : props.optimalTilingFeatures;
+    if ((supported & features) == features) {
       return format;
     }
   }

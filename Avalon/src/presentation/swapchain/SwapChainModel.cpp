@@ -30,8 +30,7 @@ SwapchainModel::SwapchainModel(std::shared_ptr<Device> device,
       m_window(std::move(window)),
       m_allocator(allocator),
       m_swapchain(),
-      m_framebufferRenderPass(VK_NULL_HANDLE),
-      m_samples(VK_SAMPLE_COUNT_1_BIT),
+
       m_depth(device, allocator),
       m_color(std::move(device), std::move(allocator)) {
   if (m_device == nullptr || m_window == nullptr || m_allocator == nullptr) {
@@ -83,13 +82,13 @@ void SwapchainModel::recreate() {
     m_framebufferRenderPass = renderPass;
     // Rebuild against the same pass the previous framebuffers used.
     std::vector<VkImageView> attachments;
-    for (uint32_t i = 0; i < m_imageViews.size(); ++i) {
+    for (auto& m_imageView : m_imageViews) {
       attachments.clear();
       if (m_samples != VK_SAMPLE_COUNT_1_BIT) {
         attachments = {m_color.getImageView(), m_depth.getImageView(),
-                       m_imageViews[i]};
+                       m_imageView};
       } else {
-        attachments = {m_imageViews[i], m_depth.getImageView()};
+        attachments = {m_imageView, m_depth.getImageView()};
       }
       VkFramebufferCreateInfo info = {};
       info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
@@ -117,12 +116,12 @@ void SwapchainModel::createFramebuffers(const RenderPass& renderPass) {
   }
   // Delegate to the shared path in recreate() without rebuilding the chain.
   std::vector<VkImageView> attachments;
-  for (uint32_t i = 0; i < m_imageViews.size(); ++i) {
+  for (auto& m_imageView : m_imageViews) {
     if (renderPass.isMultisampled()) {
       attachments = {m_color.getImageView(), m_depth.getImageView(),
-                     m_imageViews[i]};
+                     m_imageView};
     } else {
-      attachments = {m_imageViews[i], m_depth.getImageView()};
+      attachments = {m_imageView, m_depth.getImageView()};
     }
     VkFramebufferCreateInfo info = {};
     info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;

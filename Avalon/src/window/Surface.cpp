@@ -23,12 +23,13 @@
 
 #include <exception>
 #include <memory>
+#include <utility>
 
 #include "Window.h"
 
 Surface::Surface(std::shared_ptr<Instance> instance,
                  std::shared_ptr<Window> window)
-    : m_instance(instance), m_window(window), m_surface(VK_NULL_HANDLE) {}
+    : m_instance(std::move(instance)), m_window(std::move(window)) {}
 
 Surface::~Surface() { cleanUp(); }
 

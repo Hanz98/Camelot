@@ -30,8 +30,7 @@ Renderer::Renderer(std::shared_ptr<Device> device,
     : m_device(std::move(device)),
       m_window(std::move(window)),
       m_swapchain(std::move(swapchain)),
-      m_currentFrame(0),
-      m_frameCount(0),
+
       m_clearColor{0.05F, 0.05F, 0.08F, 1.0F} {
   if (m_device == nullptr || m_window == nullptr || m_swapchain == nullptr) {
     spdlog::error("Renderer: device, window or swapchain is not initialized.");
@@ -103,30 +102,33 @@ bool Renderer::drawFrame() {
   VK_CHECK_RESULT(vkResetCommandBuffer(commandBuffer, 0));
   recordCommandBuffer(commandBuffer, imageIndex);
 
-  const VkSemaphore waitSemaphores[] = {m_sync->imageAvailable(m_currentFrame)};
-  const VkPipelineStageFlags waitStages[] = {
+  const std::array<VkSemaphore, 1> waitSemaphores = {
+      m_sync->imageAvailable(m_currentFrame)};
+  const std::array<VkPipelineStageFlags, 1> waitStages = {
       VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
-  const VkSemaphore signalSemaphores[] = {m_sync->renderFinished(imageIndex)};
+  const std::array<VkSemaphore, 1> signalSemaphores = {
+      m_sync->renderFinished(imageIndex)};
 
   VkSubmitInfo submit = {};
   submit.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-  submit.waitSemaphoreCount = 1;
-  submit.pWaitSemaphores = waitSemaphores;
-  submit.pWaitDstStageMask = waitStages;
+  submit.waitSemaphoreCount = static_cast<uint32_t>(waitSemaphores.size());
+  submit.pWaitSemaphores = waitSemaphores.data();
+  submit.pWaitDstStageMask = waitStages.data();
   submit.commandBufferCount = 1;
   submit.pCommandBuffers = &commandBuffer;
-  submit.signalSemaphoreCount = 1;
-  submit.pSignalSemaphores = signalSemaphores;
+  submit.signalSemaphoreCount = static_cast<uint32_t>(signalSemaphores.size());
+  submit.pSignalSemaphores = signalSemaphores.data();
   VK_CHECK_RESULT(
       vkQueueSubmit(m_device->getGraphicsQueue(), 1, &submit, fence));
 
-  const VkSwapchainKHR swapchains[] = {m_swapchain->getSwapchain()};
+  const std::array<VkSwapchainKHR, 1> swapchains = {
+      m_swapchain->getSwapchain()};
   VkPresentInfoKHR present = {};
   present.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-  present.waitSemaphoreCount = 1;
-  present.pWaitSemaphores = signalSemaphores;
-  present.swapchainCount = 1;
-  present.pSwapchains = swapchains;
+  present.waitSemaphoreCount = static_cast<uint32_t>(signalSemaphores.size());
+  present.pWaitSemaphores = signalSemaphores.data();
+  present.swapchainCount = static_cast<uint32_t>(swapchains.size());
+  present.pSwapchains = swapchains.data();
   present.pImageIndices = &imageIndex;
 
   VkResult presented = vkQueuePresentKHR(m_device->getPresentQueue(), &present);
@@ -153,13 +155,13 @@ void Renderer::recordCommandBuffer(VkCommandBuffer commandBuffer,
   std::array<VkClearValue, 2> clearValues = {};
   clearValues[0].color = {
       {m_clearColor[0], m_clearColor[1], m_clearColor[2], m_clearColor[3]}};
-  clearValues[1].depthStencil = {1.0F, 0};
+  clearValues[1].depthStencil = {.depth = 1.0F, .stencil = 0};
 
   VkRenderPassBeginInfo passBegin = {};
   passBegin.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
   passBegin.renderPass = m_renderPass->getRenderPass();
   passBegin.framebuffer = m_swapchain->getFramebuffer(imageIndex);
-  passBegin.renderArea.offset = {0, 0};
+  passBegin.renderArea.offset = {.x = 0, .y = 0};
   passBegin.renderArea.extent = m_swapchain->getExtent();
   passBegin.clearValueCount = static_cast<uint32_t>(clearValues.size());
   passBegin.pClearValues = clearValues.data();

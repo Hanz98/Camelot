@@ -27,11 +27,11 @@
 
 class Window {
  private:
-  GLFWwindow* m_pWindow;
+  GLFWwindow* m_pWindow{nullptr};
   std::pair<uint16_t, uint16_t> m_dimensions;
   // True while this object holds one reference on the GLFW library. GLFW is
   // terminated only when the last Window releases its reference.
-  bool m_ownsGlfwRef;
+  bool m_ownsGlfwRef{false};
 
  public:
   explicit Window();

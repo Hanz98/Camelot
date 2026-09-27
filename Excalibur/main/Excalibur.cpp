@@ -17,4 +17,7 @@
 
 #include <Camelot/src/main/MainModel.h>
 
-void buildCamelot(ICamelot **camelot) { *camelot = new MainModel(); }
+// C ABI factory: ownership of the instance passes to the caller.
+void buildCamelot(ICamelot** camelot) {
+  *camelot = new MainModel();  // NOLINT(cppcoreguidelines-owning-memory)
+}
