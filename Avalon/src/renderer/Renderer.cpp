@@ -23,6 +23,9 @@
 #include <stdexcept>
 #include <utility>
 
+#include "Avalon/shaders/Registry.h"
+#include "Avalon/src/pipeline/GraphicsPipeline.h"
+#include "Avalon/src/shader/ShaderModule.h"
 #include "Avalon/src/validation/CheckResult.h"
 
 namespace avalon {
@@ -48,6 +51,23 @@ Renderer::Renderer(std::shared_ptr<Device> device,
   m_commandBuffers = m_commandPool->allocate(kFramesInFlight);
   m_sync = std::make_unique<FrameSync>(m_device, kFramesInFlight,
                                        m_swapchain->getImageCount());
+  m_pipelines = std::make_unique<PipelineManager>(m_device);
+  createPipelines();
+}
+
+void Renderer::createPipelines() {
+  m_pipelines->getOrCreate(kTrianglePipeline, [this](PipelineManager& pm) {
+    const ShaderModule vert(m_device, shaders::get("triangle.vert"));
+    const ShaderModule frag(m_device, shaders::get("triangle.frag"));
+    return GraphicsPipelineBuilder(kTrianglePipeline)
+        .addStage(vert)
+        .addStage(frag)
+        .setRenderPass(m_renderPass->getRenderPass())
+        .setLayout(pm.getOrCreateLayout("empty").get())
+        .setSamples(m_renderPass->getSamples())
+        .setDepth(true, true)
+        .build(m_device);
+  });
 }
 
 Renderer::~Renderer() { cleanUp(); }
@@ -56,6 +76,7 @@ void Renderer::cleanUp() {
   if (m_device != nullptr) {
     m_device->waitIdle();
   }
+  m_pipelines.reset();
   m_sync.reset();
   m_commandBuffers.clear();  // freed with the pool
   m_commandPool.reset();
@@ -170,7 +191,9 @@ void Renderer::recordCommandBuffer(VkCommandBuffer commandBuffer,
   passBegin.pClearValues = clearValues.data();
 
   vkCmdBeginRenderPass(commandBuffer, &passBegin, VK_SUBPASS_CONTENTS_INLINE);
-  // Drawing goes here (T3+). For now the pass only clears.
+  const GraphicsPipeline& triangle = m_pipelines->get(kTrianglePipeline);
+  triangle.bind(commandBuffer, m_swapchain->getExtent());
+  vkCmdDraw(commandBuffer, 3, 1, 0, 0);
   vkCmdEndRenderPass(commandBuffer);
 
   VK_CHECK_RESULT(vkEndCommandBuffer(commandBuffer));
