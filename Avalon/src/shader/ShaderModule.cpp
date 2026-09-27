@@ -98,7 +98,7 @@ ShaderModule ShaderModule::fromFile(std::shared_ptr<Device> device,
     stage = stageFromFileName(path);
   }
   std::vector<uint32_t> code = readSpirv(path);
-  return ShaderModule(std::move(device), code, stage, path.filename().string());
+  return {std::move(device), code, stage, path.filename().string()};
 }
 
 std::vector<uint32_t> ShaderModule::readSpirv(

@@ -24,7 +24,7 @@
 #include <vector>
 
 CommandPool::CommandPool(std::shared_ptr<Device> device)
-    : m_device(std::move(device)), m_pool(VK_NULL_HANDLE) {
+    : m_device(std::move(device)) {
   if (m_device == nullptr) {
     spdlog::error("CommandPool: Device is not initialized.");
     throw std::runtime_error("CommandPool: Device is not initialized.");

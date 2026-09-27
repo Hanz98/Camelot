@@ -1,12 +1,10 @@
-
 # The Vulkan headers, loader and VMA come from Conan. VULKAN_SDK is only used
 # as an additional include hint when it is set in the environment.
 if(DEFINED ENV{VULKAN_SDK})
-    set(VULKAN_SDK_PATH $ENV{VULKAN_SDK})
+  set(VULKAN_SDK_PATH $ENV{VULKAN_SDK})
 endif()
 
 set(Avalon_include_dirs ${CMAKE_CURRENT_SOURCE_DIR})
-
 
 find_package(glfw3 REQUIRED)
 find_package(spdlog REQUIRED)
@@ -30,7 +28,6 @@ add_subdirectory("src")
 
 add_library(Avalon "main.cpp")
 
-
 target_include_directories(Avalon
     PUBLIC
         ${glfw3_INCLUDE_DIRS}/include/
@@ -38,7 +35,7 @@ target_include_directories(Avalon
         ${vk-bootstrap_INCLUDE_DIRS}
 )
 if(DEFINED VULKAN_SDK_PATH)
-    target_include_directories(Avalon PUBLIC ${VULKAN_SDK_PATH}/include/)
+  target_include_directories(Avalon PUBLIC ${VULKAN_SDK_PATH}/include/)
 endif()
 
 target_link_libraries(Avalon
@@ -50,6 +47,5 @@ target_link_libraries(Avalon
         Vulkan::Vulkan
         GPUOpen::VulkanMemoryAllocator
 )
-
 
 target_precompile_headers(Avalon PUBLIC "pch.h")

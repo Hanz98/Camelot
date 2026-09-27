@@ -23,14 +23,16 @@
 
 class Buffer {
  private:
-  VkBuffer m_buffer;
-  VmaAllocation m_allocation;
+  VkBuffer m_buffer{VK_NULL_HANDLE};
+  VmaAllocation m_allocation{VK_NULL_HANDLE};
   std::shared_ptr<VmaAllocatorWrapper> m_allocator;
 
  public:
   Buffer();
   Buffer(const Buffer&) = delete;
   Buffer& operator=(const Buffer&) = delete;
+  Buffer(Buffer&&) = delete;
+  Buffer& operator=(Buffer&&) = delete;
   ~Buffer();
   void cleanUp();
 

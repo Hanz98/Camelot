@@ -18,10 +18,11 @@
 #include <Avalon/src/validation/CheckResult.h>
 
 #include <memory>
+#include <utility>
 
 SurfaceManager::SurfaceManager(std::shared_ptr<Instance> instance,
                                std::shared_ptr<Window> window)
-    : m_window(window), m_instance(instance) {
+    : m_window(std::move(window)), m_instance(std::move(instance)) {
   if (m_instance == nullptr || m_window == nullptr) {
     spdlog::error("SurfaceManager: Instance or Window is not initialized.");
     throw std::runtime_error(
@@ -35,13 +36,13 @@ SurfaceManager::~SurfaceManager() { cleanUp(); }
 void SurfaceManager::initialize() {
   m_surfaces.push_back(std::make_shared<Surface>(m_instance, m_window));
 
-  for (auto surface : m_surfaces) {
+  for (const auto& surface : m_surfaces) {
     surface->init();
   }
 }
 
 void SurfaceManager::cleanUp() {
-  for (auto surface : m_surfaces) {
+  for (const auto& surface : m_surfaces) {
     surface->cleanUp();
   }
   m_surfaces.clear();

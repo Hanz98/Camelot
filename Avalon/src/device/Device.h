@@ -30,14 +30,15 @@ class Device {
  private:
   vkb::Device m_device;
   vkb::PhysicalDevice m_physicalDevice;
-  VkQueue m_graphicsQueue;
-  VkQueue m_presentQueue;
-  uint32_t m_graphicsQueueFamily;
+  VkQueue m_graphicsQueue{VK_NULL_HANDLE};
+  VkQueue m_presentQueue{VK_NULL_HANDLE};
+  uint32_t m_graphicsQueueFamily{0};
 
   VkPhysicalDeviceProperties m_physicalDeviceProperties;
 
  public:
-  Device(std::shared_ptr<Instance>, std::shared_ptr<Surface>);
+  Device(const std::shared_ptr<Instance>& instance,
+         const std::shared_ptr<Surface>& surface);
   Device(Device&& other) noexcept;
   Device(const Device& other) = delete;
   Device& operator=(Device&& other) noexcept;
@@ -48,7 +49,8 @@ class Device {
   void cleanUp();
 
  private:
-  void initialize(std::shared_ptr<Instance>, std::shared_ptr<Surface>);
+  void initialize(const std::shared_ptr<Instance>&,
+                  const std::shared_ptr<Surface>&);
 
  public:
   inline VkDevice& getDevice() { return m_device.device; }

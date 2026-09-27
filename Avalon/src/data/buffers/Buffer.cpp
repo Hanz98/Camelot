@@ -21,8 +21,7 @@
 #include <memory>
 #include <utility>
 
-Buffer::Buffer()
-    : m_buffer(VK_NULL_HANDLE), m_allocation(VK_NULL_HANDLE), m_allocator() {}
+Buffer::Buffer() : m_allocator() {}
 
 Buffer::~Buffer() { cleanUp(); }
 
@@ -48,7 +47,8 @@ void Buffer::createBuffer(std::shared_ptr<VmaAllocatorWrapper> allocator) {
   cleanUp();
   m_allocator = std::move(allocator);
 
-  constexpr VkDeviceSize kDefaultBufferSize = 64 * 1024;
+  constexpr VkDeviceSize kDefaultBufferSize =
+      static_cast<VkDeviceSize>(64) * 1024;
   VkBufferCreateInfo bufferInfo = {};
   bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
   bufferInfo.size = kDefaultBufferSize;

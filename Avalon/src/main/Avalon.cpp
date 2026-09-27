@@ -109,7 +109,7 @@ bool Avalon::frame() {
   return true;
 }
 
-void Avalon::test() { std::cout << "Hello World from Avalon!" << std::endl; }
+void Avalon::test() { std::cout << "Hello World from Avalon!" << '\n'; }
 
 void Avalon::initVma() {
   VmaVulkanFunctions vulkanFunctions = {};

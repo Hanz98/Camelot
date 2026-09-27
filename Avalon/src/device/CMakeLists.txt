@@ -13,8 +13,6 @@ target_include_directories(Avalon_device
      ${vk-bootstrap_INCLUDE_DIRS}
 )
 
-
-
 target_link_libraries(Avalon_device
     PRIVATE
         Avalon

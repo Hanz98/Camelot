@@ -1,33 +1,40 @@
-Checks:          'clang-diagnostic-*,clang-analyzer-*,cppcoreguidelines-*,modernize-*,-modernize-use-trailing-return-type'
-WarningsAsErrors: true
-HeaderFilterRegex: ''
-FormatStyle:     google
+# clang-tidy configuration. Run through scripts/linux/runStaticAnalysis.sh or
+# `clang-tidy -p build/Release <file>`; CI runs it on every PR.
+#
+# Disabled checks:
+#   avoid-magic-numbers                 Vulkan code is full of literal counts,
+#                                       sizes and version numbers.
+#   pro-bounds-avoid-unchecked-container-access
+#                                       operator[] on std::array/std::vector
+#                                       is used deliberately in hot paths.
+#   modernize-use-trailing-return-type  Not the style used here.
+#   bugprone-invalid-enum-default-initialization
+#                                       Vulkan structs are zero-initialised
+#                                       with `= {}`; their enum members have
+#                                       no zero enumerator by design.
+#   bugprone-easily-swappable-parameters
+#                                       Vulkan APIs take many adjacent
+#                                       uint32_t/VkFormat parameters by design.
+Checks: >
+  clang-diagnostic-*,
+  clang-analyzer-*,
+  bugprone-*,
+  performance-*,
+  cppcoreguidelines-*,
+  modernize-*,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-pro-bounds-avoid-unchecked-container-access,
+  -modernize-use-trailing-return-type,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-invalid-enum-default-initialization
+WarningsAsErrors: '*'
+HeaderFilterRegex: '.*/(Avalon|Camelot|Excalibur|Pendragon|Tests)/.*'
+ExcludeHeaderFilterRegex: '.*/(build|Tests/ext)/.*'
+FormatStyle: google
 CheckOptions:
-  - key:             cert-dcl16-c.NewSuffixes
-    value:           'L;LL;LU;LLU'
-  - key:             cert-oop54-cpp.WarnOnlyIfThisHasSuspiciousField
-    value:           '0'
-  - key:             cppcoreguidelines-explicit-virtual-functions.IgnoreDestructors
-    value:           '1'
-  - key:             cppcoreguidelines-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic
-    value:           '1'
-  - key:             google-readability-braces-around-statements.ShortStatementLines
-    value:           '1'
-  - key:             google-readability-function-size.StatementThreshold
-    value:           '800'
-  - key:             google-readability-namespace-comments.ShortNamespaceLines
-    value:           '10'
-  - key:             google-readability-namespace-comments.SpacesBeforeComments
-    value:           '2'
-  - key:             modernize-loop-convert.MaxCopySize
-    value:           '16'
-  - key:             modernize-loop-convert.MinConfidence
-    value:           reasonable
-  - key:             modernize-loop-convert.NamingStyle
-    value:           CamelCase
-  - key:             modernize-pass-by-value.IncludeStyle
-    value:           llvm
-  - key:             modernize-replace-auto-ptr.IncludeStyle
-    value:           llvm
-  - key:             modernize-use-nullptr.NullMacros
-    value:           'NULL'
+  cppcoreguidelines-explicit-virtual-functions.IgnoreDestructors: 'true'
+  cppcoreguidelines-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic: 'true'
+  modernize-loop-convert.MaxCopySize: '16'
+  modernize-loop-convert.MinConfidence: reasonable
+  modernize-loop-convert.NamingStyle: CamelCase
+  modernize-use-nullptr.NullMacros: 'NULL'

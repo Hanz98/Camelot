@@ -26,21 +26,23 @@
 
 namespace {
 // Number of live Window objects that successfully called glfwInit().
-int g_glfwRefCount = 0;
+int& glfwRefCount() {
+  static int count = 0;
+  return count;
+}
 
 constexpr int kDefaultWindowWidth = 800;
 constexpr int kDefaultWindowHeight = 600;
 constexpr const char* kDefaultWindowTitle = "Avalon Window";
 }  // namespace
 
-Window::Window()
-    : m_pWindow(nullptr), m_dimensions(0, 0), m_ownsGlfwRef(false) {
+Window::Window() : m_dimensions(0, 0) {
   initialize(kDefaultWindowWidth, kDefaultWindowHeight, kDefaultWindowTitle);
 }
 
 Window::Window(Window&& other) noexcept
     : m_pWindow(other.m_pWindow),
-      m_dimensions(other.m_dimensions),
+      m_dimensions(std::move(other.m_dimensions)),
       m_ownsGlfwRef(other.m_ownsGlfwRef) {
   other.m_pWindow = nullptr;
   other.m_dimensions = {0, 0};
@@ -77,7 +79,7 @@ void Window::releaseGlfw() {
     return;
   }
   m_ownsGlfwRef = false;
-  if (--g_glfwRefCount == 0) {
+  if (--glfwRefCount() == 0) {
     glfwTerminate();
   }
 }
@@ -93,7 +95,7 @@ bool Window::initialize(int width, int height, const std::string& title) {
   if (glfwInit() != GLFW_TRUE) {
     return false;
   }
-  ++g_glfwRefCount;
+  ++glfwRefCount();
   m_ownsGlfwRef = true;
   m_dimensions = std::make_pair(static_cast<uint16_t>(width),
                                 static_cast<uint16_t>(height));

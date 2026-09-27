@@ -38,8 +38,9 @@ class SwapchainModel {
   vkb::Swapchain m_swapchain;
   std::vector<VkImageView> m_imageViews;
   std::vector<VkFramebuffer> m_framebuffers;
-  VkRenderPass m_framebufferRenderPass;  // pass the framebuffers were built for
-  VkSampleCountFlagBits m_samples;
+  VkRenderPass m_framebufferRenderPass{
+      VK_NULL_HANDLE};  // pass the framebuffers were built for
+  VkSampleCountFlagBits m_samples{VK_SAMPLE_COUNT_1_BIT};
 
   Image m_depth;
   Image m_color;

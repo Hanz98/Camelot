@@ -22,11 +22,7 @@
 
 Image::Image(std::shared_ptr<Device> device,
              std::shared_ptr<VmaAllocatorWrapper> allocator)
-    : m_image(VK_NULL_HANDLE),
-      m_imageView(VK_NULL_HANDLE),
-      m_allocation(VK_NULL_HANDLE),
-      m_device(std::move(device)),
-      m_allocator(std::move(allocator)) {
+    : m_device(std::move(device)), m_allocator(std::move(allocator)) {
   if (m_device == nullptr || m_allocator == nullptr) {
     spdlog::error("Image: Device and Allocator are not initialized.");
     throw std::runtime_error(
@@ -58,12 +54,12 @@ Image::~Image() { cleanUp(); }
 void Image::cleanUp() {
   if (m_imageView != VK_NULL_HANDLE) {
     if (m_device == nullptr) {
+      // Called from noexcept destructors: report and leak rather than throw.
       spdlog::error(
           "Image: Device is not initialized. Cannot destroy image view.");
-      throw std::runtime_error(
-          "Image: Device is not initialized. Cannot destroy image view.");
+    } else {
+      vkDestroyImageView(m_device->getDevice(), m_imageView, nullptr);
     }
-    vkDestroyImageView(m_device->getDevice(), m_imageView, nullptr);
     m_imageView = VK_NULL_HANDLE;
   }
 
@@ -71,10 +67,9 @@ void Image::cleanUp() {
     if (m_allocator == nullptr) {
       spdlog::error(
           "Image: Allocator is not initialized. Cannot destroy image.");
-      throw std::runtime_error(
-          "Image: Allocator is not initialized. Cannot destroy image.");
+    } else {
+      vmaDestroyImage(m_allocator->allocator, m_image, m_allocation);
     }
-    vmaDestroyImage(m_allocator->allocator, m_image, m_allocation);
     m_image = VK_NULL_HANDLE;
     m_allocation = VK_NULL_HANDLE;
   }
