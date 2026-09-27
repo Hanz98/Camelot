@@ -1,3 +1,18 @@
+/*
+ * Copyright 2024 Jan Filip
+ *
+ * Licensed under the MIT License. You may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * https://opensource.org/licenses/MIT
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 #include "Avalon/src/ui/SceneViewWidget.h"
 
 #include <GLFW/glfw3.h>
@@ -28,19 +43,20 @@ SceneViewWidget::SceneViewWidget(std::string title,
       m_controller(&m_camera) {
   if (m_device == nullptr || m_allocator == nullptr || m_ui == nullptr ||
       m_renderer == nullptr) {
-    spdlog::error("SceneViewWidget: device, allocator, UI or renderer is null.");
+    spdlog::error(
+        "SceneViewWidget: device, allocator, UI or renderer is null.");
     throw std::runtime_error(
         "SceneViewWidget: device, allocator, UI or renderer is null.");
   }
-  m_target = std::make_unique<RenderTarget>(
-      m_device, m_allocator, m_ui, std::max(width, kMinSize),
-      std::max(height, kMinSize));
+  m_target = std::make_unique<RenderTarget>(m_device, m_allocator, m_ui,
+                                            std::max(width, kMinSize),
+                                            std::max(height, kMinSize));
   m_pipelines = std::make_unique<PipelineManager>(m_device);
   m_cameraLayout = std::make_unique<DescriptorSetLayout>(
-      m_device, std::vector<VkDescriptorSetLayoutBinding>{
-                    DescriptorSetLayout::uniformBuffer(
-                        0, VK_SHADER_STAGE_VERTEX_BIT |
-                               VK_SHADER_STAGE_FRAGMENT_BIT)});
+      m_device,
+      std::vector<VkDescriptorSetLayoutBinding>{
+          DescriptorSetLayout::uniformBuffer(
+              0, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT)});
   m_descriptorPool = std::make_unique<DescriptorPool>(
       m_device,
       std::vector<VkDescriptorPoolSize>{
@@ -97,8 +113,9 @@ void SceneViewWidget::handleInput() {
   // drag keeps working when the cursor leaves the window.
   const ImGuiIO& io = ImGui::GetIO();
   const ImVec2 mouse = io.MousePos;
-  static constexpr std::array<int, 3> kGlfwButtons = {
-      GLFW_MOUSE_BUTTON_LEFT, GLFW_MOUSE_BUTTON_RIGHT, GLFW_MOUSE_BUTTON_MIDDLE};
+  static constexpr std::array<int, 3> kGlfwButtons = {GLFW_MOUSE_BUTTON_LEFT,
+                                                      GLFW_MOUSE_BUTTON_RIGHT,
+                                                      GLFW_MOUSE_BUTTON_MIDDLE};
   for (int button = 0; button < 3; ++button) {
     if (m_hovered && ImGui::IsMouseClicked(button)) {
       m_controller.onMouseButton(kGlfwButtons.at(static_cast<size_t>(button)),
