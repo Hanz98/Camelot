@@ -288,8 +288,10 @@ void Renderer::recordCommandBuffer(VkCommandBuffer commandBuffer,
   context.cameraSet = m_cameraSets.at(m_currentFrame);
   context.cameraSetLayout = m_cameraLayout->get();
   context.pipelines = m_pipelines.get();
-  for (const std::shared_ptr<IDrawable>& drawable : m_drawables) {
-    drawable->record(context);
+  if (m_drawablesInMainPass) {
+    for (const std::shared_ptr<IDrawable>& drawable : m_drawables) {
+      drawable->record(context);
+    }
   }
   if (m_ui != nullptr) {
     m_ui->render(commandBuffer);

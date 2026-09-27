@@ -74,6 +74,7 @@ class Renderer {
   std::vector<VkDescriptorSet> m_cameraSets;
 
   std::vector<std::shared_ptr<IDrawable>> m_drawables;
+  bool m_drawablesInMainPass{true};
   std::vector<std::shared_ptr<IPrePass>> m_prePasses;
   UiContext* m_ui{nullptr};  // not owned; drawn last inside the pass
 
@@ -103,6 +104,16 @@ class Renderer {
   bool removeDrawable(const std::shared_ptr<IDrawable>& drawable);
   void clearDrawables();
   [[nodiscard]] size_t drawableCount() const { return m_drawables.size(); }
+  [[nodiscard]] const std::vector<std::shared_ptr<IDrawable>>& drawables()
+      const {
+    return m_drawables;
+  }
+  // When the scene is shown through SceneViewWidgets (offscreen), the main
+  // pass only clears and draws the UI.
+  void setDrawablesInMainPass(bool enabled) { m_drawablesInMainPass = enabled; }
+  [[nodiscard]] bool drawablesInMainPass() const {
+    return m_drawablesInMainPass;
+  }
 
   // Pre-passes record before the main render pass begins (uploads,
   // offscreen passes the main pass samples).
