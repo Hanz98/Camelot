@@ -127,9 +127,14 @@ jobs:
         # Conan's run environment (conanrun.bat, hence cmd). The runner has a
         # desktop session, so GLFW creates windows without xvfb. Paths are
         # BUILD_DIR with backslashes.
+        # The runner is elevated (high integrity level), and the Vulkan loader
+        # ignores VK_DRIVER_FILES / VK_ICD_FILENAMES in that case, so the mock
+        # driver is registered the official way, in the registry.
         shell: cmd
         run: |
           call build\Release\generators\conanrun.bat || exit /b 1
+          reg add "HKLM\SOFTWARE\Khronos\Vulkan\Drivers" /v "%GITHUB_WORKSPACE%\build\Release\bin\VkICD_mock_icd.json" /t REG_DWORD /d 0 /f || exit /b 1
+          set VK_LOADER_DEBUG=error,warn
           build\Release\bin\Test_Main.exe --gtest_output=xml:test-report.xml
 
       - name: Upload logs on failure
