@@ -19,6 +19,7 @@
 
 #include "Avalon/pch.h"
 #include "Avalon/src/allocator/VmaAllocator.h"
+#include "Avalon/src/camera/CameraController.h"
 #include "Avalon/src/device/Device.h"
 #include "Avalon/src/device/Instance.h"
 #include "Avalon/src/presentation/renderpass/RenderPass.h"
@@ -41,6 +42,7 @@ class Avalon {
   std::shared_ptr<VmaAllocatorWrapper> m_allocator;
   std::shared_ptr<SwapchainModel> m_swapchainModel;
   std::unique_ptr<Renderer> m_renderer;
+  std::unique_ptr<CameraController> m_cameraController;
 
  public:
   Avalon();
@@ -65,6 +67,16 @@ class Avalon {
 
   [[nodiscard]] std::shared_ptr<Window> getWindow() const { return m_window; }
   [[nodiscard]] std::shared_ptr<Device> getDevice() const { return m_device; }
+  [[nodiscard]] std::shared_ptr<VmaAllocatorWrapper> getAllocator() const {
+    return m_allocator;
+  }
+  // The renderer's camera and the mouse controller attached to the window.
+  [[nodiscard]] Camera* getCamera() const {
+    return m_renderer ? &m_renderer->getCamera() : nullptr;
+  }
+  [[nodiscard]] CameraController* getCameraController() const {
+    return m_cameraController.get();
+  }
 
  private:
   void initVma();

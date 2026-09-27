@@ -12,6 +12,9 @@
 #                                       Vulkan structs are zero-initialised
 #                                       with `= {}`; their enum members have
 #                                       no zero enumerator by design.
+#   cppcoreguidelines-pro-type-union-access
+#                                       GLM vectors expose .x/.y/.z through
+#                                       anonymous unions; that is their API.
 #   bugprone-easily-swappable-parameters
 #                                       Vulkan APIs take many adjacent
 #                                       uint32_t/VkFormat parameters by design.
@@ -26,6 +29,7 @@ Checks: >
   -cppcoreguidelines-pro-bounds-avoid-unchecked-container-access,
   -modernize-use-trailing-return-type,
   -bugprone-easily-swappable-parameters,
+  -cppcoreguidelines-pro-type-union-access,
   -bugprone-invalid-enum-default-initialization
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*/(Avalon|Camelot|Excalibur|Pendragon|Tests)/.*'

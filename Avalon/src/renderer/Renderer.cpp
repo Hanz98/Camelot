@@ -17,11 +17,13 @@
 
 #include <spdlog/spdlog.h>
 
+#include <algorithm>
 #include <array>
 #include <limits>
 #include <memory>
 #include <stdexcept>
 #include <utility>
+#include <vector>
 
 #include "Avalon/shaders/Registry.h"
 #include "Avalon/src/pipeline/GraphicsPipeline.h"
@@ -32,16 +34,19 @@ namespace avalon {
 
 Renderer::Renderer(std::shared_ptr<Device> device,
                    std::shared_ptr<Window> window,
-                   std::shared_ptr<SwapchainModel> swapchain)
+                   std::shared_ptr<SwapchainModel> swapchain,
+                   std::shared_ptr<VmaAllocatorWrapper> allocator)
     : m_device(std::move(device)),
       m_window(std::move(window)),
       m_swapchain(std::move(swapchain)),
-
+      m_allocator(std::move(allocator)),
       m_clearColor{0.05F, 0.05F, 0.08F, 1.0F} {
-  if (m_device == nullptr || m_window == nullptr || m_swapchain == nullptr) {
-    spdlog::error("Renderer: device, window or swapchain is not initialized.");
+  if (m_device == nullptr || m_window == nullptr || m_swapchain == nullptr ||
+      m_allocator == nullptr) {
+    spdlog::error(
+        "Renderer: device, window, swapchain or allocator is not initialized.");
     throw std::runtime_error(
-        "Renderer: device, window or swapchain is not initialized.");
+        "Renderer: device, window, swapchain or allocator is not initialized.");
   }
   m_renderPass = std::make_unique<RenderPass>(
       m_device, m_swapchain->getImageFormat(), m_device->getDepthFormat(),
@@ -52,7 +57,56 @@ Renderer::Renderer(std::shared_ptr<Device> device,
   m_sync = std::make_unique<FrameSync>(m_device, kFramesInFlight,
                                        m_swapchain->getImageCount());
   m_pipelines = std::make_unique<PipelineManager>(m_device);
+  createCameraResources();
   createPipelines();
+}
+
+void Renderer::createCameraResources() {
+  m_cameraLayout = std::make_unique<DescriptorSetLayout>(
+      m_device,
+      std::vector<VkDescriptorSetLayoutBinding>{
+          DescriptorSetLayout::uniformBuffer(
+              0, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT)});
+  m_descriptorPool = std::make_unique<DescriptorPool>(
+      m_device,
+      std::vector<VkDescriptorPoolSize>{
+          {.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+           .descriptorCount = kFramesInFlight}},
+      kFramesInFlight);
+  m_cameraUbo = std::make_unique<UniformBuffer>(m_allocator, sizeof(CameraUbo),
+                                                kFramesInFlight);
+  m_cameraSets =
+      m_descriptorPool->allocate(m_cameraLayout->get(), kFramesInFlight);
+  for (uint32_t frame = 0; frame < kFramesInFlight; ++frame) {
+    m_descriptorPool->writeUniformBuffer(m_cameraSets.at(frame), 0,
+                                         m_cameraUbo->descriptorInfo(frame));
+  }
+}
+
+void Renderer::addDrawable(std::shared_ptr<IDrawable> drawable) {
+  if (drawable == nullptr) {
+    spdlog::error("Renderer::addDrawable: drawable is null.");
+    throw std::runtime_error("Renderer::addDrawable: drawable is null.");
+  }
+  m_drawables.push_back(std::move(drawable));
+}
+
+bool Renderer::removeDrawable(const std::shared_ptr<IDrawable>& drawable) {
+  auto it = std::ranges::find(m_drawables, drawable);
+  if (it == m_drawables.end()) {
+    return false;
+  }
+  m_device->waitIdle();  // a command buffer may still reference it
+  m_drawables.erase(it);
+  return true;
+}
+
+void Renderer::clearDrawables() {
+  if (m_drawables.empty()) {
+    return;
+  }
+  m_device->waitIdle();
+  m_drawables.clear();
 }
 
 void Renderer::createPipelines() {
@@ -76,7 +130,12 @@ void Renderer::cleanUp() {
   if (m_device != nullptr) {
     m_device->waitIdle();
   }
+  m_drawables.clear();
   m_pipelines.reset();
+  m_cameraSets.clear();  // freed with the pool
+  m_descriptorPool.reset();
+  m_cameraUbo.reset();
+  m_cameraLayout.reset();
   m_sync.reset();
   m_commandBuffers.clear();  // freed with the pool
   m_commandPool.reset();
@@ -121,6 +180,10 @@ bool Renderer::drawFrame() {
 
   // Only reset the fence once we know we will submit work that signals it.
   VK_CHECK_RESULT(vkResetFences(device, 1, &fence));
+
+  const VkExtent2D extent = m_swapchain->getExtent();
+  m_camera.setAspect(extent.width, extent.height);
+  m_cameraUbo->write(m_currentFrame, m_camera.ubo());
 
   VkCommandBuffer commandBuffer = m_commandBuffers.at(m_currentFrame);
   VK_CHECK_RESULT(vkResetCommandBuffer(commandBuffer, 0));
@@ -191,9 +254,18 @@ void Renderer::recordCommandBuffer(VkCommandBuffer commandBuffer,
   passBegin.pClearValues = clearValues.data();
 
   vkCmdBeginRenderPass(commandBuffer, &passBegin, VK_SUBPASS_CONTENTS_INLINE);
-  const GraphicsPipeline& triangle = m_pipelines->get(kTrianglePipeline);
-  triangle.bind(commandBuffer, m_swapchain->getExtent());
-  vkCmdDraw(commandBuffer, 3, 1, 0, 0);
+  FrameContext context;
+  context.commandBuffer = commandBuffer;
+  context.frameIndex = m_currentFrame;
+  context.extent = m_swapchain->getExtent();
+  context.renderPass = m_renderPass->getRenderPass();
+  context.samples = m_renderPass->getSamples();
+  context.cameraSet = m_cameraSets.at(m_currentFrame);
+  context.cameraSetLayout = m_cameraLayout->get();
+  context.pipelines = m_pipelines.get();
+  for (const std::shared_ptr<IDrawable>& drawable : m_drawables) {
+    drawable->record(context);
+  }
   vkCmdEndRenderPass(commandBuffer);
 
   VK_CHECK_RESULT(vkEndCommandBuffer(commandBuffer));

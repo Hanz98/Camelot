@@ -110,6 +110,9 @@ bool Window::initialize(int width, int height, const std::string& title) {
 
   glfwSetWindowUserPointer(m_pWindow, this);
   glfwSetFramebufferSizeCallback(m_pWindow, &Window::framebufferSizeCallback);
+  glfwSetMouseButtonCallback(m_pWindow, &Window::mouseButtonCallback);
+  glfwSetCursorPosCallback(m_pWindow, &Window::cursorPosCallback);
+  glfwSetScrollCallback(m_pWindow, &Window::scrollCallback);
   return true;
 }
 
@@ -155,5 +158,39 @@ bool Window::consumeResized() {
 uint16_t Window::getWidth() const { return m_dimensions.first; }
 
 uint16_t Window::getHeight() const { return m_dimensions.second; }
+
+void Window::setInputHooks(InputHooks hooks) { m_hooks = std::move(hooks); }
+
+std::pair<double, double> Window::getCursorPosition() const {
+  double x = 0.0;
+  double y = 0.0;
+  if (m_pWindow != nullptr) {
+    glfwGetCursorPos(m_pWindow, &x, &y);
+  }
+  return {x, y};
+}
+
+void Window::mouseButtonCallback(GLFWwindow* window, int button, int action,
+                                 int mods) {
+  auto* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
+  if (self != nullptr && self->m_hooks.onMouseButton) {
+    const auto [x, y] = self->getCursorPosition();
+    self->m_hooks.onMouseButton(button, action, mods, x, y);
+  }
+}
+
+void Window::cursorPosCallback(GLFWwindow* window, double x, double y) {
+  auto* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
+  if (self != nullptr && self->m_hooks.onCursorMove) {
+    self->m_hooks.onCursorMove(x, y);
+  }
+}
+
+void Window::scrollCallback(GLFWwindow* window, double dx, double dy) {
+  auto* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
+  if (self != nullptr && self->m_hooks.onScroll) {
+    self->m_hooks.onScroll(dx, dy);
+  }
+}
 
 }  // namespace avalon

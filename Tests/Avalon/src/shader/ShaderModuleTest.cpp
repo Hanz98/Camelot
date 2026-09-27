@@ -39,7 +39,8 @@ std::filesystem::path compiledShader(const char* name) {
 }  // namespace
 
 TEST(ShaderRegistryTest, TriangleShadersAreEmbedded) {
-  EXPECT_EQ(avalon::shaders::all().size(), 2U);
+  // triangle.vert/.frag plus whatever later tickets added.
+  EXPECT_GE(avalon::shaders::all().size(), 2U);
 
   const avalon::shaders::ShaderBlob* vert =
       avalon::shaders::find("triangle.vert");

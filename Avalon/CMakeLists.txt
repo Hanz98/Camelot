@@ -7,6 +7,7 @@ endif()
 set(Avalon_include_dirs ${CMAKE_CURRENT_SOURCE_DIR})
 
 find_package(glfw3 REQUIRED)
+find_package(glm REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(vk-bootstrap REQUIRED)
 find_package(Vulkan REQUIRED)
@@ -21,6 +22,8 @@ camelot_add_shaders(Avalon_shaders
     SOURCES
         shaders/triangle.vert
         shaders/triangle.frag
+        shaders/mesh.vert
+        shaders/mesh.frag
 )
 
 add_subdirectory("interface")
@@ -46,6 +49,10 @@ target_link_libraries(Avalon
         spdlog::spdlog
         Vulkan::Vulkan
         GPUOpen::VulkanMemoryAllocator
+        glm::glm
 )
+
+# GLM in Vulkan conventions: radians everywhere, clip-space depth 0..1.
+target_compile_definitions(Avalon PUBLIC GLM_FORCE_RADIANS GLM_FORCE_DEPTH_ZERO_TO_ONE)
 
 target_precompile_headers(Avalon PUBLIC "pch.h")

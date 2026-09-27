@@ -1,6 +1,8 @@
 add_library(Avalon_buffers
-"Buffer.cpp"
-"Buffer.h"
+  "Buffer.cpp"
+  "Buffer.h"
+  "UniformBuffer.cpp"
+  "UniformBuffer.h"
 )
 
 target_include_directories(Avalon_buffers PUBLIC ${Avalon_include_dirs})

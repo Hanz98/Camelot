@@ -15,9 +15,14 @@
 
 #include "Camelot/src/main/MainModel.h"
 
-namespace camelot {
+#include <memory>
 
-//  #include <unistd.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+#include "Avalon/src/geometry/Shapes.h"
+
+namespace camelot {
 
 void MainModel::test() {
   m_avalon.init();
@@ -27,9 +32,40 @@ void MainModel::test() {
 
 void MainModel::run() {
   m_avalon.init();
+  populateDemoScene();
   while (m_avalon.frame()) {
   }
+  m_objects.clear();
   m_avalon.cleanUp();
+}
+
+void MainModel::populateDemoScene() {
+  avalon::Renderer* renderer = m_avalon.getRenderer();
+  const std::shared_ptr<avalon::Device> device = m_avalon.getDevice();
+  const std::shared_ptr<avalon::VmaAllocatorWrapper> allocator =
+      m_avalon.getAllocator();
+
+  auto add = [&](const avalon::MeshData& mesh, const glm::vec3& position,
+                 const glm::vec4& color) {
+    auto drawable =
+        std::make_shared<avalon::MeshDrawable>(device, allocator, mesh);
+    drawable->setTransform(glm::translate(glm::mat4(1.0F), position));
+    drawable->setColor(color);
+    renderer->addDrawable(drawable);
+    m_objects.push_back(drawable);
+  };
+
+  add(avalon::shapes::box(glm::vec3(1.0F)), {0.0F, 0.0F, 0.5F},
+      {0.9F, 0.3F, 0.3F, 1.0F});
+  add(avalon::shapes::sphere(0.5F), {2.0F, 0.0F, 0.5F},
+      {0.3F, 0.9F, 0.3F, 1.0F});
+  add(avalon::shapes::box(glm::vec3(0.6F, 0.6F, 2.0F)), {0.0F, 2.0F, 1.0F},
+      {0.3F, 0.4F, 0.9F, 1.0F});
+  add(avalon::shapes::cylinder(0.4F, 1.2F), {-2.0F, -1.0F, 0.6F},
+      {0.9F, 0.8F, 0.2F, 1.0F});
+  // A thin slab as a stand-in ground plane until the grid (T6) lands.
+  add(avalon::shapes::box(glm::vec3(8.0F, 8.0F, 0.02F)), {0.0F, 0.0F, -0.01F},
+      {0.35F, 0.35F, 0.38F, 1.0F});
 }
 
 }  // namespace camelot

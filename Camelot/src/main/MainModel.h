@@ -16,9 +16,11 @@
 #ifndef CAMELOT_SRC_MAIN_MAINMODEL_H_
 #define CAMELOT_SRC_MAIN_MAINMODEL_H_
 
-#include <iostream>
+#include <memory>
+#include <vector>
 
 #include "Avalon/src/main/Avalon.h"
+#include "Avalon/src/renderer/MeshDrawable.h"
 #include "Camelot/API/main/ICamelot.h"
 
 namespace camelot {
@@ -26,6 +28,7 @@ namespace camelot {
 class MainModel : public ICamelot {
  private:
   avalon::Avalon m_avalon;
+  std::vector<std::shared_ptr<avalon::MeshDrawable>> m_objects;
 
  public:
   MainModel() = default;
@@ -33,6 +36,16 @@ class MainModel : public ICamelot {
 
   // Initialises the engine and runs the frame loop until the window closes.
   void run();
+
+  // Fills the scene with a few boxes, spheres and a cylinder until real data
+  // (roadmap T7/T8) replaces them. Requires an initialised engine.
+  void populateDemoScene();
+
+  [[nodiscard]] avalon::Avalon& engine() { return m_avalon; }
+  [[nodiscard]] const std::vector<std::shared_ptr<avalon::MeshDrawable>>&
+  objects() const {
+    return m_objects;
+  }
 };
 
 }  // namespace camelot
