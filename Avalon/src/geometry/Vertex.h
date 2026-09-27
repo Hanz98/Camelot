@@ -39,6 +39,17 @@ struct Vertex {
       uint32_t binding = 0);
 };
 
+// Vertex layout of the point pipeline (point.vert): position and colour.
+struct PointVertex {
+  glm::vec3 position{0.0F};
+  glm::vec4 color{1.0F};
+
+  static VkVertexInputBindingDescription bindingDescription(
+      uint32_t binding = 0);
+  static std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions(
+      uint32_t binding = 0);
+};
+
 // CPU-side triangle mesh: indexed triangle list.
 struct MeshData {
   std::vector<Vertex> vertices;
