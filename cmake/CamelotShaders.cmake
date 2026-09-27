@@ -30,7 +30,8 @@ function(camelot_add_shaders target)
   cmake_parse_arguments(ARG "" "NAMESPACE;HEADER;TARGET_ENV;OUTPUT_DIR" "SOURCES" ${ARGN})
 
   if(ARG_UNPARSED_ARGUMENTS)
-    message(FATAL_ERROR "camelot_add_shaders(${target}): unknown arguments: ${ARG_UNPARSED_ARGUMENTS}")
+    message(FATAL_ERROR
+      "camelot_add_shaders(${target}): unknown arguments: ${ARG_UNPARSED_ARGUMENTS}")
   endif()
   if(NOT ARG_SOURCES)
     message(FATAL_ERROR "camelot_add_shaders(${target}): SOURCES is required")

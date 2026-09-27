@@ -1,0 +1,76 @@
+name: Set up build
+description: >
+  Installs the system packages, Conan dependencies and CMake configuration
+  shared by the build and static-analysis jobs. Produces
+  build/<build-type>/compile_commands.json.
+
+inputs:
+  build-type:
+    description: CMake build type
+    default: Release
+  use-mock-icd:
+    description: Configure the tests to run against the bundled mock Vulkan ICD
+    default: "ON"
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Install system dependencies
+      # X11 dev packages are needed to build GLFW (Conan xorg/system);
+      # xvfb provides a display so window/Vulkan tests can run headless.
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ninja-build cmake pkg-config xvfb \
+          libx11-dev libx11-xcb-dev libfontenc-dev libice-dev libsm-dev \
+          libxau-dev libxaw7-dev libxcomposite-dev libxcursor-dev \
+          libxdamage-dev libxdmcp-dev libxext-dev libxfixes-dev \
+          libxi-dev libxinerama-dev libxkbfile-dev libxmu-dev libxmuu-dev \
+          libxpm-dev libxrandr-dev libxrender-dev libxres-dev \
+          libxss-dev libxt-dev libxtst-dev libxv-dev libxxf86vm-dev \
+          libxcb-glx0-dev libxcb-render0-dev libxcb-render-util0-dev \
+          libxcb-xkb-dev libxcb-icccm4-dev libxcb-image0-dev \
+          libxcb-keysyms1-dev libxcb-randr0-dev libxcb-shape0-dev \
+          libxcb-sync-dev libxcb-xfixes0-dev libxcb-xinerama0-dev \
+          libxcb-dri3-dev uuid-dev libxcb-cursor-dev libxcb-dri2-0-dev \
+          libxcb-present-dev libxcb-composite0-dev libxcb-ewmh-dev \
+          libxcb-res0-dev libxcb-util-dev
+        pip install "conan>=2.0"
+
+    - name: Cache Conan packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.conan2/p
+        key: conan-${{ runner.os }}-${{ hashFiles('conanfile.py', 'profiles/Camelot-Linux') }}
+        restore-keys: conan-${{ runner.os }}-
+
+    - name: Install Conan dependencies
+      # The repo profile pins gcc 14; override with whatever gcc the runner has.
+      shell: bash
+      run: |
+        GCC_MAJOR="$(gcc -dumpversion | cut -d. -f1)"
+        conan profile detect --force >/dev/null
+        conan install . \
+          --profile:host=profiles/Camelot-Linux \
+          --profile:build=profiles/Camelot-Linux \
+          -s compiler.version="$GCC_MAJOR" \
+          -s build_type="${{ inputs.build-type }}" \
+          -c tools.system.package_manager:mode=install \
+          -c tools.system.package_manager:sudo=True \
+          --build=missing
+
+    - name: Configure
+      shell: bash
+      run: |
+        BUILD_DIR="build/${{ inputs.build-type }}"
+        cmake -S . -B "$BUILD_DIR" -G Ninja \
+          -DCMAKE_TOOLCHAIN_FILE="$BUILD_DIR/generators/conan_toolchain.cmake" \
+          -DCMAKE_BUILD_TYPE="${{ inputs.build-type }}" \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+          -DBUILD_TESTING=ON \
+          -DCAMELOT_TESTS_USE_MOCK_ICD=${{ inputs.use-mock-icd }}
