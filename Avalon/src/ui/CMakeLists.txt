@@ -4,6 +4,10 @@
 add_library(Avalon_ui
   "GraphWidget.cpp"
   "GraphWidget.h"
+  "RenderTarget.cpp"
+  "RenderTarget.h"
+  "SceneViewWidget.cpp"
+  "SceneViewWidget.h"
   "TestPatternSource.cpp"
   "TestPatternSource.h"
   "TreeWidget.cpp"
