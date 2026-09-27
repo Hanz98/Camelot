@@ -25,6 +25,7 @@
 
 #include "Avalon/src/command/CommandPool.h"
 #include "Avalon/src/device/Device.h"
+#include "Avalon/src/pipeline/PipelineManager.h"
 #include "Avalon/src/presentation/renderpass/RenderPass.h"
 #include "Avalon/src/presentation/swapchain/SwapchainModel.h"
 #include "Avalon/src/sync/FrameSync.h"
@@ -33,8 +34,9 @@
 namespace avalon {
 
 // Frame loop: acquire a swapchain image, record one command buffer that runs
-// the render pass (currently: clear only), submit it and present. Handles
-// swapchain recreation on resize / out-of-date.
+// the render pass, submit it and present. Handles swapchain recreation on
+// resize / out-of-date. Owns the PipelineManager; until drawables exist it
+// draws the built-in `triangle` pipeline every frame.
 class Renderer {
  public:
   static constexpr uint32_t kFramesInFlight = 2;
@@ -48,6 +50,7 @@ class Renderer {
   std::unique_ptr<CommandPool> m_commandPool;
   std::vector<VkCommandBuffer> m_commandBuffers;
   std::unique_ptr<FrameSync> m_sync;
+  std::unique_ptr<PipelineManager> m_pipelines;
 
   uint32_t m_currentFrame{0};
   uint64_t m_frameCount{0};
@@ -76,6 +79,12 @@ class Renderer {
   [[nodiscard]] VkExtent2D getSwapchainExtent() const {
     return m_swapchain->getExtent();
   }
+  [[nodiscard]] PipelineManager& getPipelineManager() const {
+    return *m_pipelines;
+  }
+
+  // Name of the pipeline that draws the hard-coded clip-space triangle.
+  static constexpr const char* kTrianglePipeline = "triangle";
 
   // Waits for the device and rebuilds the swapchain for the current window
   // size. Returns false if the window is currently 0x0.
@@ -83,6 +92,7 @@ class Renderer {
 
  private:
   void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+  void createPipelines();
 };
 
 }  // namespace avalon

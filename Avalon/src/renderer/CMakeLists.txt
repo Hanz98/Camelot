@@ -10,6 +10,8 @@ target_link_libraries(Avalon_renderer
         Avalon
         Avalon_command
         Avalon_device
+        Avalon_pipeline
+        Avalon_shader
         Avalon_presentation_renderpass
         Avalon_presentation_swapchain
         Avalon_sync
