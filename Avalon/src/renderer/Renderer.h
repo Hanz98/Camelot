@@ -19,32 +19,44 @@
 #include <vulkan/vulkan.h>
 
 #include <array>
+#include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <vector>
 
+#include "Avalon/src/allocator/VmaAllocator.h"
+#include "Avalon/src/camera/Camera.h"
 #include "Avalon/src/command/CommandPool.h"
+#include "Avalon/src/data/buffers/UniformBuffer.h"
+#include "Avalon/src/descriptor/DescriptorPool.h"
+#include "Avalon/src/descriptor/DescriptorSetLayout.h"
 #include "Avalon/src/device/Device.h"
 #include "Avalon/src/pipeline/PipelineManager.h"
 #include "Avalon/src/presentation/renderpass/RenderPass.h"
 #include "Avalon/src/presentation/swapchain/SwapchainModel.h"
+#include "Avalon/src/renderer/IDrawable.h"
 #include "Avalon/src/sync/FrameSync.h"
 #include "Avalon/src/window/Window.h"
 
 namespace avalon {
 
 // Frame loop: acquire a swapchain image, record one command buffer that runs
-// the render pass, submit it and present. Handles swapchain recreation on
-// resize / out-of-date. Owns the PipelineManager; until drawables exist it
-// draws the built-in `triangle` pipeline every frame.
+// the render pass over every drawable, submit it and present. Handles
+// swapchain recreation on resize / out-of-date. Owns the camera, its uniform
+// buffer and descriptor set (set 0, binding 0 for every pipeline), and the
+// PipelineManager.
 class Renderer {
  public:
   static constexpr uint32_t kFramesInFlight = 2;
+  // Name of the pipeline that draws the hard-coded clip-space triangle; kept
+  // as the smallest possible smoke test of the pipeline path.
+  static constexpr const char* kTrianglePipeline = "triangle";
 
  private:
   std::shared_ptr<Device> m_device;
   std::shared_ptr<Window> m_window;
   std::shared_ptr<SwapchainModel> m_swapchain;
+  std::shared_ptr<VmaAllocatorWrapper> m_allocator;
 
   std::unique_ptr<RenderPass> m_renderPass;
   std::unique_ptr<CommandPool> m_commandPool;
@@ -52,13 +64,22 @@ class Renderer {
   std::unique_ptr<FrameSync> m_sync;
   std::unique_ptr<PipelineManager> m_pipelines;
 
+  Camera m_camera;
+  std::unique_ptr<DescriptorSetLayout> m_cameraLayout;
+  std::unique_ptr<DescriptorPool> m_descriptorPool;
+  std::unique_ptr<UniformBuffer> m_cameraUbo;
+  std::vector<VkDescriptorSet> m_cameraSets;
+
+  std::vector<std::shared_ptr<IDrawable>> m_drawables;
+
   uint32_t m_currentFrame{0};
   uint64_t m_frameCount{0};
   std::array<float, 4> m_clearColor;
 
  public:
   Renderer(std::shared_ptr<Device> device, std::shared_ptr<Window> window,
-           std::shared_ptr<SwapchainModel> swapchain);
+           std::shared_ptr<SwapchainModel> swapchain,
+           std::shared_ptr<VmaAllocatorWrapper> allocator);
   Renderer(const Renderer&) = delete;
   Renderer& operator=(const Renderer&) = delete;
   Renderer(Renderer&&) = delete;
@@ -70,6 +91,19 @@ class Renderer {
   // Renders and presents one frame. Returns false if nothing was drawn (the
   // window is minimised or the swapchain had to be recreated first).
   bool drawFrame();
+
+  // Drawables are recorded in insertion order every frame. The renderer
+  // waits for the device before dropping one so its buffers can go away.
+  void addDrawable(std::shared_ptr<IDrawable> drawable);
+  bool removeDrawable(const std::shared_ptr<IDrawable>& drawable);
+  void clearDrawables();
+  [[nodiscard]] size_t drawableCount() const { return m_drawables.size(); }
+
+  [[nodiscard]] Camera& getCamera() { return m_camera; }
+  [[nodiscard]] const Camera& getCamera() const { return m_camera; }
+  [[nodiscard]] VkDescriptorSetLayout getCameraSetLayout() const {
+    return m_cameraLayout->get();
+  }
 
   void setClearColor(float r, float g, float b, float a = 1.0F);
   [[nodiscard]] uint64_t getFrameCount() const { return m_frameCount; }
@@ -83,9 +117,6 @@ class Renderer {
     return *m_pipelines;
   }
 
-  // Name of the pipeline that draws the hard-coded clip-space triangle.
-  static constexpr const char* kTrianglePipeline = "triangle";
-
   // Waits for the device and rebuilds the swapchain for the current window
   // size. Returns false if the window is currently 0x0.
   bool recreateSwapchain();
@@ -93,6 +124,7 @@ class Renderer {
  private:
   void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
   void createPipelines();
+  void createCameraResources();
 };
 
 }  // namespace avalon

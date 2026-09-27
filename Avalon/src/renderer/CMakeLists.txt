@@ -1,6 +1,9 @@
 add_library(Avalon_renderer
-"Renderer.cpp"
-"Renderer.h"
+  "IDrawable.h"
+  "MeshDrawable.cpp"
+  "MeshDrawable.h"
+  "Renderer.cpp"
+  "Renderer.h"
 )
 
 target_include_directories(Avalon_renderer PUBLIC ${Avalon_include_dirs})
@@ -8,7 +11,11 @@ target_include_directories(Avalon_renderer PUBLIC ${Avalon_include_dirs})
 target_link_libraries(Avalon_renderer
     PUBLIC
         Avalon
+        Avalon_buffers
+        Avalon_camera
         Avalon_command
+        Avalon_descriptor
+        Avalon_geometry
         Avalon_device
         Avalon_pipeline
         Avalon_shader

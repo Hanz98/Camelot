@@ -18,28 +18,55 @@
 
 #include <vulkan/vulkan.h>
 
+#include <cstddef>
 #include <memory>
+#include <span>
 
 #include "Avalon/src/allocator/VmaAllocator.h"
 
 namespace avalon {
 
+// A VkBuffer with its VMA allocation. Host-visible buffers stay persistently
+// mapped and are written with write(); device-local buffers (hostVisible ==
+// false) can only be filled through a transfer, which T5 adds.
 class Buffer {
  private:
+  std::shared_ptr<VmaAllocatorWrapper> m_allocator;
   VkBuffer m_buffer{VK_NULL_HANDLE};
   VmaAllocation m_allocation{VK_NULL_HANDLE};
-  std::shared_ptr<VmaAllocatorWrapper> m_allocator;
+  VkDeviceSize m_size{0};
+  VkBufferUsageFlags m_usage{0};
+  void* m_mapped{nullptr};
 
  public:
-  Buffer();
+  Buffer() = default;
+  // Throws std::runtime_error if `allocator` is null, `size` is 0 or the
+  // allocation fails.
+  Buffer(std::shared_ptr<VmaAllocatorWrapper> allocator, VkDeviceSize size,
+         VkBufferUsageFlags usage, bool hostVisible = true);
   Buffer(const Buffer&) = delete;
   Buffer& operator=(const Buffer&) = delete;
-  Buffer(Buffer&&) = delete;
-  Buffer& operator=(Buffer&&) = delete;
+  Buffer(Buffer&& other) noexcept;
+  Buffer& operator=(Buffer&& other) noexcept;
   ~Buffer();
+
   void cleanUp();
 
-  void createBuffer(std::shared_ptr<VmaAllocatorWrapper> allocator);
+  // Copies `bytes` into the buffer at `offset`. Throws std::runtime_error if
+  // the buffer is not host-visible or the range does not fit.
+  void write(std::span<const std::byte> bytes, VkDeviceSize offset = 0);
+  template <typename T>
+  void write(std::span<const T> items, VkDeviceSize offset = 0) {
+    write(std::span<const std::byte>(std::as_bytes(items)), offset);
+  }
+
+  [[nodiscard]] VkBuffer get() const { return m_buffer; }
+  [[nodiscard]] VkDeviceSize size() const { return m_size; }
+  [[nodiscard]] VkBufferUsageFlags usage() const { return m_usage; }
+  [[nodiscard]] bool isValid() const { return m_buffer != VK_NULL_HANDLE; }
+  [[nodiscard]] bool isHostVisible() const { return m_mapped != nullptr; }
+  // The persistently mapped memory of a host-visible buffer, else empty.
+  [[nodiscard]] std::span<std::byte> mapped() const;
 };
 
 }  // namespace avalon

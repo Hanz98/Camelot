@@ -11,21 +11,17 @@ AccessModifierOffset: -1
 DerivePointerAlignment: false
 PointerAlignment: Left
 IncludeBlocks: Regroup
+# The groups follow cpplint's build/include_order: C headers (which for
+# cpplint means every <x.h>, so Vulkan, GLFW, spdlog, gtest, VMA and
+# vk-bootstrap land here), the C++ standard library, other third-party
+# headers such as GLM's .hpp files, then project headers.
 IncludeCategories:
-  # Third-party headers (Vulkan, GLFW, spdlog, gtest, VMA, vk-bootstrap).
-  - Regex: '^<(vulkan|GLFW|spdlog|gtest|gmock)/'
-    Priority: 2
-  - Regex: '^<(vk_mem_alloc|VkBootstrap|VkBootstrapDispatch)\.h>'
-    Priority: 2
-  # C++ standard library.
-  - Regex: '^<[a-z_]+>$'
-    Priority: 3
-  # Remaining angle-bracket includes (C system headers).
   - Regex: '^<.*\.h>'
     Priority: 1
+  - Regex: '^<[a-z_]+>$'
+    Priority: 2
   - Regex: '^<.*'
     Priority: 3
-  # Project headers, always quoted with the path from the repository root.
   - Regex: '^"'
     Priority: 4
 IncludeIsMainRegex: '$'

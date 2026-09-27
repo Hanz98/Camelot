@@ -38,6 +38,10 @@ void Avalon::cleanUp() {
   if (m_device) {
     m_device->waitIdle();
   }
+  if (m_window) {
+    m_window->setInputHooks({});  // the controller is about to go away
+  }
+  m_cameraController.reset();
   m_renderer.reset();
   if (m_swapchainModel) {
     m_swapchainModel->cleanUp();
@@ -77,8 +81,11 @@ void Avalon::init() {
     initVma();
     m_swapchainModel =
         std::make_shared<SwapchainModel>(m_device, m_window, m_allocator);
-    m_renderer =
-        std::make_unique<Renderer>(m_device, m_window, m_swapchainModel);
+    m_renderer = std::make_unique<Renderer>(m_device, m_window,
+                                            m_swapchainModel, m_allocator);
+    m_cameraController =
+        std::make_unique<CameraController>(&m_renderer->getCamera());
+    m_cameraController->attach(*m_window);
   } catch (const std::exception& e) {
     cleanUp();
     spdlog::error("Failed to initialize Avalon. Error: {}", e.what());

@@ -10,6 +10,7 @@ class CamelotConan(ConanFile):
     requires = (
         "gtest/1.18.0",
         "glfw/3.4",
+        "glm/1.0.1",
         "spdlog/1.17.0",
         "vk-bootstrap/1.4.350",
         "vulkan-headers/1.4.350.0",

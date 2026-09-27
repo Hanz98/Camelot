@@ -21,6 +21,7 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+#include <functional>
 #include <string>
 #include <utility>
 
@@ -29,8 +30,19 @@
 namespace avalon {
 
 class Window {
+ public:
+  // Mouse callbacks, dispatched from the GLFW callbacks on pollEvents().
+  // Any hook may be left empty.
+  struct InputHooks {
+    std::function<void(int button, int action, int mods, double x, double y)>
+        onMouseButton;
+    std::function<void(double x, double y)> onCursorMove;
+    std::function<void(double dx, double dy)> onScroll;
+  };
+
  private:
   GLFWwindow* m_pWindow{nullptr};
+  InputHooks m_hooks;
   std::pair<uint16_t, uint16_t> m_dimensions;
   // True while this object holds one reference on the GLFW library. GLFW is
   // terminated only when the last Window releases its reference.
@@ -63,11 +75,21 @@ class Window {
   [[nodiscard]] bool wasResized() const;
   bool consumeResized();
 
+  void setInputHooks(InputHooks hooks);
+  [[nodiscard]] const InputHooks& getInputHooks() const { return m_hooks; }
+
+  // Current cursor position in window coordinates.
+  [[nodiscard]] std::pair<double, double> getCursorPosition() const;
+
  private:
   bool initialize(int width, int height, const std::string& title);
   void releaseGlfw();
   static void framebufferSizeCallback(GLFWwindow* window, int width,
                                       int height);
+  static void mouseButtonCallback(GLFWwindow* window, int button, int action,
+                                  int mods);
+  static void cursorPosCallback(GLFWwindow* window, double x, double y);
+  static void scrollCallback(GLFWwindow* window, double dx, double dy);
 
   bool m_resized = false;
 };
