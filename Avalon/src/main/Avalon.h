@@ -15,7 +15,10 @@
 
 #ifndef AVALON_SRC_MAIN_AVALON_H_
 #define AVALON_SRC_MAIN_AVALON_H_
+#include <chrono>
+#include <functional>
 #include <memory>
+#include <utility>
 
 #include "Avalon/pch.h"
 #include "Avalon/src/allocator/VmaAllocator.h"
@@ -25,6 +28,7 @@
 #include "Avalon/src/presentation/renderpass/RenderPass.h"
 #include "Avalon/src/presentation/swapchain/SwapchainModel.h"
 #include "Avalon/src/renderer/Renderer.h"
+#include "Avalon/src/ui/UiContext.h"
 #include "Avalon/src/window/SurfaceManager.h"
 #include "Avalon/src/window/Window.h"
 
@@ -43,6 +47,10 @@ class Avalon {
   std::shared_ptr<SwapchainModel> m_swapchainModel;
   std::unique_ptr<Renderer> m_renderer;
   std::unique_ptr<CameraController> m_cameraController;
+  std::unique_ptr<UiContext> m_ui;
+  std::function<void()> m_uiCallback;
+  std::chrono::steady_clock::time_point m_lastFrameStart;
+  double m_lastFrameSeconds{0.0};
 
  public:
   Avalon();
@@ -76,6 +84,17 @@ class Avalon {
   }
   [[nodiscard]] CameraController* getCameraController() const {
     return m_cameraController.get();
+  }
+  [[nodiscard]] UiContext* getUi() const { return m_ui.get(); }
+
+  // Called once per frame between UiContext::newFrame() and rendering; build
+  // the ImGui widgets here.
+  void setUiCallback(std::function<void()> callback) {
+    m_uiCallback = std::move(callback);
+  }
+  // Wall-clock duration of the previous frame() call, 0 before the first.
+  [[nodiscard]] double getLastFrameSeconds() const {
+    return m_lastFrameSeconds;
   }
 
  private:

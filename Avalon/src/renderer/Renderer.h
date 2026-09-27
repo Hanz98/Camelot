@@ -35,10 +35,13 @@
 #include "Avalon/src/presentation/renderpass/RenderPass.h"
 #include "Avalon/src/presentation/swapchain/SwapchainModel.h"
 #include "Avalon/src/renderer/IDrawable.h"
+#include "Avalon/src/renderer/IPrePass.h"
 #include "Avalon/src/sync/FrameSync.h"
 #include "Avalon/src/window/Window.h"
 
 namespace avalon {
+
+class UiContext;
 
 // Frame loop: acquire a swapchain image, record one command buffer that runs
 // the render pass over every drawable, submit it and present. Handles
@@ -71,6 +74,8 @@ class Renderer {
   std::vector<VkDescriptorSet> m_cameraSets;
 
   std::vector<std::shared_ptr<IDrawable>> m_drawables;
+  std::vector<std::shared_ptr<IPrePass>> m_prePasses;
+  UiContext* m_ui{nullptr};  // not owned; drawn last inside the pass
 
   uint32_t m_currentFrame{0};
   uint64_t m_frameCount{0};
@@ -98,6 +103,17 @@ class Renderer {
   bool removeDrawable(const std::shared_ptr<IDrawable>& drawable);
   void clearDrawables();
   [[nodiscard]] size_t drawableCount() const { return m_drawables.size(); }
+
+  // Pre-passes record before the main render pass begins (uploads,
+  // offscreen passes the main pass samples).
+  void addPrePass(std::shared_ptr<IPrePass> prePass);
+  bool removePrePass(const std::shared_ptr<IPrePass>& prePass);
+  [[nodiscard]] size_t prePassCount() const { return m_prePasses.size(); }
+
+  // The UI context whose draw data is rendered after the drawables. May be
+  // null. The caller keeps it alive while it is set.
+  void setUi(UiContext* ui) { m_ui = ui; }
+  [[nodiscard]] UiContext* getUi() const { return m_ui; }
 
   [[nodiscard]] Camera& getCamera() { return m_camera; }
   [[nodiscard]] const Camera& getCamera() const { return m_camera; }

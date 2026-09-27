@@ -19,5 +19,6 @@ target_link_libraries(
             Avalon_presentation_image
             Avalon_presentation_swapchain
             Avalon_renderer
+            Avalon_ui
             spdlog::spdlog
 )

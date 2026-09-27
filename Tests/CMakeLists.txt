@@ -23,6 +23,7 @@ target_link_libraries(Test_Main
 
 add_subdirectory(ext)
 add_subdirectory(Avalon)
+add_subdirectory(Camelot)
 
 if(CAMELOT_TESTS_USE_MOCK_ICD)
   # The test binary points the Vulkan loader at the mock driver itself (see

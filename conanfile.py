@@ -18,6 +18,12 @@ class CamelotConan(ConanFile):
         "vulkan-memory-allocator/3.3.0",
     )
 
+    def requirements(self):
+        # Dear ImGui with the docking branch; implot pins the matching
+        # non-docking version, so force ours (same API).
+        self.requires("imgui/1.92.5-docking", force=True)
+        self.requires("implot/0.17")
+
     # Build-time tools. glslang provides glslangValidator, which
     # cmake/CamelotShaders.cmake uses to compile GLSL to SPIR-V; its bindir is
     # exported to CMake through CMAKE_PROGRAM_PATH by the toolchain.

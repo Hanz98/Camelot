@@ -44,6 +44,9 @@ void CameraController::attach(Window& window) {
 void CameraController::onMouseButton(int button, int action, double x,
                                      double y) {
   const bool pressed = action == GLFW_PRESS;
+  if (pressed && isInputBlocked()) {
+    return;
+  }
   if (button == GLFW_MOUSE_BUTTON_LEFT) {
     m_orbiting = pressed;
   } else if (button == GLFW_MOUSE_BUTTON_RIGHT ||
@@ -69,6 +72,9 @@ void CameraController::onCursorMove(double x, double y) {
 }
 
 void CameraController::onScroll(double deltaY) {
+  if (isInputBlocked()) {
+    return;
+  }
   // Scrolling up (positive) moves closer.
   m_camera->zoom(std::pow(m_zoomStep, static_cast<float>(-deltaY)));
 }

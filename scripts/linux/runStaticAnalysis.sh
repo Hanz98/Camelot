@@ -66,15 +66,18 @@ fi
 if (( run_cppcheck )); then
   echo "== cppcheck ($("$CPPCHECK" --version))"
   # cppcheck 2.13 (Ubuntu 24.04) ignores -i for --project inputs, so the
-  # third-party and generated translation units are dropped from a filtered
-  # copy of the compile database instead.
+  # third-party (Tests/ext, Conan packages such as the imgui backends) and
+  # generated translation units are dropped from a filtered copy of the
+  # compile database instead.
   filtered_db="$BUILD_DIR/compile_commands.cppcheck.json"
-  python3 - "$BUILD_DIR/compile_commands.json" "$filtered_db" <<'PY'
+  python3 - "$BUILD_DIR/compile_commands.json" "$filtered_db" "$rootDir" <<'PY'
 import json, sys
 src, dst = sys.argv[1], sys.argv[2]
 entries = json.load(open(src))
+root = sys.argv[3]
 keep = [e for e in entries
-        if "/Tests/ext/" not in e["file"] and "/build/" not in e["file"]]
+        if e["file"].startswith(root + "/")
+        and "/Tests/ext/" not in e["file"] and "/build/" not in e["file"]]
 json.dump(keep, open(dst, "w"), indent=1)
 print(f"   {len(keep)} of {len(entries)} translation units")
 PY

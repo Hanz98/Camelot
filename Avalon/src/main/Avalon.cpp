@@ -15,6 +15,7 @@
 
 #include "Avalon/src/main/Avalon.h"
 
+#include <chrono>
 #include <iostream>
 #include <memory>
 
@@ -42,6 +43,10 @@ void Avalon::cleanUp() {
     m_window->setInputHooks({});  // the controller is about to go away
   }
   m_cameraController.reset();
+  if (m_renderer) {
+    m_renderer->setUi(nullptr);
+  }
+  m_ui.reset();
   m_renderer.reset();
   if (m_swapchainModel) {
     m_swapchainModel->cleanUp();
@@ -86,6 +91,20 @@ void Avalon::init() {
     m_cameraController =
         std::make_unique<CameraController>(&m_renderer->getCamera());
     m_cameraController->attach(*m_window);
+    UiInitInfo uiInfo;
+    uiInfo.instance = m_instance;
+    uiInfo.device = m_device;
+    uiInfo.window = m_window;
+    uiInfo.renderPass = m_renderer->getRenderPass().getRenderPass();
+    uiInfo.samples = m_renderer->getRenderPass().getSamples();
+    uiInfo.minImageCount = Renderer::kFramesInFlight;
+    uiInfo.imageCount = m_swapchainModel->getImageCount();
+    m_ui = std::make_unique<UiContext>(uiInfo);
+    m_renderer->setUi(m_ui.get());
+    // The 3D view must not react to clicks and wheel events the UI consumes.
+    m_cameraController->setInputBlocked(
+        [this]() { return m_ui != nullptr && m_ui->wantsMouse(); });
+    m_lastFrameStart = std::chrono::steady_clock::now();
   } catch (const std::exception& e) {
     cleanUp();
     spdlog::error("Failed to initialize Avalon. Error: {}", e.what());
@@ -107,11 +126,25 @@ bool Avalon::frame() {
     spdlog::error("Avalon::frame() called before init().");
     throw std::runtime_error("Avalon::frame() called before init().");
   }
+  const auto now = std::chrono::steady_clock::now();
+  m_lastFrameSeconds =
+      std::chrono::duration<double>(now - m_lastFrameStart).count();
+  m_lastFrameStart = now;
+
   m_window->pollEvents();
   if (m_window->shouldClose()) {
     return false;
   }
+  if (m_ui) {
+    m_ui->newFrame();
+    if (m_uiCallback) {
+      m_uiCallback();
+    }
+  }
   if (!m_renderer->drawFrame()) {
+    if (m_ui) {
+      m_ui->discardFrame();
+    }
     // Minimised or mid-recreate: avoid a busy loop.
     m_window->waitEvents();
   }
