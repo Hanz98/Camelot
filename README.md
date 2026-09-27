@@ -53,13 +53,28 @@ build/Release/bin/Test_Main
 
 ### Windows
 
-Open a *Developer PowerShell for VS 2022* and run:
+Open a *Developer PowerShell for VS 2022*, `pip install conan ninja` once, and run:
 
 ```powershell
-scripts\windows\setup.ps1              # Debug build (BUILD_TYPE=Release for Release)
+scripts\windows\setup.ps1                                        # Debug build
+$env:BUILD_TYPE = "Release"; scripts\windows\setup.ps1           # Release build
+$env:RUN_TESTS = 1; $env:USE_MOCK_ICD = 1; scripts\windows\setup.ps1   # build + run tests without a GPU
 ```
 
-It uses `profiles/Camelot-Win` (MSVC 19.4, Ninja) and the same `build/<BuildType>` layout.
+It uses `profiles/Camelot-Win` (MSVC 19.4x, Ninja) and the same
+`build/<BuildType>` layout; the knobs are the same as on Linux (`BUILD_TYPE`,
+`BUILD_TESTS`, `RUN_TESTS`, `USE_MOCK_ICD`, `CONAN_ARGS`). No Vulkan SDK is
+needed: the loader, the headers and glslang come from Conan, and packages
+without a prebuilt binary are built from source (together with their tool
+requirements, e.g. `nasm`), so the first install takes a while. Because
+`vulkan-1.dll` lives in the Conan cache, the script runs `Test_Main.exe`
+inside Conan's run environment (`build\<BuildType>\generators\conanrun.bat`);
+do the same when running it by hand. With the mock ICD, the manifest and
+`VkICD_mock_icd.dll` sit side by side in `build\<BuildType>\bin`.
+
+If a link fails with `undefined reference to ImGui::GetForegroundDrawList()`,
+an implot binary built against a non-docking imgui is in your Conan cache;
+rebuild it with `CONAN_ARGS='--build=implot/*'` (see the CI section).
 
 ## Shaders
 
@@ -93,9 +108,35 @@ build/Release/bin/Test_Main --gtest_output=xml:report.xml
 
 Configure with `-DCAMELOT_TESTS_USE_MOCK_ICD=ON` to run against the vendored
 mock Vulkan ICD; the binary then points the Vulkan loader at it by itself
-(this is what CI does, under `xvfb-run`, so no GPU is required). `ctest`
-still works and runs the same binary as a single test, which keeps IDE test
-explorers happy.
+(this is what CI does: under `xvfb-run` on Linux, on the runner's desktop
+session on Windows, so no GPU is required). `ctest` still works and runs the
+same binary as a single test, which keeps IDE test explorers happy.
+
+## Continuous integration
+
+Every pull request runs (`.github/workflows/`):
+
+| Job | Workflow | What it does |
+|-----|----------|--------------|
+| `Build and test` | `build.yaml` | Ubuntu, gcc, Conan + Ninja, `Test_Main` on the mock ICD under `xvfb-run` |
+| `Build and test (Windows)` | `build.yaml` | `windows-latest`, `profiles/Camelot-Win` with `compiler.version` overridden to the runner's MSVC toolset (as the Linux job does for gcc), Conan + Ninja, `Test_Main.exe` on the mock ICD; no Vulkan SDK, no xvfb |
+| `clang-tidy and cppcheck` | `build.yaml` | static analysis on the configured Linux build |
+| `Pre-commit Checks` | `pre-commit.yaml` | the hooks of `.pre-commit-config.yaml` |
+
+The Linux setup shared by the build and static-analysis jobs lives in
+`.github/actions/setup-build/action.yaml`. The Windows job is a separate job,
+not a matrix entry, so a Windows failure never masks a Linux one; build and
+test logs are uploaded as artifacts when a job fails.
+
+Both build jobs cache `~/.conan2/p`, keyed on `conanfile.py` and the platform
+profile, with a fallback to any older cache of the same OS. That fallback is
+why `conan install` runs with `--build="implot/*"`: implot's package id only
+encodes imgui's minor version (`imgui/1.92.Z`), so an implot binary built
+against the non-docking imgui its recipe pins is indistinguishable from one
+built against our forced `imgui/1.92.5-docking` and would be reused with
+`--build=missing`, failing the link with
+`undefined reference to ImGui::GetForegroundDrawList()`. Rebuilding implot
+takes seconds; every other package's id changes with what it was built for.
 
 ## Coding style
 

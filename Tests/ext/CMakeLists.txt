@@ -19,14 +19,22 @@ endif()
 add_subdirectory(icd)
 
 # The manifest references the shared library relative to its own location,
-# so it is placed next to libVkICD_mock_icd in CMAKE_LIBRARY_OUTPUT_DIRECTORY.
+# so it is placed next to the VkICD_mock_icd library: lib/
+# (CMAKE_LIBRARY_OUTPUT_DIRECTORY) on Linux and macOS, bin/
+# (CMAKE_RUNTIME_OUTPUT_DIRECTORY) on Windows, where a DLL is a runtime
+# artifact. Tests/CMakeLists.txt reads CAMELOT_MOCK_ICD_JSON to tell the test
+# binary where the manifest is.
 if(WIN32)
     set(_icd_manifest ${CMAKE_CURRENT_SOURCE_DIR}/icd/windows/VkICD_mock_icd.json)
+    set(_icd_manifest_dir ${CMAKE_BINARY_DIR}/bin)
 elseif(APPLE)
     set(_icd_manifest ${CMAKE_CURRENT_SOURCE_DIR}/icd/macos/VkICD_mock_icd.json)
+    set(_icd_manifest_dir ${CMAKE_BINARY_DIR}/lib)
 elseif(UNIX)
     set(_icd_manifest ${CMAKE_CURRENT_SOURCE_DIR}/icd/linux/VkICD_mock_icd.json)
+    set(_icd_manifest_dir ${CMAKE_BINARY_DIR}/lib)
 else()
     message(FATAL_ERROR "Unsupported Platform!")
 endif()
-configure_file(${_icd_manifest} ${CMAKE_BINARY_DIR}/lib/VkICD_mock_icd.json COPYONLY)
+configure_file(${_icd_manifest} ${_icd_manifest_dir}/VkICD_mock_icd.json COPYONLY)
+set(CAMELOT_MOCK_ICD_JSON ${_icd_manifest_dir}/VkICD_mock_icd.json PARENT_SCOPE)

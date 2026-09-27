@@ -108,6 +108,12 @@ Scope: matrix entry on `windows-latest` using `profiles/Camelot-Win`, MSVC + Nin
 
 AC: both jobs green on a PR.
 
+Status: **done**. Implemented as a separate `build-windows` job in
+`.github/workflows/build.yaml` (not a matrix entry, so a Windows failure is
+isolated from the Linux jobs): Conan-provided Vulkan loader/headers and glslang,
+the runner's MSVC toolset + Ninja, `Test_Main.exe` on the mock ICD. `scripts/windows/setup.ps1`
+mirrors it for developers (`USE_MOCK_ICD=1`).
+
 ### T12 – Namespaces and public headers (cross-cutting) — issue #42
 
 Scope: `avalon::` and `camelot::` namespaces; move consumer-facing headers of Avalon into `Avalon/include/avalon/` so Camelot stops including `Avalon/src/...`; keep the change mechanical, no behaviour change.

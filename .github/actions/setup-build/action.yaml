@@ -51,6 +51,15 @@ runs:
 
     - name: Install Conan dependencies
       # The repo profile pins gcc 14; override with whatever gcc the runner has.
+      #
+      # implot is always rebuilt from source: its package id encodes only the
+      # minor version of imgui ("imgui/1.92.Z"), so a cached implot that was
+      # compiled against the non-docking imgui its recipe pins has the same id
+      # as one built against our forced imgui/1.92.5-docking. The cache
+      # restore-keys fallback can bring such a binary back and --build=missing
+      # would reuse it, which fails at link time with
+      # "undefined reference to ImGui::GetForegroundDrawList()". implot
+      # builds in seconds, so forcing it is cheaper than losing the cache.
       shell: bash
       run: |
         GCC_MAJOR="$(gcc -dumpversion | cut -d. -f1)"
@@ -62,7 +71,8 @@ runs:
           -s build_type="${{ inputs.build-type }}" \
           -c tools.system.package_manager:mode=install \
           -c tools.system.package_manager:sudo=True \
-          --build=missing
+          --build=missing \
+          --build="implot/*"
 
     - name: Configure
       shell: bash
