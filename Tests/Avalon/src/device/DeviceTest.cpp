@@ -13,15 +13,18 @@
  * limitations under the License.
  */
 
-#include <Avalon/src/device/Device.h>
-#include <Avalon/src/device/Instance.h>
-#include <Avalon/src/window/Surface.h>
-#include <Avalon/src/window/Window.h>
 #include <VkBootstrap.h>
 #include <gtest/gtest.h>
 
 #include <memory>
 #include <utility>
+
+#include "Avalon/src/device/Device.h"
+#include "Avalon/src/device/Instance.h"
+#include "Avalon/src/window/Surface.h"
+#include "Avalon/src/window/Window.h"
+
+namespace avalon {
 
 // Objects are declared in creation order so that the fixture destroys them
 // in reverse: device -> surface -> instance -> window.
@@ -116,3 +119,5 @@ TEST_F(DeviceTest, MoveTransfersOwnership) {
   EXPECT_EQ(moved.getDevice(), VK_NULL_HANDLE);
   EXPECT_EQ(assigned.getDevice(), original);
 }
+
+}  // namespace avalon

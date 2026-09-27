@@ -16,10 +16,13 @@
 #ifndef AVALON_SRC_PRESENTATION_RENDERPASS_RENDERPASS_H_
 #define AVALON_SRC_PRESENTATION_RENDERPASS_RENDERPASS_H_
 
-#include <Avalon/src/device/Device.h>
 #include <vulkan/vulkan.h>
 
 #include <memory>
+
+#include "Avalon/src/device/Device.h"
+
+namespace avalon {
 
 // A single-subpass render pass with a colour attachment, a depth attachment
 // and, when multisampling is on, a resolve attachment onto the swapchain
@@ -56,5 +59,7 @@ class RenderPass {
  private:
   void initialize();
 };
+
+}  // namespace avalon
 
 #endif  // AVALON_SRC_PRESENTATION_RENDERPASS_RENDERPASS_H_

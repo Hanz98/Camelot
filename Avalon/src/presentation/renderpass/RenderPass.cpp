@@ -13,9 +13,8 @@
  * limitations under the License.
  */
 
-#include "RenderPass.h"
+#include "Avalon/src/presentation/renderpass/RenderPass.h"
 
-#include <Avalon/src/validation/CheckResult.h>
 #include <spdlog/spdlog.h>
 
 #include <array>
@@ -23,6 +22,10 @@
 #include <stdexcept>
 #include <utility>
 #include <vector>
+
+#include "Avalon/src/validation/CheckResult.h"
+
+namespace avalon {
 
 RenderPass::RenderPass(std::shared_ptr<Device> device, VkFormat colorFormat,
                        VkFormat depthFormat, VkSampleCountFlagBits samples)
@@ -127,3 +130,5 @@ void RenderPass::initialize() {
   VK_CHECK_RESULT(
       vkCreateRenderPass(m_device->getDevice(), &info, nullptr, &m_renderPass));
 }
+
+}  // namespace avalon

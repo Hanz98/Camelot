@@ -13,12 +13,15 @@
  * limitations under the License.
  */
 
-#include <Avalon/src/window/Window.h>
 #include <GLFW/glfw3.h>
 #include <gtest/gtest.h>
 
 #include <memory>
 #include <utility>
+
+#include "Avalon/src/window/Window.h"
+
+namespace avalon {
 
 TEST(WindowTest, DefaultConstructorCreatesWindow) {
   Window window;
@@ -91,3 +94,5 @@ TEST(WindowTest, FramebufferSizeIsZeroAfterCleanup) {
   EXPECT_EQ(height, 0U);
   EXPECT_TRUE(window.shouldClose());
 }
+
+}  // namespace avalon

@@ -13,14 +13,17 @@
  * limitations under the License.
  */
 
-#include "FrameSync.h"
+#include "Avalon/src/sync/FrameSync.h"
 
-#include <Avalon/src/validation/CheckResult.h>
 #include <spdlog/spdlog.h>
 
 #include <memory>
 #include <stdexcept>
 #include <utility>
+
+#include "Avalon/src/validation/CheckResult.h"
+
+namespace avalon {
 
 FrameSync::FrameSync(std::shared_ptr<Device> device, uint32_t framesInFlight,
                      uint32_t swapchainImageCount)
@@ -83,3 +86,5 @@ void FrameSync::cleanUp() {
   }
   m_inFlight.clear();
 }
+
+}  // namespace avalon

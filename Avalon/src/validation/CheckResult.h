@@ -16,10 +16,10 @@
 #ifndef AVALON_SRC_VALIDATION_CHECKRESULT_H_
 #define AVALON_SRC_VALIDATION_CHECKRESULT_H_
 
-#include <pch.h>
-
 #include <exception>
 #include <sstream>
+
+#include "Avalon/pch.h"
 #define VK_CHECK_RESULT(f)                                            \
   {                                                                   \
     VkResult res = (f);                                               \

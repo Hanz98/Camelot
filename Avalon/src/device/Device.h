@@ -16,7 +16,6 @@
 #ifndef AVALON_SRC_DEVICE_DEVICE_H_
 #define AVALON_SRC_DEVICE_DEVICE_H_
 
-#include <Avalon/src/window/Surface.h>
 #include <VkBootstrap.h>
 #include <VkBootstrapDispatch.h>
 #include <vulkan/vulkan.h>
@@ -24,7 +23,10 @@
 #include <memory>
 #include <vector>
 
-#include "Instance.h"
+#include "Avalon/src/device/Instance.h"
+#include "Avalon/src/window/Surface.h"
+
+namespace avalon {
 
 class Device {
  private:
@@ -85,5 +87,7 @@ class Device {
                                VkFormatFeatureFlags features);
   void initializeQueues();
 };
+
+}  // namespace avalon
 
 #endif  // AVALON_SRC_DEVICE_DEVICE_H_

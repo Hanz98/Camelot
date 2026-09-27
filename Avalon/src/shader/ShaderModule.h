@@ -16,8 +16,6 @@
 #ifndef AVALON_SRC_SHADER_SHADERMODULE_H_
 #define AVALON_SRC_SHADER_SHADERMODULE_H_
 
-#include <Avalon/shaders/Registry.h>
-#include <Avalon/src/device/Device.h>
 #include <vulkan/vulkan.h>
 
 #include <cstdint>
@@ -26,6 +24,11 @@
 #include <span>
 #include <string>
 #include <vector>
+
+#include "Avalon/shaders/Registry.h"
+#include "Avalon/src/device/Device.h"
+
+namespace avalon {
 
 // RAII wrapper around VkShaderModule. Modules are usually created from the
 // shaders embedded at build time (avalon::shaders::get("name.vert")); loading
@@ -77,5 +80,7 @@ class ShaderModule {
   [[nodiscard]] VkPipelineShaderStageCreateInfo stageInfo(
       const char* entryPoint = "main") const;
 };
+
+}  // namespace avalon
 
 #endif  // AVALON_SRC_SHADER_SHADERMODULE_H_

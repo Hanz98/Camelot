@@ -19,11 +19,14 @@
 //  #include <pch.h>
 
 #define GLFW_INCLUDE_VULKAN
-#include <Avalon/interface/window/IGlfWrapper.h>
 #include <GLFW/glfw3.h>
 
 #include <string>
 #include <utility>
+
+#include "Avalon/interface/window/IGlfWrapper.h"
+
+namespace avalon {
 
 class Window {
  private:
@@ -68,5 +71,7 @@ class Window {
 
   bool m_resized = false;
 };
+
+}  // namespace avalon
 
 #endif  // AVALON_SRC_WINDOW_WINDOW_H_

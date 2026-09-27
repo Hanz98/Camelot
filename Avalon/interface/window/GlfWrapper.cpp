@@ -13,7 +13,9 @@
  * limitations under the License.
  */
 
-#include "GlfWrapper.h"
+#include "Avalon/interface/window/GlfWrapper.h"
+
+namespace avalon {
 
 int GlfWrapper::init() { return glfwInit(); }
 
@@ -35,3 +37,5 @@ void GlfWrapper::destroyWindow(GLFWwindow* window) {
 void GlfWrapper::setWindowUserPointer(GLFWwindow* window, void* pointer) {
   glfwSetWindowUserPointer(window, pointer);
 }
+
+}  // namespace avalon

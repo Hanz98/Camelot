@@ -19,8 +19,12 @@
 #include <vk_mem_alloc.h>
 #include <vulkan/vulkan.h>
 
+namespace avalon {
+
 struct VmaAllocatorWrapper {
   VmaAllocator allocator = VK_NULL_HANDLE;
 };
+
+}  // namespace avalon
 
 #endif  // AVALON_SRC_ALLOCATOR_VMAALLOCATOR_H_

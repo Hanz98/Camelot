@@ -16,15 +16,17 @@
 #ifndef AVALON_SRC_WINDOW_SURFACEMANAGER_H_
 #define AVALON_SRC_WINDOW_SURFACEMANAGER_H_
 
-#include <Avalon/src/device/Instance.h>
 #include <GLFW/glfw3.h>
 #include <vulkan/vulkan.h>
 
 #include <memory>
 #include <vector>
 
-#include "Surface.h"
-#include "Window.h"
+#include "Avalon/src/device/Instance.h"
+#include "Avalon/src/window/Surface.h"
+#include "Avalon/src/window/Window.h"
+
+namespace avalon {
 
 class SurfaceManager {
  private:
@@ -48,5 +50,7 @@ class SurfaceManager {
 
  private:
 };
+
+}  // namespace avalon
 
 #endif  // AVALON_SRC_WINDOW_SURFACEMANAGER_H_

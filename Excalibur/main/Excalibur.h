@@ -34,10 +34,10 @@
 #endif
 #endif
 
-#include <Camelot/API/main/ICamelot.h>
+#include "Camelot/API/main/ICamelot.h"
 
-using Camelot_Init_Func = void (*)(ICamelot** camelot);
+using Camelot_Init_Func = void (*)(camelot::ICamelot** camelot);
 
-extern "C" EXCALIBUR_API void buildCamelot(ICamelot** camelot);
+extern "C" EXCALIBUR_API void buildCamelot(camelot::ICamelot** camelot);
 
 #endif  // EXCALIBUR_MAIN_EXCALIBUR_H_

@@ -16,12 +16,15 @@
 #ifndef AVALON_SRC_SYNC_FRAMESYNC_H_
 #define AVALON_SRC_SYNC_FRAMESYNC_H_
 
-#include <Avalon/src/device/Device.h>
 #include <vulkan/vulkan.h>
 
 #include <cstdint>
 #include <memory>
 #include <vector>
+
+#include "Avalon/src/device/Device.h"
+
+namespace avalon {
 
 // Synchronisation objects for N frames in flight:
 //  - one "image available" semaphore and one fence per in-flight frame,
@@ -61,5 +64,7 @@ class FrameSync {
   // Recreates the per-image semaphores when the swapchain image count changes.
   void resizeImageSemaphores(uint32_t swapchainImageCount);
 };
+
+}  // namespace avalon
 
 #endif  // AVALON_SRC_SYNC_FRAMESYNC_H_

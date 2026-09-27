@@ -13,12 +13,15 @@
  * limitations under the License.
  */
 
-#include <Avalon/src/main/Avalon.h>
-#include <Avalon/src/renderer/Renderer.h>
 #include <gtest/gtest.h>
 
 #include <cstdint>
 #include <cstdlib>
+
+#include "Avalon/src/main/Avalon.h"
+#include "Avalon/src/renderer/Renderer.h"
+
+namespace avalon {
 
 // Drives the full frame loop through Avalon. Runs on the mock ICD in CI.
 class RendererTest : public testing::Test {
@@ -85,3 +88,5 @@ TEST_F(RendererTest, WindowResizeRecreatesSwapchainAndKeepsDrawing) {
     EXPECT_EQ(extent.height, fbHeight);
   }
 }
+
+}  // namespace avalon

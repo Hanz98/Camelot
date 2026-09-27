@@ -13,12 +13,14 @@
  * limitations under the License.
  */
 
-#include "Avalon.h"
-
-#include <pch.h>
+#include "Avalon/src/main/Avalon.h"
 
 #include <iostream>
 #include <memory>
+
+#include "Avalon/pch.h"
+
+namespace avalon {
 
 Avalon::Avalon()
     : m_window(nullptr),
@@ -137,3 +139,5 @@ void Avalon::initVma() {
     throw std::runtime_error("Failed to create VMA allocator.");
   }
 }
+
+}  // namespace avalon

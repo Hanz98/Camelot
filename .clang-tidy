@@ -30,7 +30,7 @@ Checks: >
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*/(Avalon|Camelot|Excalibur|Pendragon|Tests)/.*'
 ExcludeHeaderFilterRegex: '.*/(build|Tests/ext)/.*'
-FormatStyle: google
+FormatStyle: file
 CheckOptions:
   cppcoreguidelines-explicit-virtual-functions.IgnoreDestructors: 'true'
   cppcoreguidelines-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic: 'true'

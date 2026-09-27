@@ -13,8 +13,11 @@
  * limitations under the License.
  */
 
-#include <Avalon/src/main/Avalon.h>
 #include <gtest/gtest.h>
+
+#include "Avalon/src/main/Avalon.h"
+
+namespace avalon {
 
 TEST(AvalonTest, InitCreatesAllObjects) {
   Avalon avalon;
@@ -43,3 +46,5 @@ TEST(AvalonTest, CanBeInitializedTwice) {
   ASSERT_NO_THROW(avalon.init());
   EXPECT_TRUE(avalon.isInitialized());
 }
+
+}  // namespace avalon

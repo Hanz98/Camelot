@@ -84,6 +84,7 @@ PY
       --inconclusive \
       --std=c++20 \
       --suppressions-list=.cppcheck-suppressions \
+      --library=googletest \
       --inline-suppr \
       -i "$rootDir/Tests/ext" \
       -i "$rootDir/build" \

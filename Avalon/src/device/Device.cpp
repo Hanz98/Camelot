@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "Device.h"
+#include "Avalon/src/device/Device.h"
 
 #define VMA_IMPLEMENTATION
 #include <vk_mem_alloc.h>
@@ -24,6 +24,8 @@
 #include <string>
 #include <utility>
 #include <vector>
+
+namespace avalon {
 
 Device::Device(const std::shared_ptr<Instance>& instance,
                const std::shared_ptr<Surface>& surface)
@@ -203,3 +205,5 @@ VkFormat Device::findSupportedFormat(const std::vector<VkFormat>& candidates,
   spdlog::error("Failed to find supported format.");
   throw std::runtime_error("Failed to find supported format.");
 }
+
+}  // namespace avalon

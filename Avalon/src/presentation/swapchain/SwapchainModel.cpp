@@ -13,15 +13,17 @@
  * limitations under the License.
  */
 
-#include "SwapChainModel.h"
-
-#include <Avalon/src/validation/CheckResult.h>
+#include "Avalon/src/presentation/swapchain/SwapchainModel.h"
 
 #include <array>
 #include <memory>
 #include <stdexcept>
 #include <utility>
 #include <vector>
+
+#include "Avalon/src/validation/CheckResult.h"
+
+namespace avalon {
 
 SwapchainModel::SwapchainModel(std::shared_ptr<Device> device,
                                std::shared_ptr<Window> window,
@@ -183,7 +185,7 @@ void SwapchainModel::destroyFramebuffers() {
 }
 
 void SwapchainModel::createDepthImage() {
-  Camelot::ImageCreateInfo depthInfo = {
+  ImageCreateInfo depthInfo = {
       .width = static_cast<int>(m_swapchain.extent.width),
       .height = static_cast<int>(m_swapchain.extent.height),
       .mipLevels = 1,
@@ -200,7 +202,7 @@ void SwapchainModel::createColorImage() {
   if (m_samples == VK_SAMPLE_COUNT_1_BIT) {
     return;  // no MSAA: the swapchain image is the colour target
   }
-  Camelot::ImageCreateInfo colorInfo = {
+  ImageCreateInfo colorInfo = {
       .width = static_cast<int>(m_swapchain.extent.width),
       .height = static_cast<int>(m_swapchain.extent.height),
       .mipLevels = 1,
@@ -213,3 +215,5 @@ void SwapchainModel::createColorImage() {
       .aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT};
   m_color.createImage(colorInfo);
 }
+
+}  // namespace avalon

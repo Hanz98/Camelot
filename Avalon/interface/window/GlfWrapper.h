@@ -18,7 +18,9 @@
 
 #include <GLFW/glfw3.h>
 
-#include "IGlfWrapper.h"
+#include "Avalon/interface/window/IGlfWrapper.h"
+
+namespace avalon {
 
 class GlfWrapper : public IGlfWrapper {
  public:
@@ -30,5 +32,7 @@ class GlfWrapper : public IGlfWrapper {
   void destroyWindow(GLFWwindow* window) override;
   void setWindowUserPointer(GLFWwindow* window, void* pointer) override;
 };
+
+}  // namespace avalon
 
 #endif  // AVALON_INTERFACE_WINDOW_GLFWRAPPER_H_

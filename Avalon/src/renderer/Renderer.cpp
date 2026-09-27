@@ -13,9 +13,8 @@
  * limitations under the License.
  */
 
-#include "Renderer.h"
+#include "Avalon/src/renderer/Renderer.h"
 
-#include <Avalon/src/validation/CheckResult.h>
 #include <spdlog/spdlog.h>
 
 #include <array>
@@ -23,6 +22,10 @@
 #include <memory>
 #include <stdexcept>
 #include <utility>
+
+#include "Avalon/src/validation/CheckResult.h"
+
+namespace avalon {
 
 Renderer::Renderer(std::shared_ptr<Device> device,
                    std::shared_ptr<Window> window,
@@ -172,3 +175,5 @@ void Renderer::recordCommandBuffer(VkCommandBuffer commandBuffer,
 
   VK_CHECK_RESULT(vkEndCommandBuffer(commandBuffer));
 }
+
+}  // namespace avalon

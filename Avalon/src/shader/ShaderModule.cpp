@@ -13,9 +13,8 @@
  * limitations under the License.
  */
 
-#include "ShaderModule.h"
+#include "Avalon/src/shader/ShaderModule.h"
 
-#include <Avalon/src/validation/CheckResult.h>
 #include <spdlog/spdlog.h>
 
 #include <fstream>
@@ -24,6 +23,10 @@
 #include <string>
 #include <utility>
 #include <vector>
+
+#include "Avalon/src/validation/CheckResult.h"
+
+namespace avalon {
 
 namespace {
 
@@ -155,3 +158,5 @@ VkPipelineShaderStageCreateInfo ShaderModule::stageInfo(
   info.pName = entryPoint;
   return info;
 }
+
+}  // namespace avalon

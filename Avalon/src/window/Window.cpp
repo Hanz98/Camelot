@@ -13,16 +13,18 @@
  * limitations under the License.
  */
 
-#include "Window.h"
+#include "Avalon/src/window/Window.h"
 
-#include <Avalon/interface/window/GlfWrapper.h>
 #include <GLFW/glfw3.h>
 
 #include <memory>
 #include <string>
 #include <utility>
 
-#include "interface/window/IGlfWrapper.h"
+#include "Avalon/interface/window/GlfWrapper.h"
+#include "Avalon/interface/window/IGlfWrapper.h"
+
+namespace avalon {
 
 namespace {
 // Number of live Window objects that successfully called glfwInit().
@@ -153,3 +155,5 @@ bool Window::consumeResized() {
 uint16_t Window::getWidth() const { return m_dimensions.first; }
 
 uint16_t Window::getHeight() const { return m_dimensions.second; }
+
+}  // namespace avalon

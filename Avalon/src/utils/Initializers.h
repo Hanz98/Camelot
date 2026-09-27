@@ -13,10 +13,11 @@
  * limitations under the License.
  */
 
-#ifndef AVALON_SRC_UTILS_INITIALIZERS_HPP_
-#define AVALON_SRC_UTILS_INITIALIZERS_HPP_
-#include <pch.h>
+#ifndef AVALON_SRC_UTILS_INITIALIZERS_H_
+#define AVALON_SRC_UTILS_INITIALIZERS_H_
+#include "Avalon/pch.h"
 
-namespace Initializers {}  // namespace Initializers
+// Vulkan create-info helper functions will live here (see roadmap T3).
+namespace avalon::initializers {}  // namespace avalon::initializers
 
-#endif  // AVALON_SRC_UTILS_INITIALIZERS_HPP_
+#endif  // AVALON_SRC_UTILS_INITIALIZERS_H_

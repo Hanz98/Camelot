@@ -16,11 +16,14 @@
 #ifndef AVALON_SRC_COMMAND_COMMANDPOOL_H_
 #define AVALON_SRC_COMMAND_COMMANDPOOL_H_
 
-#include <Avalon/src/device/Device.h>
 #include <vulkan/vulkan.h>
 
 #include <memory>
 #include <vector>
+
+#include "Avalon/src/device/Device.h"
+
+namespace avalon {
 
 // Command pool on the graphics queue family. Buffers allocated from it are
 // resettable individually (RESET_COMMAND_BUFFER_BIT).
@@ -45,5 +48,7 @@ class CommandPool {
   [[nodiscard]] std::vector<VkCommandBuffer> allocate(uint32_t count) const;
   void free(const std::vector<VkCommandBuffer>& buffers) const;
 };
+
+}  // namespace avalon
 
 #endif  // AVALON_SRC_COMMAND_COMMANDPOOL_H_

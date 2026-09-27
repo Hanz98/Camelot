@@ -18,7 +18,10 @@
 
 #include <VkBootstrap.h>
 #include <VkBootstrapDispatch.h>
-#include <pch.h>
+
+#include "Avalon/pch.h"
+
+namespace avalon {
 
 // Vulkan version the whole engine targets. The instance is created with it,
 // and every consumer (VMA, swapchain, etc.) must use the same value.
@@ -50,5 +53,7 @@ class Instance {
     return m_instance.instance;
   }
 };
+
+}  // namespace avalon
 
 #endif  // AVALON_SRC_DEVICE_INSTANCE_H_

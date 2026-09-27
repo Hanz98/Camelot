@@ -13,7 +13,9 @@
  * limitations under the License.
  */
 
-#include "MainModel.h"
+#include "Camelot/src/main/MainModel.h"
+
+namespace camelot {
 
 //  #include <unistd.h>
 
@@ -29,3 +31,5 @@ void MainModel::run() {
   }
   m_avalon.cleanUp();
 }
+
+}  // namespace camelot

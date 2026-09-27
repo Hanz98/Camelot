@@ -16,14 +16,16 @@
 #ifndef CAMELOT_SRC_MAIN_MAINMODEL_H_
 #define CAMELOT_SRC_MAIN_MAINMODEL_H_
 
-#include <Avalon/src/main/Avalon.h>
-#include <Camelot/API/main/ICamelot.h>
-
 #include <iostream>
+
+#include "Avalon/src/main/Avalon.h"
+#include "Camelot/API/main/ICamelot.h"
+
+namespace camelot {
 
 class MainModel : public ICamelot {
  private:
-  Avalon m_avalon;
+  avalon::Avalon m_avalon;
 
  public:
   MainModel() = default;
@@ -32,5 +34,7 @@ class MainModel : public ICamelot {
   // Initialises the engine and runs the frame loop until the window closes.
   void run();
 };
+
+}  // namespace camelot
 
 #endif  // CAMELOT_SRC_MAIN_MAINMODEL_H_

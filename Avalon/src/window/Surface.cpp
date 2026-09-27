@@ -13,11 +13,9 @@
  * limitations under the License.
  */
 
-#include "Surface.h"
+#include "Avalon/src/window/Surface.h"
 
 #define GLFW_INCLUDE_VULKAN
-#include <Avalon/src/device/Instance.h>
-#include <Avalon/src/validation/CheckResult.h>
 #include <GLFW/glfw3.h>
 #include <spdlog/spdlog.h>
 
@@ -25,7 +23,11 @@
 #include <memory>
 #include <utility>
 
-#include "Window.h"
+#include "Avalon/src/device/Instance.h"
+#include "Avalon/src/validation/CheckResult.h"
+#include "Avalon/src/window/Window.h"
+
+namespace avalon {
 
 Surface::Surface(std::shared_ptr<Instance> instance,
                  std::shared_ptr<Window> window)
@@ -53,3 +55,5 @@ void Surface::cleanUp() {
 }
 
 const VkSurfaceKHR& Surface::getSurface() const { return m_surface; }
+
+}  // namespace avalon
