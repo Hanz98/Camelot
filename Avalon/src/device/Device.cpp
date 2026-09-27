@@ -80,19 +80,24 @@ void Device::initialize(const std::shared_ptr<Instance>& instance,
   }
 
   vkb::PhysicalDeviceSelector selector{instance->getVkbInstance()};
-  auto vkbPhysicalDevice =
-      selector.set_surface(surface->getSurface())
-          .set_minimum_version(1, 1)
-          .add_desired_extension(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME)
-          .select();
+  auto vkbPhysicalDevice = selector.set_surface(surface->getSurface())
+                               .set_minimum_version(1, 1)
+                               .select();
   if (!vkbPhysicalDevice) {
     spdlog::error("Failed to select Vulkan Physical Device. Error: " +
                   vkbPhysicalDevice.error().message());
+    for (const std::string& reason :
+         vkbPhysicalDevice.detailed_failure_reasons()) {
+      spdlog::error("  {}", reason);
+    }
     throw std::runtime_error("Failed to select Vulkan Physical Device.");
   }
   m_physicalDevice = vkbPhysicalDevice.value();
+  // Optional: memory budget queries for VMA statistics.
+  m_physicalDevice.enable_extension_if_present(
+      VK_EXT_MEMORY_BUDGET_EXTENSION_NAME);
 
-  vkb::DeviceBuilder deviceBuilder{vkbPhysicalDevice.value()};
+  vkb::DeviceBuilder deviceBuilder{m_physicalDevice};
   auto devRet = deviceBuilder.build();
   if (!devRet) {
     spdlog::error("Failed to create Vulkan device. Error: " +

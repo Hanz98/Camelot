@@ -8,6 +8,14 @@ if(NOT TARGET vulkan-headers::vulkan-headers AND TARGET Vulkan::Headers)
     add_library(vulkan-headers::vulkan-headers ALIAS Vulkan::Headers)
 endif()
 
+# The mock must create real (fake-handle) surfaces for the window system GLFW
+# uses, otherwise Vulkan loaders since 1.4 report no presentation support for
+# the loader-owned surface and device selection fails.
+if(UNIX AND NOT APPLE)
+  set(BUILD_WSI_XCB_SUPPORT ON)
+  set(BUILD_WSI_XLIB_SUPPORT ON)
+endif()
+
 add_subdirectory(icd)
 
 # The manifest references the shared library relative to its own location,

@@ -8,13 +8,13 @@ class CamelotConan(ConanFile):
     settings = "os", "arch", "compiler", "build_type"
 
     requires = (
-        "gtest/1.15.0",
+        "gtest/1.18.0",
         "glfw/3.4",
-        "spdlog/1.15.0",
-        "vk-bootstrap/0.7",
-        "vulkan-headers/1.3.239.0",
-        "vulkan-loader/1.3.239.0",
-        "vulkan-memory-allocator/3.0.1",
+        "spdlog/1.17.0",
+        "vk-bootstrap/1.4.350",
+        "vulkan-headers/1.4.350.0",
+        "vulkan-loader/1.4.350.0",
+        "vulkan-memory-allocator/3.3.0",
     )
 
     # Build-time tools. glslang provides glslangValidator, which
