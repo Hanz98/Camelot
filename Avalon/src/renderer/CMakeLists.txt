@@ -1,6 +1,8 @@
 add_library(Avalon_renderer
   "IDrawable.h"
   "IPrePass.h"
+  "LineDrawable.cpp"
+  "LineDrawable.h"
   "MeshDrawable.cpp"
   "MeshDrawable.h"
   "PointCloudDrawable.cpp"
