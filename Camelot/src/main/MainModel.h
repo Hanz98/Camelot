@@ -22,6 +22,9 @@
 #include "Avalon/src/main/Avalon.h"
 #include "Avalon/src/renderer/MeshDrawable.h"
 #include "Avalon/src/renderer/PointCloudDrawable.h"
+#include "Avalon/src/ui/GraphWidget.h"
+#include "Avalon/src/ui/TreeWidget.h"
+#include "Avalon/src/ui/VideoWidget.h"
 #include "Camelot/API/main/ICamelot.h"
 
 namespace camelot {
@@ -31,6 +34,15 @@ class MainModel : public ICamelot {
   avalon::Avalon m_avalon;
   std::vector<std::shared_ptr<avalon::MeshDrawable>> m_objects;
   std::shared_ptr<avalon::PointCloudDrawable> m_points;
+
+  // UI state.
+  avalon::TreeNode m_sceneTree;
+  avalon::GraphWidget m_frameTimeGraph{"frame time", 300, "ms"};
+  std::shared_ptr<avalon::VideoTexture> m_videoTexture;
+  std::unique_ptr<avalon::VideoWidget> m_video;
+  std::shared_ptr<avalon::MeshDrawable> m_videoBox;
+  std::shared_ptr<avalon::PointCloudDrawable> m_videoMarker;
+  double m_time{0.0};
 
  public:
   MainModel() = default;
@@ -43,6 +55,13 @@ class MainModel : public ICamelot {
   // until real data (roadmap T7/T8) replaces them. Requires an initialised
   // engine.
   void populateDemoScene();
+  // Creates the UI: scene tree, frame-time graph and a test video with a GPU
+  // overlay. Requires an initialised engine and populateDemoScene().
+  void setupUi();
+  // Builds the ImGui windows for one frame (called from the engine).
+  void buildUi();
+  // Releases UI and scene resources; safe to call more than once.
+  void teardown();
 
   [[nodiscard]] avalon::Avalon& engine() { return m_avalon; }
   [[nodiscard]] const std::vector<std::shared_ptr<avalon::MeshDrawable>>&
@@ -52,6 +71,11 @@ class MainModel : public ICamelot {
   [[nodiscard]] std::shared_ptr<avalon::PointCloudDrawable> points() const {
     return m_points;
   }
+  [[nodiscard]] avalon::TreeNode& sceneTree() { return m_sceneTree; }
+  [[nodiscard]] avalon::GraphWidget& frameTimeGraph() {
+    return m_frameTimeGraph;
+  }
+  [[nodiscard]] avalon::VideoWidget* video() const { return m_video.get(); }
 };
 
 }  // namespace camelot

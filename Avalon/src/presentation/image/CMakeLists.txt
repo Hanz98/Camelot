@@ -1,6 +1,8 @@
 add_library(Avalon_presentation_image
 "Image.cpp"
 "Image.h"
+  "Sampler.cpp"
+  "Sampler.h"
 )
 
 target_include_directories(Avalon_presentation_image

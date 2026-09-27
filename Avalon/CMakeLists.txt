@@ -8,6 +8,19 @@ set(Avalon_include_dirs ${CMAKE_CURRENT_SOURCE_DIR})
 
 find_package(glfw3 REQUIRED)
 find_package(glm REQUIRED)
+find_package(imgui REQUIRED)
+find_package(implot REQUIRED)
+
+# The GLFW and Vulkan backends ship as sources inside the imgui package.
+find_path(IMGUI_BINDINGS_DIR
+  NAMES imgui_impl_vulkan.cpp
+  PATHS ${imgui_RES_DIRS} ${imgui_RES_DIRS_RELEASE} ${imgui_RES_DIRS_DEBUG}
+        ${imgui_PACKAGE_FOLDER_RELEASE}/res ${imgui_PACKAGE_FOLDER_DEBUG}/res
+  PATH_SUFFIXES bindings
+  NO_DEFAULT_PATH)
+if(NOT IMGUI_BINDINGS_DIR)
+  message(FATAL_ERROR "imgui backends (imgui_impl_vulkan.cpp) not found in the imgui package")
+endif()
 find_package(spdlog REQUIRED)
 find_package(vk-bootstrap REQUIRED)
 find_package(Vulkan REQUIRED)

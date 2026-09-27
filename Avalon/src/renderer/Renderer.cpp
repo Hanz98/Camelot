@@ -28,6 +28,7 @@
 #include "Avalon/shaders/Registry.h"
 #include "Avalon/src/pipeline/GraphicsPipeline.h"
 #include "Avalon/src/shader/ShaderModule.h"
+#include "Avalon/src/ui/UiContext.h"
 #include "Avalon/src/validation/CheckResult.h"
 
 namespace avalon {
@@ -101,6 +102,24 @@ bool Renderer::removeDrawable(const std::shared_ptr<IDrawable>& drawable) {
   return true;
 }
 
+void Renderer::addPrePass(std::shared_ptr<IPrePass> prePass) {
+  if (prePass == nullptr) {
+    spdlog::error("Renderer::addPrePass: pre-pass is null.");
+    throw std::runtime_error("Renderer::addPrePass: pre-pass is null.");
+  }
+  m_prePasses.push_back(std::move(prePass));
+}
+
+bool Renderer::removePrePass(const std::shared_ptr<IPrePass>& prePass) {
+  auto it = std::ranges::find(m_prePasses, prePass);
+  if (it == m_prePasses.end()) {
+    return false;
+  }
+  m_device->waitIdle();
+  m_prePasses.erase(it);
+  return true;
+}
+
 void Renderer::clearDrawables() {
   if (m_drawables.empty()) {
     return;
@@ -130,6 +149,8 @@ void Renderer::cleanUp() {
   if (m_device != nullptr) {
     m_device->waitIdle();
   }
+  m_ui = nullptr;
+  m_prePasses.clear();
   m_drawables.clear();
   m_pipelines.reset();
   m_cameraSets.clear();  // freed with the pool
@@ -239,6 +260,10 @@ void Renderer::recordCommandBuffer(VkCommandBuffer commandBuffer,
   begin.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
   VK_CHECK_RESULT(vkBeginCommandBuffer(commandBuffer, &begin));
 
+  for (const std::shared_ptr<IPrePass>& prePass : m_prePasses) {
+    prePass->recordPrePass(commandBuffer, m_currentFrame);
+  }
+
   std::array<VkClearValue, 2> clearValues = {};
   clearValues[0].color = {
       {m_clearColor[0], m_clearColor[1], m_clearColor[2], m_clearColor[3]}};
@@ -265,6 +290,9 @@ void Renderer::recordCommandBuffer(VkCommandBuffer commandBuffer,
   context.pipelines = m_pipelines.get();
   for (const std::shared_ptr<IDrawable>& drawable : m_drawables) {
     drawable->record(context);
+  }
+  if (m_ui != nullptr) {
+    m_ui->render(commandBuffer);
   }
   vkCmdEndRenderPass(commandBuffer);
 

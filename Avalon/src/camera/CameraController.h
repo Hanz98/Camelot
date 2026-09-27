@@ -16,6 +16,9 @@
 #ifndef AVALON_SRC_CAMERA_CAMERACONTROLLER_H_
 #define AVALON_SRC_CAMERA_CAMERACONTROLLER_H_
 
+#include <functional>
+#include <utility>
+
 #include "Avalon/src/camera/Camera.h"
 #include "Avalon/src/window/Window.h"
 
@@ -34,6 +37,7 @@ class CameraController {
   float m_orbitSensitivity{0.005F};  // radians per pixel
   float m_panSensitivity{0.0015F};   // fraction of distance per pixel
   float m_zoomStep{1.1F};            // distance factor per scroll notch
+  std::function<bool()> m_inputBlocked;
 
  public:
   explicit CameraController(Camera* camera);
@@ -52,6 +56,14 @@ class CameraController {
     m_panSensitivity = fractionPerPixel;
   }
   void setZoomStep(float factorPerNotch) { m_zoomStep = factorPerNotch; }
+  // While the predicate returns true, button presses and wheel events are
+  // ignored (the UI has the mouse). An ongoing drag still ends normally.
+  void setInputBlocked(std::function<bool()> predicate) {
+    m_inputBlocked = std::move(predicate);
+  }
+  [[nodiscard]] bool isInputBlocked() const {
+    return m_inputBlocked && m_inputBlocked();
+  }
 
   [[nodiscard]] bool isOrbiting() const { return m_orbiting; }
   [[nodiscard]] bool isPanning() const { return m_panning; }
