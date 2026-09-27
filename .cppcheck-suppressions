@@ -9,3 +9,7 @@ accessMoved:*Tests/Avalon/*
 
 # Dependency headers pulled in through the compile database.
 *:*/.conan2/*
+
+# The vendored mock ICD is third-party code; cppcheck 2.13 (Ubuntu 24.04)
+# does not honour -i for --project inputs, so suppress it here as well.
+*:*/Tests/ext/*
