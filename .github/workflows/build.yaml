@@ -133,7 +133,9 @@ jobs:
         shell: cmd
         run: |
           call build\Release\generators\conanrun.bat || exit /b 1
-          reg add "HKLM\SOFTWARE\Khronos\Vulkan\Drivers" /v "%GITHUB_WORKSPACE%\build\Release\bin\VkICD_mock_icd.json" /t REG_DWORD /d 0 /f || exit /b 1
+          set "ICD_JSON=%GITHUB_WORKSPACE%\build\Release\bin\VkICD_mock_icd.json"
+          reg add "HKLM\SOFTWARE\Khronos\Vulkan\Drivers" /v "%ICD_JSON%" ^
+            /t REG_DWORD /d 0 /f || exit /b 1
           set VK_LOADER_DEBUG=error,warn
           build\Release\bin\Test_Main.exe --gtest_output=xml:test-report.xml
 
