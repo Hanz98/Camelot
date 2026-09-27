@@ -1,27 +1,71 @@
+# Fast checks that run on every commit. CI runs the same hooks on every pull
+# request (.github/workflows/pre-commit.yaml), so `pre-commit run --all-files`
+# reproduces that job locally. Static analysis that needs a configured build
+# (clang-tidy, cppcheck) lives in scripts/linux/runStaticAnalysis.sh and the
+# static-analysis job of .github/workflows/build.yaml.
+#
+# Setup: pip install pre-commit && pre-commit install
 fail_fast: false
+exclude: ^(Tests/ext/|build/)
 repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: [--maxkb=512]
+      - id: check-yaml
+      - id: check-json
+        exclude: ^\.vscode/  # VS Code allows comments in its JSON files
   - repo: https://github.com/Lucas-C/pre-commit-hooks
-    rev: v1.5.5
+    rev: v1.5.6
     hooks:
       - id: insert-license
         name: insert license header
         files: \.cpp$|\.c$|\.cc$|\.h$|\.hpp$
-        exclude: ^build
         args:
-        - --license-filepath
-        - 'LICENSES/code_header'
-        - --comment-style
-        - "/*| *|*/"
-        - --fuzzy-match-generates-todo
+          - --license-filepath
+          - LICENSES/code_header
+          - --comment-style
+          - "/*| *|*/"
+          - --fuzzy-match-generates-todo
   - repo: https://github.com/cpp-linter/cpp-linter-hooks
     rev: v1.6.0
     hooks:
       - id: clang-format
-        args: [--style=Google, --version=13]
+        # --version pins the clang-format wheel so results do not depend on
+        # what is installed locally.
+        args: [--style=Google, --version=22]
   - repo: https://github.com/cpplint/cpplint
-    rev: 2.0.0
+    rev: 2.0.2
     hooks:
       - id: cpplint
         args: [--filter=-whitespace/indent_namespace]
-
-exclude: ^Tests/ext
+  - repo: https://github.com/cheshirekow/cmake-format-precommit
+    rev: v0.6.13
+    hooks:
+      - id: cmake-lint  # configured in .cmake-format.yaml
+        additional_dependencies: [pyyaml]
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.11.0.1-1
+    hooks:
+      - id: shellcheck
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.3
+    hooks:
+      - id: codespell
+        # "tese" is the GLSL tessellation-evaluation shader extension.
+        args: [--ignore-words-list=tese]
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.38.0
+    hooks:
+      - id: yamllint
+        args: [--strict, -c, .yamllint.yaml]
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.12
+    hooks:
+      - id: actionlint

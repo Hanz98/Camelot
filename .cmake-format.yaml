@@ -1,0 +1,12 @@
+# Configuration for cmake-lint (run by pre-commit). cmake-format itself is not
+# applied to the tree.
+format:
+  line_width: 100
+lint:
+  # C0103  variable naming: the tree uses <Target>_include_dirs, ARG_* from
+  #        cmake_parse_arguments and CAMELOT_* template variables
+  # C0111  docstrings on functions: documented in header comments instead
+  # C0113  COMMENT on add_custom_target
+  # R0912/R0915  branch and statement limits: camelot_add_shaders() is one
+  #        deliberately self-contained function
+  disabled_codes: [C0103, C0111, C0113, R0912, R0915]

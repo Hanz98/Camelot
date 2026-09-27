@@ -87,8 +87,25 @@ Tests are built when `BUILD_TESTING` is ON (the default). Run them with
 `-DCAMELOT_TESTS_USE_MOCK_ICD=ON` to run against the vendored mock Vulkan ICD
 (this is what CI does, under `xvfb-run`, so no GPU or display is required).
 
-## Static analysis and formatting
+## Linting, formatting and static analysis
 
-`pre-commit` runs the license-header, clang-format (Google style) and cpplint
-hooks; CI enforces them. `scripts/linux/runStaticAnalysis.sh` runs clang-tidy
-and cppcheck against `build/<BuildType>/compile_commands.json`.
+Two layers, both enforced on every pull request:
+
+1. **pre-commit** (`.pre-commit-config.yaml`) – fast checks that need no
+   build: whitespace and line endings, license headers, clang-format (Google
+   style, pinned clang-format version), cpplint, cmake-lint
+   (`.cmake-format.yaml`), shellcheck, codespell, yamllint (`.yamllint.yaml`)
+   and actionlint for the workflows. Install once with
+   `pip install pre-commit && pre-commit install`; run everything with
+   `pre-commit run --all-files`. CI job: `Pre-commit Checks`.
+2. **Static analysis** – clang-tidy (`.clang-tidy`, with `Tests/.clang-tidy`
+   relaxing a few checks for test code) and cppcheck
+   (`.cppcheck-suppressions`). Both read `build/<BuildType>/compile_commands.json`,
+   so configure the project first, then run
+   `scripts/linux/runStaticAnalysis.sh` (`--clang-tidy` or `--cppcheck` to
+   run one of them, file paths to limit the scope). Warnings are errors. CI
+   job: `clang-tidy and cppcheck`, using the clang-tidy 22 wheel and
+   cppcheck from apt.
+
+Suppress a finding inline only with a reason, e.g.
+`// NOLINT(check-name): why` or `// cppcheck-suppress id ; why`.
