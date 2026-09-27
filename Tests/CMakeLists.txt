@@ -24,19 +24,17 @@ target_link_libraries(Test_Main
 add_subdirectory(ext)
 add_subdirectory(Avalon)
 
-set(CAMELOT_TEST_ENVIRONMENT "")
 if(CAMELOT_TESTS_USE_MOCK_ICD)
+    # The test binary points the Vulkan loader at the mock driver itself (see
+    # test_main.cpp). Passing the variables through CTest's ENVIRONMENT
+    # property is not reliable across CMake versions: with CMake 3.31 the list
+    # arrived as one string and CI silently ran on whatever driver the runner
+    # had.
     set(_mock_icd_json "${CMAKE_BINARY_DIR}/lib/VkICD_mock_icd.json")
-    # VK_DRIVER_FILES is the current loader variable, VK_ICD_FILENAMES the
-    # legacy one; both point at the mock driver so only it is loaded.
-    list(APPEND CAMELOT_TEST_ENVIRONMENT
-         "VK_DRIVER_FILES=${_mock_icd_json}"
-         "VK_ICD_FILENAMES=${_mock_icd_json}"
-         "CAMELOT_TESTS_USE_MOCK_ICD=1")
+    target_compile_definitions(Test_Main
+        PRIVATE CAMELOT_MOCK_ICD_JSON="${_mock_icd_json}")
     add_dependencies(Test_Main VkICD_mock_icd)
 endif()
 
 include(GoogleTest)
-gtest_discover_tests(Test_Main
-    PROPERTIES ENVIRONMENT "${CAMELOT_TEST_ENVIRONMENT}"
-)
+gtest_discover_tests(Test_Main)
