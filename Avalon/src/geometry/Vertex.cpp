@@ -41,4 +41,23 @@ std::array<VkVertexInputAttributeDescription, 3> Vertex::attributeDescriptions(
             .offset = offsetof(Vertex, color)}}};
 }
 
+VkVertexInputBindingDescription PointVertex::bindingDescription(
+    uint32_t binding) {
+  return {.binding = binding,
+          .stride = sizeof(PointVertex),
+          .inputRate = VK_VERTEX_INPUT_RATE_VERTEX};
+}
+
+std::array<VkVertexInputAttributeDescription, 2>
+PointVertex::attributeDescriptions(uint32_t binding) {
+  return {{{.location = 0,
+            .binding = binding,
+            .format = VK_FORMAT_R32G32B32_SFLOAT,
+            .offset = offsetof(PointVertex, position)},
+           {.location = 1,
+            .binding = binding,
+            .format = VK_FORMAT_R32G32B32A32_SFLOAT,
+            .offset = offsetof(PointVertex, color)}}};
+}
+
 }  // namespace avalon

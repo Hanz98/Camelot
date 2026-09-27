@@ -24,6 +24,8 @@ camelot_add_shaders(Avalon_shaders
         shaders/triangle.frag
         shaders/mesh.vert
         shaders/mesh.frag
+        shaders/point.vert
+        shaders/point.frag
 )
 
 add_subdirectory("interface")

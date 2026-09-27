@@ -35,6 +35,7 @@ void MainModel::run() {
   populateDemoScene();
   while (m_avalon.frame()) {
   }
+  m_points.reset();
   m_objects.clear();
   m_avalon.cleanUp();
 }
@@ -63,6 +64,12 @@ void MainModel::populateDemoScene() {
       {0.3F, 0.4F, 0.9F, 1.0F});
   add(avalon::shapes::cylinder(0.4F, 1.2F), {-2.0F, -1.0F, 0.6F},
       {0.9F, 0.8F, 0.2F, 1.0F});
+  // A single point above the scene: the seed of the point-cloud feature.
+  m_points = std::make_shared<avalon::PointCloudDrawable>(device, allocator);
+  m_points->setPoint({1.0F, -1.5F, 1.5F}, {1.0F, 1.0F, 1.0F, 1.0F});
+  m_points->setPointSize(12.0F);
+  renderer->addDrawable(m_points);
+
   // A thin slab as a stand-in ground plane until the grid (T6) lands.
   add(avalon::shapes::box(glm::vec3(8.0F, 8.0F, 0.02F)), {0.0F, 0.0F, -0.01F},
       {0.35F, 0.35F, 0.38F, 1.0F});

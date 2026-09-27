@@ -98,6 +98,13 @@ void Device::initialize(const std::shared_ptr<Instance>& instance,
   // Optional: memory budget queries for VMA statistics.
   m_physicalDevice.enable_extension_if_present(
       VK_EXT_MEMORY_BUDGET_EXTENSION_NAME);
+  // Optional features the drawables use when available: point sprites
+  // larger than one pixel, wide lines (T6) and wireframe fill (T7 markers).
+  VkPhysicalDeviceFeatures optional = {};
+  optional.largePoints = VK_TRUE;
+  optional.wideLines = VK_TRUE;
+  optional.fillModeNonSolid = VK_TRUE;
+  m_physicalDevice.enable_features_if_present(optional);
 
   vkb::DeviceBuilder deviceBuilder{m_physicalDevice};
   auto devRet = deviceBuilder.build();
