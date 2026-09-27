@@ -119,7 +119,7 @@ Every pull request runs (`.github/workflows/`):
 | Job | Workflow | What it does |
 |-----|----------|--------------|
 | `Build and test` | `build.yaml` | Ubuntu, gcc, Conan + Ninja, `Test_Main` on the mock ICD under `xvfb-run` |
-| `Build and test (Windows)` | `build.yaml` | `windows-latest`, MSVC 19.4x (`profiles/Camelot-Win`), Conan + Ninja, `Test_Main.exe` on the mock ICD; no Vulkan SDK, no xvfb |
+| `Build and test (Windows)` | `build.yaml` | `windows-latest`, `profiles/Camelot-Win` with `compiler.version` overridden to the runner's MSVC toolset (as the Linux job does for gcc), Conan + Ninja, `Test_Main.exe` on the mock ICD; no Vulkan SDK, no xvfb |
 | `clang-tidy and cppcheck` | `build.yaml` | static analysis on the configured Linux build |
 | `Pre-commit Checks` | `pre-commit.yaml` | the hooks of `.pre-commit-config.yaml` |
 

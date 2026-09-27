@@ -64,8 +64,8 @@ jobs:
         run: pip install "conan>=2.0" ninja
 
       - name: Set up MSVC environment
-        # Puts cl.exe (VS 2022, toolset 14.4x = Conan compiler.version=194,
-        # as pinned in profiles/Camelot-Win) on PATH for the steps below.
+        # Puts cl.exe on PATH for the steps below and exports VCToolsVersion
+        # (e.g. 14.44 for VS 2022, 14.51 for VS 2026).
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x64
@@ -77,19 +77,31 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.conan2/p
-          key: conan-${{ runner.os }}-${{ hashFiles('conanfile.py', 'profiles/Camelot-Win') }}
+          key: >-
+            conan-${{ runner.os }}-msvc${{ env.VCToolsVersion }}-${{
+            hashFiles('conanfile.py', 'profiles/Camelot-Win') }}
           restore-keys: conan-${{ runner.os }}-
 
       - name: Install Conan dependencies
+        # The repo profile pins msvc 194 (VS 2022); like the Linux job does
+        # for gcc, override it with the toolset the runner has (windows-latest
+        # moved to VS 2026, toolset 14.5x = msvc 195), otherwise Conan looks
+        # for a VS 17 installation that does not exist. Conan's msvc version
+        # is "19" + the first digit of the VC tools minor version.
+        #
         # No Vulkan SDK: vulkan-loader, vulkan-headers and glslang come from
         # Conan. Packages without a prebuilt binary (and their tool
         # requirements, e.g. nasm) are built from source. Build tools are
         # always Release; the profile's Debug default is for developers.
         shell: bash
         run: |
+          MSVC_MINOR="${VCToolsVersion#14.}"
+          MSVC_VERSION="19${MSVC_MINOR:0:1}"
+          echo "VC tools $VCToolsVersion -> Conan msvc compiler.version=$MSVC_VERSION"
           conan install . \
             --profile:host="$CONAN_PROFILE" \
             --profile:build="$CONAN_PROFILE" \
+            -s:a compiler.version="$MSVC_VERSION" \
             -s build_type="$BUILD_TYPE" \
             -s:b build_type=Release \
             --build=missing \

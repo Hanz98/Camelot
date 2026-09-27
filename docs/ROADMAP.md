@@ -111,7 +111,7 @@ AC: both jobs green on a PR.
 Status: **done**. Implemented as a separate `build-windows` job in
 `.github/workflows/build.yaml` (not a matrix entry, so a Windows failure is
 isolated from the Linux jobs): Conan-provided Vulkan loader/headers and glslang,
-MSVC 19.4x + Ninja, `Test_Main.exe` on the mock ICD. `scripts/windows/setup.ps1`
+the runner's MSVC toolset + Ninja, `Test_Main.exe` on the mock ICD. `scripts/windows/setup.ps1`
 mirrors it for developers (`USE_MOCK_ICD=1`).
 
 ### T12 – Namespaces and public headers (cross-cutting) — issue #42
