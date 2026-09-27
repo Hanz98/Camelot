@@ -30,10 +30,13 @@ if(CAMELOT_TESTS_USE_MOCK_ICD)
   # test_main.cpp). Passing the variables through CTest's ENVIRONMENT
   # property is not reliable across CMake versions: with CMake 3.31 the list
   # arrived as one string and CI silently ran on whatever driver the runner
-  # had.
-  set(_mock_icd_json "${CMAKE_BINARY_DIR}/lib/VkICD_mock_icd.json")
-  target_compile_definitions(Test_Main
-                             PRIVATE CAMELOT_MOCK_ICD_JSON="${_mock_icd_json}")
+  # had. CAMELOT_MOCK_ICD_JSON is set by Tests/ext/CMakeLists.txt: the manifest
+  # sits next to the mock driver library (lib/ on Linux, bin/ on Windows).
+  if(NOT CAMELOT_MOCK_ICD_JSON)
+    message(FATAL_ERROR "CAMELOT_MOCK_ICD_JSON not set by Tests/ext")
+  endif()
+  target_compile_definitions(
+    Test_Main PRIVATE CAMELOT_MOCK_ICD_JSON="${CAMELOT_MOCK_ICD_JSON}")
   add_dependencies(Test_Main VkICD_mock_icd)
 endif()
 

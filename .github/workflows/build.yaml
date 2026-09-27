@@ -45,6 +45,92 @@ jobs:
             test-report.xml
           if-no-files-found: ignore
 
+  build-windows:
+    name: Build and test (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 45  # first run builds most Conan packages from source
+    env:
+      CONAN_PROFILE: profiles/Camelot-Win
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Conan and Ninja
+        run: pip install "conan>=2.0" ninja
+
+      - name: Set up MSVC environment
+        # Puts cl.exe (VS 2022, toolset 14.4x = Conan compiler.version=194,
+        # as pinned in profiles/Camelot-Win) on PATH for the steps below.
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Cache Conan packages
+        # Cross-key restores are safe only because implot is force-built
+        # below (see .github/actions/setup-build/action.yaml); every other
+        # package's id changes with the settings it was built for.
+        uses: actions/cache@v4
+        with:
+          path: ~/.conan2/p
+          key: conan-${{ runner.os }}-${{ hashFiles('conanfile.py', 'profiles/Camelot-Win') }}
+          restore-keys: conan-${{ runner.os }}-
+
+      - name: Install Conan dependencies
+        # No Vulkan SDK: vulkan-loader, vulkan-headers and glslang come from
+        # Conan. Packages without a prebuilt binary (and their tool
+        # requirements, e.g. nasm) are built from source. Build tools are
+        # always Release; the profile's Debug default is for developers.
+        shell: bash
+        run: |
+          conan install . \
+            --profile:host="$CONAN_PROFILE" \
+            --profile:build="$CONAN_PROFILE" \
+            -s build_type="$BUILD_TYPE" \
+            -s:b build_type=Release \
+            --build=missing \
+            --build="implot/*"
+
+      - name: Configure
+        shell: bash
+        run: |
+          cmake -S . -B "$BUILD_DIR" -G Ninja \
+            -DCMAKE_TOOLCHAIN_FILE="$BUILD_DIR/generators/conan_toolchain.cmake" \
+            -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
+            -DBUILD_TESTING=ON \
+            -DCAMELOT_TESTS_USE_MOCK_ICD=ON
+
+      - name: Build
+        shell: bash
+        run: |
+          set -o pipefail
+          cmake --build "$BUILD_DIR" --config "$BUILD_TYPE" 2>&1 | tee build.log
+
+      - name: Test (mock Vulkan ICD)
+        # vulkan-1.dll lives in the Conan cache, so the tests run inside
+        # Conan's run environment (conanrun.bat, hence cmd). The runner has a
+        # desktop session, so GLFW creates windows without xvfb. Paths are
+        # BUILD_DIR with backslashes.
+        shell: cmd
+        run: |
+          call build\Release\generators\conanrun.bat || exit /b 1
+          build\Release\bin\Test_Main.exe --gtest_output=xml:test-report.xml
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs-windows
+          path: |
+            build.log
+            test-report.xml
+            build/Release/CMakeFiles/CMakeConfigureLog.yaml
+          if-no-files-found: ignore
+
   static-analysis:
     name: clang-tidy and cppcheck
     runs-on: ubuntu-latest
