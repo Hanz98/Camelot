@@ -73,7 +73,11 @@ jobs:
             -DCAMELOT_TESTS_USE_MOCK_ICD=ON
 
       - name: Build
-        run: cmake --build "$BUILD_DIR" --config "$BUILD_TYPE" 2>&1 | tee build.log
+        # pipefail: without it a failed build is masked by tee and only the
+        # test step notices.
+        run: |
+          set -o pipefail
+          cmake --build "$BUILD_DIR" --config "$BUILD_TYPE" 2>&1 | tee build.log
 
       - name: Test (mock Vulkan ICD, headless)
         run: xvfb-run -a ctest --test-dir "$BUILD_DIR" --output-on-failure

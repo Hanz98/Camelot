@@ -6,6 +6,7 @@ option(CAMELOT_TESTS_USE_MOCK_ICD
        OFF)
 
 find_package(GTest REQUIRED)
+find_package(glfw3 REQUIRED)
 find_package(vk-bootstrap REQUIRED)
 
 add_executable(Test_Main test_main.cpp)
