@@ -19,8 +19,11 @@
 #include <cstddef>
 #include <filesystem>  // NOLINT(build/c++17)
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
+
+#include <glm/glm.hpp>
 
 #include "Avalon/src/main/Avalon.h"
 #include "Avalon/src/renderer/MeshDrawable.h"
@@ -91,6 +94,8 @@ class MainModel : public ICamelot {
   unsigned m_nextGraphId{1};
   unsigned m_nextVideoId{1};
   bool m_layoutBuilt{false};
+  std::string m_egoFrame;
+  bool m_followEgo{true};
   double m_time{0.0};
 
  public:
@@ -151,6 +156,15 @@ class MainModel : public ICamelot {
   [[nodiscard]] std::vector<VideoWindow>& videos() { return m_videos; }
   // The image topics of the open recording (empty without one).
   [[nodiscard]] std::vector<std::string> cameraTopics() const;
+  // The frame the 3D views follow while a recording plays: the render frame's
+  // first child ("base_link" when present), i.e. the recorded vehicle. Empty
+  // without a recording or without transforms.
+  [[nodiscard]] const std::string& egoFrame() const { return m_egoFrame; }
+  // Position of the ego frame in the render frame at the playback time.
+  [[nodiscard]] std::optional<glm::vec3> egoPosition() const;
+  // Whether every 3D view keeps its orbit target on the ego frame.
+  [[nodiscard]] bool followEgo() const { return m_followEgo; }
+  void setFollowEgo(bool follow) { m_followEgo = follow; }
 
  private:
   void clearScene();
@@ -162,6 +176,10 @@ class MainModel : public ICamelot {
   void drawCameraWindow(const VideoWindow& video);
   void drawOpenErrorModal();
   void updateVideoOverlays(double dt);
+  void chooseEgoFrame();
+  // Points a view at the ego frame from a fixed distance above and behind it.
+  void frameOnEgo(avalon::SceneViewWidget& view) const;
+  void followEgoVehicle();
 };
 
 }  // namespace camelot

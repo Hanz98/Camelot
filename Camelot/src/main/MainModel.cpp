@@ -30,6 +30,7 @@
 #include <exception>
 #include <memory>
 #include <numbers>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
@@ -41,6 +42,7 @@
 #include "Avalon/src/renderer/Renderer.h"
 #include "Avalon/src/ui/TestPatternSource.h"
 #include "Camelot/src/data/FoxgloveMessages.h"
+#include "Camelot/src/data/TransformTree.h"
 
 namespace camelot {
 
@@ -50,6 +52,12 @@ constexpr uint32_t kVideoHeight = 180;
 constexpr double kVideoFps = 25.0;
 constexpr const char* kDockspaceName = "CamelotDockspace";
 constexpr const char* kSceneWindow = "Scene";
+// The vehicle frame nuScenes-style recordings use; other recordings fall back
+// to the render frame's first child.
+constexpr const char* kBaseLinkFrame = "base_link";
+// Initial follow camera: 60 m from the car, pitched down about 50 degrees.
+constexpr float kFollowDistance = 60.0F;
+constexpr float kFollowPitch = 0.9F;
 constexpr const char* kOpenErrorPopup = "Open failed";
 constexpr std::array<double, 5> kSpeeds = {0.25, 0.5, 1.0, 2.0, 4.0};
 constexpr std::array<const char*, 5> kSpeedLabels = {"0.25x", "0.5x", "1x",
@@ -222,7 +230,70 @@ bool MainModel::openRecording(const std::filesystem::path& path) {
   m_recording->seek(m_recording->playback().start());
   m_recording->playback().play();
   m_timelineOpen = true;
+  // Map-frame coordinates are hundreds of metres from the origin the demo
+  // scene orbits, so every view is re-aimed at the vehicle.
+  chooseEgoFrame();
+  for (SceneViewWindow& view : m_sceneViews) {
+    frameOnEgo(*view.view);
+  }
   return true;
+}
+
+void MainModel::chooseEgoFrame() {
+  m_egoFrame.clear();
+  if (m_recording == nullptr) {
+    return;
+  }
+  const TransformTree& tree = m_recording->transforms();
+  const std::string& render = m_recording->renderFrame();
+  for (const std::string& frame : tree.frames()) {
+    if (tree.parent(frame) == render) {
+      if (frame == kBaseLinkFrame) {
+        m_egoFrame = frame;
+        return;
+      }
+      if (m_egoFrame.empty()) {
+        m_egoFrame = frame;
+      }
+    }
+  }
+}
+
+std::optional<glm::vec3> MainModel::egoPosition() const {
+  if (m_recording == nullptr || m_egoFrame.empty()) {
+    return std::nullopt;
+  }
+  const std::optional<glm::mat4> egoToRender =
+      m_recording->transforms().lookup(m_recording->renderFrame(), m_egoFrame,
+                                       m_recording->playback().current());
+  if (!egoToRender) {
+    return std::nullopt;
+  }
+  return glm::vec3((*egoToRender)[3]);
+}
+
+void MainModel::frameOnEgo(avalon::SceneViewWidget& view) const {
+  const std::optional<glm::vec3> ego = egoPosition();
+  if (!ego) {
+    return;
+  }
+  avalon::Camera& camera = view.camera();
+  camera.setTarget(*ego);
+  camera.setDistance(kFollowDistance);
+  camera.setYawPitch(camera.getYaw(), kFollowPitch);
+}
+
+void MainModel::followEgoVehicle() {
+  if (!m_followEgo) {
+    return;
+  }
+  const std::optional<glm::vec3> ego = egoPosition();
+  if (!ego) {
+    return;
+  }
+  for (SceneViewWindow& view : m_sceneViews) {
+    view.view->camera().setTarget(*ego);
+  }
 }
 
 void MainModel::buildTopicTree() {
@@ -269,6 +340,7 @@ MainModel::SceneViewWindow& MainModel::addSceneView() {
       m_avalon.getUi(), renderer, avalon::Renderer::kFramesInFlight);
   renderer->addPrePass(window.view);
   m_sceneViews.push_back(std::move(window));
+  frameOnEgo(*m_sceneViews.back().view);
   return m_sceneViews.back();
 }
 
@@ -473,6 +545,10 @@ void MainModel::drawTimelineWindow() {
       playback.setLoop(loop);
     }
     ImGui::SameLine();
+    if (!m_egoFrame.empty()) {
+      ImGui::Checkbox("Follow car", &m_followEgo);
+      ImGui::SameLine();
+    }
     const Time start = playback.start();
     const double duration =
         static_cast<double>(playback.end() - start) / kNanosPerSecond;
@@ -572,6 +648,7 @@ void MainModel::buildUi() {
   m_time += dt;
   if (m_recording != nullptr) {
     m_recording->tick(dt);
+    followEgoVehicle();
   }
   for (GraphWindow& graph : m_graphs) {
     graph.graph->push(static_cast<float>(dt * 1000.0));

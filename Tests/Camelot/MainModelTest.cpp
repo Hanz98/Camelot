@@ -168,6 +168,15 @@ TEST(MainModelTest, OpensARecordingWithTopicsTimelineAndCameras) {
 
   // A seek reloads the state at that time: radar has arrived by then.
   const Time start = model.recording()->playback().start();
+  // The 3D views follow the car: the orbit target is the ego frame's position
+  // in the render frame, which moves along +x in the fixture.
+  EXPECT_EQ(model.egoFrame(), "base_link");
+  EXPECT_TRUE(model.followEgo());
+  ASSERT_TRUE(model.egoPosition().has_value());
+  EXPECT_EQ(model.sceneViews().front().view->camera().getTarget(),
+            *model.egoPosition());
+  const glm::vec3 targetBefore =
+      model.sceneViews().front().view->camera().getTarget();
   model.recording()->seek(start + 1'700'000'000ULL);
   EXPECT_EQ(model.sceneUpdater()->cloudCount(), 2U);
   EXPECT_EQ(model.sceneUpdater()->entityCount(), 4U);
@@ -176,6 +185,17 @@ TEST(MainModelTest, OpensARecordingWithTopicsTimelineAndCameras) {
   for (int i = 0; i < 2; ++i) {
     EXPECT_TRUE(model.engine().frame());
   }
+  // After the seek the follow target moved with the car (+x in the fixture),
+  // and switching the follow off leaves the target where the user put it.
+  const glm::vec3 targetAfter =
+      model.sceneViews().front().view->camera().getTarget();
+  EXPECT_GT(targetAfter.x, targetBefore.x);
+  EXPECT_EQ(targetAfter, *model.egoPosition());
+  model.setFollowEgo(false);
+  model.sceneViews().front().view->camera().setTarget(glm::vec3(1.0F));
+  EXPECT_TRUE(model.engine().frame());
+  EXPECT_EQ(model.sceneViews().front().view->camera().getTarget(),
+            glm::vec3(1.0F));
 
   // Extra camera windows come from the Windows menu.
   model.addCameraView("/CAM_BACK/image_rect_compressed");
