@@ -125,7 +125,8 @@ TEST_F(SceneViewTest, DrawsInsideAWindowAndFollowsItsSize) {
   EXPECT_GT(view->target().width(), 200U);
   EXPECT_LT(view->target().width(), 300U);
   EXPECT_GT(view->renderedFrames(), 0U);
-  EXPECT_FALSE(view->isHovered());
+  // isHovered() follows the real cursor, which on a CI desktop (Windows) can
+  // sit inside the freshly created window, so it is deliberately not asserted.
   avalon.setUiCallback(nullptr);
   avalon.getRenderer()->removePrePass(view);
 }
