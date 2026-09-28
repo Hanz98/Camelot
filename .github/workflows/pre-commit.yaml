@@ -19,21 +19,14 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Cache hook environments
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pre-commit
-          key: pre-commit-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml') }}
-
       - name: Install pre-commit and the hooks
-        # pip wheels that ship a binary (clang-format) have come back from the
-        # cache without their executable bit, which made the hook fail with
-        # "Permission denied"; restoring the bit is cheap and idempotent.
+        # The hook environments are deliberately not cached: a restored cache
+        # repeatedly came back with the clang-format wheel's binary lacking its
+        # executable bit ("Permission denied"). A fresh install costs about a
+        # minute and is reproducible.
         run: |
           pip install pre-commit
           pre-commit install-hooks
-          find ~/.cache/pre-commit -path '*/site-packages/clang_format/data/bin/*' \
-            -type f -exec chmod u+x {} +
 
       - name: Run pre-commit
         run: pre-commit run --all-files --show-diff-on-failure --color=always

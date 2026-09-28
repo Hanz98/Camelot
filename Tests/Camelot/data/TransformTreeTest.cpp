@@ -44,8 +44,9 @@ Quat identity() { return quat(0.0, 0.0, 0.0, 1.0); }
 Quat quarterTurn() { return quat(0.0, 0.0, kHalfSqrt2, kHalfSqrt2); }
 
 FrameTransform makeTransform(const std::string& parent,
-                             const std::string& child, Time t, Vec3 translation,
-                             Quat rotation = identity()) {
+                             const std::string& child, Time t,
+                             const Vec3& translation,
+                             const Quat& rotation = identity()) {
   FrameTransform tf;
   tf.timestamp = t;
   tf.parentFrameId = parent;
