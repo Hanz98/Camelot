@@ -76,6 +76,26 @@ If a link fails with `undefined reference to ImGui::GetForegroundDrawList()`,
 an implot binary built against a non-docking imgui is in your Conan cache;
 rebuild it with `CONAN_ARGS='--build=implot/*'` (see the CI section).
 
+## Replaying a recording
+
+```sh
+build/Release/bin/Pendragon path/to/recording.mcap   # replay
+build/Release/bin/Pendragon                          # demo scene
+build/Release/bin/Pendragon --help
+```
+
+Pendragon replays a Foxglove-style MCAP recording (for example the
+`nuscenes2mcap` output): camera images (`foxglove.CompressedImage`, JPEG)
+in one window per camera with their `ImageAnnotations` drawn on top, point
+clouds (`foxglove.PointCloud`, coloured by intensity), scene entities
+(`foxglove.SceneUpdate`: cubes, spheres, arrows and lines) and transforms
+(`foxglove.FrameTransform`), everything expressed in the `map` frame. The
+**Timeline** window has play/pause, speed, loop and a seek slider; the
+**Scene** window lists every topic with a visibility checkbox, unsupported
+schemas (grids, models, text, JSON channels, GPS) greyed out. A missing or
+unreadable file is reported on stderr with exit code 2 before any window
+opens. `Tests/fixtures/nuscenes-mini.mcap` is a small sample to try.
+
 ## Shaders
 
 GLSL sources live in `Avalon/shaders/` and are listed in

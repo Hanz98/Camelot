@@ -17,6 +17,7 @@
 #define CAMELOT_SRC_MAIN_MAINMODEL_H_
 
 #include <cstddef>
+#include <filesystem>  // NOLINT(build/c++17)
 #include <memory>
 #include <string>
 #include <vector>
@@ -29,13 +30,16 @@
 #include "Avalon/src/ui/TreeWidget.h"
 #include "Avalon/src/ui/VideoWidget.h"
 #include "Camelot/API/main/ICamelot.h"
+#include "Camelot/src/replay/Recording.h"
+#include "Camelot/src/replay/SceneUpdater.h"
 
 namespace camelot {
 
 // The application: a scene of drawables and a dockable UI in which every
 // widget lives in its own window and can be opened any number of times. The
 // 3D scene is one such widget (SceneViewWidget) rendered offscreen; the
-// swapchain only carries the UI.
+// swapchain only carries the UI. Without a recording the scene is the demo
+// scene; openRecording() replaces it with the replay of an MCAP file.
 class MainModel : public ICamelot {
  public:
   struct SceneViewWindow {
@@ -48,23 +52,38 @@ class MainModel : public ICamelot {
     std::unique_ptr<avalon::GraphWidget> graph;
     bool open{true};
   };
+  // Either a test video (widget, texture and overlays owned here) or a
+  // camera window of a recording (`topic` set, widget null: the texture is
+  // the SceneUpdater's and is looked up every frame).
   struct VideoWindow {
     std::string title;
+    std::string topic;
     std::shared_ptr<avalon::VideoTexture> texture;
     std::unique_ptr<avalon::VideoWidget> widget;
     std::shared_ptr<avalon::MeshDrawable> box;
     std::shared_ptr<avalon::PointCloudDrawable> marker;
     bool open{true};
+
+    [[nodiscard]] bool isCamera() const { return !topic.empty(); }
   };
+
+  static constexpr const char* kTimelineWindow = "Timeline";
+  static constexpr const char* kTopicsBranch = "Topics";
+  static constexpr const char* kUnsupportedBranch = "Unsupported topics";
 
  private:
   avalon::Avalon m_avalon;
   std::vector<std::shared_ptr<avalon::MeshDrawable>> m_objects;
   std::shared_ptr<avalon::PointCloudDrawable> m_points;
+  std::unique_ptr<Recording> m_recording;
+  std::unique_ptr<SceneUpdater> m_sceneUpdater;
 
   // UI state.
   avalon::TreeNode m_sceneTree;
+  avalon::TreeNode m_unsupportedTree;
   bool m_sceneWindowOpen{true};
+  bool m_timelineOpen{true};
+  std::string m_openError;
   std::vector<SceneViewWindow> m_sceneViews;
   std::vector<GraphWindow> m_graphs;
   std::vector<VideoWindow> m_videos;
@@ -79,14 +98,20 @@ class MainModel : public ICamelot {
   void test();
 
   // Initialises the engine and runs the frame loop until the window closes.
-  void run();
+  // With a recording path the scene is the replay, otherwise the demo scene.
+  void run(const std::filesystem::path& recording = {});
 
   // Fills the scene with a few boxes, spheres, a cylinder and a single point
   // until real data (roadmap T7/T8) replaces them. Requires an initialised
   // engine.
   void populateDemoScene();
+  // Replaces the scene with the replay of an MCAP file: topic tree, camera
+  // windows, timeline. Errors are logged, shown in a modal and reported as
+  // false; the previous scene is kept then. Requires an initialised engine.
+  bool openRecording(const std::filesystem::path& path);
   // Creates the default windows: one 3D view, the scene tree, a frame-time
-  // graph and a test video. Requires an initialised engine.
+  // graph and a test video (only without a recording). Requires an
+  // initialised engine.
   void setupUi();
   // Builds the ImGui windows for one frame (called from the engine).
   void buildUi();
@@ -97,6 +122,8 @@ class MainModel : public ICamelot {
   SceneViewWindow& addSceneView();
   GraphWindow& addGraph();
   VideoWindow& addVideo();
+  // A window showing the camera of an image topic of the open recording.
+  VideoWindow& addCameraView(const std::string& topic);
   // Drops the windows whose close button was pressed (or `open` cleared).
   void pruneClosedWindows();
 
@@ -108,17 +135,32 @@ class MainModel : public ICamelot {
   [[nodiscard]] std::shared_ptr<avalon::PointCloudDrawable> points() const {
     return m_points;
   }
+  [[nodiscard]] Recording* recording() const { return m_recording.get(); }
+  [[nodiscard]] SceneUpdater* sceneUpdater() const {
+    return m_sceneUpdater.get();
+  }
+  [[nodiscard]] const std::string& openError() const { return m_openError; }
   [[nodiscard]] avalon::TreeNode& sceneTree() { return m_sceneTree; }
+  [[nodiscard]] avalon::TreeNode& unsupportedTree() {
+    return m_unsupportedTree;
+  }
   [[nodiscard]] std::vector<SceneViewWindow>& sceneViews() {
     return m_sceneViews;
   }
   [[nodiscard]] std::vector<GraphWindow>& graphs() { return m_graphs; }
   [[nodiscard]] std::vector<VideoWindow>& videos() { return m_videos; }
+  // The image topics of the open recording (empty without one).
+  [[nodiscard]] std::vector<std::string> cameraTopics() const;
 
  private:
+  void clearScene();
+  void buildTopicTree();
   void buildDefaultLayout();
   void drawMenuBar();
   void drawSceneWindow();
+  void drawTimelineWindow();
+  void drawCameraWindow(const VideoWindow& video);
+  void drawOpenErrorModal();
   void updateVideoOverlays(double dt);
 };
 

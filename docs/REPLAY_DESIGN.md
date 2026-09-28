@@ -9,6 +9,15 @@ topics and schemas are listed at the end. Everything must also build on Windows 
 Layering stays as in `docs/ROADMAP.md`: Avalon knows nothing about MCAP; Camelot owns
 data ingestion, playback and the scene; Pendragon parses arguments.
 
+## Status
+
+| Module | Status |
+|---|---|
+| data (`Camelot/src/data/`) | merged into `feature/mcap-replay` |
+| lines (`avalon::LineDrawable`) | merged into `feature/mcap-replay` |
+| ci (Windows job, portability) | in progress on `feature/mcap-replay-ci` |
+| replay (`Camelot/src/replay/`, `MainModel`, Pendragon arguments) | implemented on `feature/mcap-replay-replay`: `Recording`, `IRecordingSink`, `SceneUpdater`, topic tree, timeline, camera windows, `Pendragon [--help] [recording.mcap]`; texts, grids, models and triangle lists are counted but not drawn |
+
 ## Decisions
 
 - **MCAP reading**: `mcap` from Conan (header-only, `mcap/2.1.3`) with `lz4` and `zstd`

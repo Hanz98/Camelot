@@ -17,14 +17,22 @@
 
 #include <imgui.h>
 #include <imgui_internal.h>
+#include <spdlog/fmt/chrono.h>
 #include <spdlog/fmt/fmt.h>
+#include <spdlog/spdlog.h>
 
 #include <algorithm>
+#include <array>
 #include <cmath>
+#include <cstddef>
+#include <cstdint>
+#include <ctime>
+#include <exception>
 #include <memory>
 #include <numbers>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -32,6 +40,7 @@
 #include "Avalon/src/geometry/Shapes.h"
 #include "Avalon/src/renderer/Renderer.h"
 #include "Avalon/src/ui/TestPatternSource.h"
+#include "Camelot/src/data/FoxgloveMessages.h"
 
 namespace camelot {
 
@@ -41,6 +50,37 @@ constexpr uint32_t kVideoHeight = 180;
 constexpr double kVideoFps = 25.0;
 constexpr const char* kDockspaceName = "CamelotDockspace";
 constexpr const char* kSceneWindow = "Scene";
+constexpr const char* kOpenErrorPopup = "Open failed";
+constexpr std::array<double, 5> kSpeeds = {0.25, 0.5, 1.0, 2.0, 4.0};
+constexpr std::array<const char*, 5> kSpeedLabels = {"0.25x", "0.5x", "1x",
+                                                     "2x", "4x"};
+constexpr double kNanosPerSecond = 1e9;
+constexpr float kMinImageWidth = 64.0F;
+
+// "2020-09-13 12:26:40.250 UTC" for a nanosecond timestamp.
+std::string wallClock(Time t) {
+  const auto seconds = static_cast<std::time_t>(t / 1'000'000'000ULL);
+  const auto millis = (t % 1'000'000'000ULL) / 1'000'000ULL;
+  return fmt::format("{:%Y-%m-%d %H:%M:%S}.{:03} UTC", fmt::gmtime(seconds),
+                     millis);
+}
+
+// Draws `texture` fitted to the window like VideoWidget::draw() does.
+void drawFittedImage(const avalon::VideoTexture& texture) {
+  const ImVec2 avail = ImGui::GetContentRegionAvail();
+  const float aspect = static_cast<float>(texture.width()) /
+                       static_cast<float>(texture.height());
+  float width = std::max(avail.x, kMinImageWidth);
+  float height = width / aspect;
+  if (avail.y > kMinImageWidth && height > avail.y) {
+    height = avail.y;
+    width = height * aspect;
+  }
+  // ImGui identifies textures by an integer; the Vulkan backend expects the
+  // descriptor set handle in it.
+  const auto id = reinterpret_cast<ImTextureID>(texture.uiTexture());  // NOLINT
+  ImGui::Image(ImTextureRef(id), ImVec2(width, height));
+}
 }  // namespace
 
 void MainModel::test() {
@@ -49,9 +89,11 @@ void MainModel::test() {
   m_avalon.cleanUp();
 }
 
-void MainModel::run() {
+void MainModel::run(const std::filesystem::path& recording) {
   m_avalon.init();
-  populateDemoScene();
+  if (recording.empty() || !openRecording(recording)) {
+    populateDemoScene();
+  }
   setupUi();
   while (m_avalon.frame()) {
     pruneClosedWindows();
@@ -65,7 +107,9 @@ void MainModel::teardown() {
   m_avalon.setUiCallback(nullptr);
   if (renderer != nullptr) {
     for (VideoWindow& video : m_videos) {
-      renderer->removePrePass(video.texture);
+      if (video.texture != nullptr) {
+        renderer->removePrePass(video.texture);
+      }
     }
     for (SceneViewWindow& view : m_sceneViews) {
       renderer->removePrePass(view.view);
@@ -75,10 +119,35 @@ void MainModel::teardown() {
   m_videos.clear();
   m_sceneViews.clear();
   m_graphs.clear();
-  m_sceneTree = avalon::TreeNode{};
-  m_points.reset();
-  m_objects.clear();
+  clearScene();
+  m_openError.clear();
   m_layoutBuilt = false;
+}
+
+void MainModel::clearScene() {
+  avalon::Renderer* renderer = m_avalon.getRenderer();
+  if (m_sceneUpdater != nullptr) {
+    m_sceneUpdater->clear();
+  }
+  if (m_recording != nullptr) {
+    m_recording->setSink(nullptr);
+  }
+  m_sceneUpdater.reset();
+  m_recording.reset();
+  if (renderer != nullptr) {
+    for (const auto& object : m_objects) {
+      renderer->removeDrawable(object);
+    }
+    if (m_points != nullptr) {
+      renderer->removeDrawable(m_points);
+    }
+  }
+  m_objects.clear();
+  m_points.reset();
+  // Camera windows only reference the updater's textures.
+  std::erase_if(m_videos, [](const VideoWindow& v) { return v.isCamera(); });
+  m_sceneTree = avalon::TreeNode{};
+  m_unsupportedTree = avalon::TreeNode{};
 }
 
 void MainModel::populateDemoScene() {
@@ -87,6 +156,7 @@ void MainModel::populateDemoScene() {
   const std::shared_ptr<avalon::VmaAllocatorWrapper> allocator =
       m_avalon.getAllocator();
 
+  clearScene();
   m_sceneTree = avalon::TreeNode{.label = "Scene"};
   avalon::TreeNode& objects = m_sceneTree.add("Objects");
 
@@ -124,6 +194,70 @@ void MainModel::populateDemoScene() {
   m_sceneTree.add("Points", true, [points = m_points](bool visible) {
     points->setVisible(visible);
   });
+}
+
+bool MainModel::openRecording(const std::filesystem::path& path) {
+  auto recording = std::make_unique<Recording>();
+  try {
+    recording->open(path);
+  } catch (const std::exception& error) {
+    spdlog::error("MainModel: cannot open {}: {}", path.string(), error.what());
+    m_openError =
+        fmt::format("Cannot open {}:\n{}", path.string(), error.what());
+    return false;
+  }
+  clearScene();
+  m_recording = std::move(recording);
+  m_sceneUpdater = std::make_unique<SceneUpdater>(
+      m_avalon.getDevice(), m_avalon.getAllocator(), m_avalon.getRenderer(),
+      m_avalon.getUi());
+  m_sceneUpdater->setTransforms(&m_recording->transforms());
+  m_sceneUpdater->setRenderFrame(m_recording->renderFrame());
+  m_recording->setSink(m_sceneUpdater.get());
+  buildTopicTree();
+  for (const std::string& topic : cameraTopics()) {
+    addCameraView(topic);
+  }
+  // Show the state at the start right away, then play.
+  m_recording->seek(m_recording->playback().start());
+  m_recording->playback().play();
+  m_timelineOpen = true;
+  return true;
+}
+
+void MainModel::buildTopicTree() {
+  m_sceneTree = avalon::TreeNode{.label = "Scene"};
+  avalon::TreeNode& topics = m_sceneTree.add(kTopicsBranch);
+  m_unsupportedTree = avalon::TreeNode{.label = kUnsupportedBranch};
+  for (const RecordingTopic& topic : m_recording->topics()) {
+    if (topic.supported) {
+      topics.add(topic.topic, topic.visible,
+                 [this, name = topic.topic](bool visible) {
+                   if (m_recording != nullptr) {
+                     m_recording->setTopicVisible(name, visible);
+                   }
+                 });
+    } else {
+      m_unsupportedTree.add(
+          fmt::format(
+              "{} ({})", topic.topic,
+              topic.schemaName.empty() ? "no schema" : topic.schemaName),
+          false);
+    }
+  }
+}
+
+std::vector<std::string> MainModel::cameraTopics() const {
+  std::vector<std::string> topics;
+  if (m_recording == nullptr) {
+    return topics;
+  }
+  for (const RecordingTopic& topic : m_recording->topics()) {
+    if (topic.schemaName == Recording::kCompressedImageSchema) {
+      topics.push_back(topic.topic);
+    }
+  }
+  return topics;
 }
 
 MainModel::SceneViewWindow& MainModel::addSceneView() {
@@ -176,6 +310,15 @@ MainModel::VideoWindow& MainModel::addVideo() {
   return m_videos.back();
 }
 
+MainModel::VideoWindow& MainModel::addCameraView(const std::string& topic) {
+  VideoWindow window;
+  // The part after "##" keeps the ImGui id unique for repeated windows.
+  window.title = fmt::format("Camera {}##{}", topic, m_nextVideoId++);
+  window.topic = topic;
+  m_videos.push_back(std::move(window));
+  return m_videos.back();
+}
+
 void MainModel::pruneClosedWindows() {
   avalon::Renderer* renderer = m_avalon.getRenderer();
   for (auto it = m_sceneViews.begin(); it != m_sceneViews.end();) {
@@ -188,7 +331,9 @@ void MainModel::pruneClosedWindows() {
   }
   for (auto it = m_videos.begin(); it != m_videos.end();) {
     if (!it->open) {
-      renderer->removePrePass(it->texture);
+      if (it->texture != nullptr) {
+        renderer->removePrePass(it->texture);
+      }
       it = m_videos.erase(it);
     } else {
       ++it;
@@ -201,13 +346,16 @@ void MainModel::setupUi() {
   m_avalon.getRenderer()->setDrawablesInMainPass(false);
   addSceneView();
   addGraph();
-  addVideo();
+  if (m_recording == nullptr) {
+    addVideo();
+  }
   m_avalon.setUiCallback([this]() { buildUi(); });
 }
 
 void MainModel::buildDefaultLayout() {
   // First frame only: split the dockspace into the scene tree on the left,
-  // the 3D view in the middle, the graph below it and the video on the right.
+  // the 3D view in the middle, the graph and timeline below it and the
+  // videos on the right.
   const ImGuiID dockspace = ImGui::GetID(kDockspaceName);
   if (ImGui::DockBuilderGetNode(dockspace) == nullptr ||
       ImGui::DockBuilderGetNode(dockspace)->IsLeafNode()) {
@@ -229,8 +377,9 @@ void MainModel::buildDefaultLayout() {
     if (!m_graphs.empty()) {
       ImGui::DockBuilderDockWindow(m_graphs.front().title.c_str(), bottom);
     }
-    if (!m_videos.empty()) {
-      ImGui::DockBuilderDockWindow(m_videos.front().title.c_str(), right);
+    ImGui::DockBuilderDockWindow(kTimelineWindow, bottom);
+    for (const VideoWindow& video : m_videos) {
+      ImGui::DockBuilderDockWindow(video.title.c_str(), right);
     }
     ImGui::DockBuilderFinish(dockspace);
   }
@@ -249,8 +398,19 @@ void MainModel::drawMenuBar() {
       if (ImGui::MenuItem("New video")) {
         addVideo();
       }
+      if (m_recording != nullptr && ImGui::BeginMenu("New camera view")) {
+        for (const std::string& topic : cameraTopics()) {
+          if (ImGui::MenuItem(topic.c_str())) {
+            addCameraView(topic);
+          }
+        }
+        ImGui::EndMenu();
+      }
       ImGui::Separator();
       ImGui::MenuItem(kSceneWindow, nullptr, &m_sceneWindowOpen);
+      if (m_recording != nullptr) {
+        ImGui::MenuItem(kTimelineWindow, nullptr, &m_timelineOpen);
+      }
       ImGui::EndMenu();
     }
     ImGui::EndMainMenuBar();
@@ -263,7 +423,22 @@ void MainModel::drawSceneWindow() {
   }
   if (ImGui::Begin(kSceneWindow, &m_sceneWindowOpen)) {
     avalon::TreeWidget::draw(m_sceneTree);
+    if (!m_unsupportedTree.children.empty()) {
+      // TreeWidget has no per-node disabled state, so the topics Camelot
+      // cannot render form their own greyed-out branch.
+      ImGui::BeginDisabled();
+      avalon::TreeWidget::draw(m_unsupportedTree);
+      ImGui::EndDisabled();
+    }
     ImGui::Separator();
+    if (m_sceneUpdater != nullptr) {
+      ImGui::TextUnformatted(
+          fmt::format(
+              "{} entities, {} clouds, {} cameras, {} texts not drawn",
+              m_sceneUpdater->entityCount(), m_sceneUpdater->cloudCount(),
+              m_sceneUpdater->cameraCount(), m_sceneUpdater->textCount())
+              .c_str());
+    }
     ImGui::TextUnformatted(fmt::format("{} views, {} graphs, {} videos",
                                        m_sceneViews.size(), m_graphs.size(),
                                        m_videos.size())
@@ -272,8 +447,106 @@ void MainModel::drawSceneWindow() {
   ImGui::End();
 }
 
+void MainModel::drawTimelineWindow() {
+  if (!m_timelineOpen || m_recording == nullptr) {
+    return;
+  }
+  ImGui::SetNextWindowSize(ImVec2(640, 110), ImGuiCond_FirstUseEver);
+  if (ImGui::Begin(kTimelineWindow, &m_timelineOpen)) {
+    Playback& playback = m_recording->playback();
+    if (ImGui::Button(playback.isPlaying() ? "Pause" : "Play")) {
+      playback.toggle();
+    }
+    ImGui::SameLine();
+    // The combo entry nearest to the current speed.
+    const auto nearest = std::ranges::min_element(
+        kSpeeds, {}, [&](double s) { return std::abs(s - playback.speed()); });
+    int speed = static_cast<int>(nearest - kSpeeds.begin());
+    ImGui::SetNextItemWidth(80.0F);
+    if (ImGui::Combo("##speed", &speed, kSpeedLabels.data(),
+                     static_cast<int>(kSpeedLabels.size()))) {
+      playback.setSpeed(kSpeeds.at(static_cast<size_t>(speed)));
+    }
+    ImGui::SameLine();
+    bool loop = playback.loop();
+    if (ImGui::Checkbox("Loop", &loop)) {
+      playback.setLoop(loop);
+    }
+    ImGui::SameLine();
+    const Time start = playback.start();
+    const double duration =
+        static_cast<double>(playback.end() - start) / kNanosPerSecond;
+    const double position =
+        static_cast<double>(playback.current() - start) / kNanosPerSecond;
+    ImGui::TextUnformatted(fmt::format("{:.2f} / {:.2f} s   {}", position,
+                                       duration, wallClock(playback.current()))
+                               .c_str());
+
+    auto slider = static_cast<float>(position);
+    ImGui::SetNextItemWidth(-1.0F);
+    if (ImGui::SliderFloat("##time", &slider, 0.0F,
+                           static_cast<float>(duration), "%.2f s")) {
+      m_recording->seek(
+          start + static_cast<Time>(std::max(0.0F, slider) * kNanosPerSecond));
+    }
+  }
+  ImGui::End();
+}
+
+void MainModel::drawCameraWindow(const VideoWindow& video) {
+  const std::shared_ptr<avalon::VideoTexture> texture =
+      m_sceneUpdater != nullptr ? m_sceneUpdater->cameraTexture(video.topic)
+                                : nullptr;
+  const SceneUpdater::Camera* camera =
+      m_sceneUpdater != nullptr ? m_sceneUpdater->camera(video.topic) : nullptr;
+  const RecordingTopic* topic =
+      m_recording != nullptr ? m_recording->topic(video.topic) : nullptr;
+  ImGui::TextUnformatted(
+      fmt::format("{}  frame {}  {}x{}", video.topic,
+                  camera != nullptr ? camera->framesDecoded : 0,
+                  texture != nullptr ? texture->width() : 0,
+                  texture != nullptr ? texture->height() : 0)
+          .c_str());
+  if (topic != nullptr && !topic->visible) {
+    ImGui::PushStyleColor(ImGuiCol_Text,
+                          ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled));
+    ImGui::TextUnformatted("hidden (see Scene > Topics)");
+    ImGui::PopStyleColor();
+    return;
+  }
+  if (texture == nullptr || !texture->hasFrame()) {
+    ImGui::PushStyleColor(ImGuiCol_Text,
+                          ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled));
+    ImGui::TextUnformatted("waiting for the first frame");
+    ImGui::PopStyleColor();
+    return;
+  }
+  drawFittedImage(*texture);
+}
+
+void MainModel::drawOpenErrorModal() {
+  if (m_openError.empty()) {
+    return;
+  }
+  if (!ImGui::IsPopupOpen(kOpenErrorPopup)) {
+    ImGui::OpenPopup(kOpenErrorPopup);
+  }
+  if (ImGui::BeginPopupModal(kOpenErrorPopup, nullptr,
+                             ImGuiWindowFlags_AlwaysAutoResize)) {
+    ImGui::TextUnformatted(m_openError.c_str());
+    if (ImGui::Button("OK")) {
+      m_openError.clear();
+      ImGui::CloseCurrentPopup();
+    }
+    ImGui::EndPopup();
+  }
+}
+
 void MainModel::updateVideoOverlays(double dt) {
   for (VideoWindow& video : m_videos) {
+    if (video.widget == nullptr) {
+      continue;  // camera windows follow the recording
+    }
     video.widget->tick(dt);
     // Move the overlay with the bar of the test pattern (pixel space).
     const auto* pattern = dynamic_cast<const avalon::TestPatternSource*>(
@@ -297,6 +570,9 @@ void MainModel::updateVideoOverlays(double dt) {
 void MainModel::buildUi() {
   const double dt = m_avalon.getLastFrameSeconds();
   m_time += dt;
+  if (m_recording != nullptr) {
+    m_recording->tick(dt);
+  }
   for (GraphWindow& graph : m_graphs) {
     graph.graph->push(static_cast<float>(dt * 1000.0));
   }
@@ -310,6 +586,7 @@ void MainModel::buildUi() {
   }
 
   drawSceneWindow();
+  drawTimelineWindow();
   for (SceneViewWindow& view : m_sceneViews) {
     ImGui::SetNextWindowSize(ImVec2(640, 480), ImGuiCond_FirstUseEver);
     if (ImGui::Begin(view.title.c_str(), &view.open)) {
@@ -327,10 +604,15 @@ void MainModel::buildUi() {
   for (VideoWindow& video : m_videos) {
     ImGui::SetNextWindowSize(ImVec2(380, 300), ImGuiCond_FirstUseEver);
     if (ImGui::Begin(video.title.c_str(), &video.open)) {
-      video.widget->draw();
+      if (video.widget != nullptr) {
+        video.widget->draw();
+      } else {
+        drawCameraWindow(video);
+      }
     }
     ImGui::End();
   }
+  drawOpenErrorModal();
 }
 
 }  // namespace camelot

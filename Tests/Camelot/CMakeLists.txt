@@ -1,4 +1,5 @@
 add_subdirectory(data)
+add_subdirectory(replay)
 
 target_sources(Test_Main
     PRIVATE
