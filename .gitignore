@@ -16,3 +16,4 @@ out
 build
 *.tcl
 logs
+/recording.mcap
